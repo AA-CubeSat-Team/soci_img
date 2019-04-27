@@ -41,6 +41,12 @@
 #define JPEG_640_480 0x07
 
 /* Parameters for the 'Get Picture' command */
-// 
+// Parameter 1 - Picture Type
+#define Snapshot_Mode 0x01
+#define RAW_Mode      0x02
+#define JPEG_Mode     0x05
+
+/* Parameters for the 'Snapshot' command */
+
 
 #endif /* _COMMANDSET_H_ */
