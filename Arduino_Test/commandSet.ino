@@ -5,6 +5,14 @@ extern "C" {
 }
 
 /*
+ * Holds auxiliary commands necessary for testing
+ * the uCAM-III device
+ * (Designed for Arduino Uno or similar hardware)
+ * 
+ * Author: Haomin Yu
+ */
+
+/*
  * Initializes the uCAM-III
  * (Necessary upon power-on)
  */
@@ -26,6 +34,44 @@ bool initializeCamera() {
  */
 void sendSyncCommand() {
   Serial.write(syncCommand, sizeof(syncCommand));
+  delay(1);
+}
+
+/*
+ * Attempts to receive a SYNC command through serial
+ * (Returns false if fails)
+ */
+bool receiveSyncCommand() {
+  bool isSyncCommand = true;
+  char incoming = 0;
+  // Checking if first byte is 0xAA
+  incoming = Serial.read();
+  isSyncCommand = isSyncCommand && (incoming == 0xAA);
+  // Checking if second byte is 0x0D
+  incoming = Serial.read();
+  isSyncCommand = isSyncCommand && (incoming == 0x0D);
+  // Checking if third byte is 0x00
+  incoming = Serial.read();
+  isSyncCommand = isSyncCommand && (incoming == 0x00);
+  // Checking if fourth byte is 0x00
+  incoming = Serial.read();
+  isSyncCommand = isSyncCommand && (incoming == 0x00);
+  // Checking if fifth byte is 0x00
+  incoming = Serial.read();
+  isSyncCommand = isSyncCommand && (incoming == 0x00);
+  // Checking if sixth byte is 0x00
+  incoming = Serial.read();
+  isSyncCommand = isSyncCommand && (incoming == 0x00);
+  return isSyncCommand;
+}
+
+/*
+ * Sends a ACK command through serial, indicating
+ * that the SYNC command has been registered
+ * (With a small built-in delay)
+ */
+void sendAckSyncCommand() {
+  Serial.write(ackSyncCommand, sizeof(ackSyncCommand));
   delay(1);
 }
 
