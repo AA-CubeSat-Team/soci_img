@@ -19,16 +19,16 @@ void setup() {
   Serial.begin(9600, SERIAL_8N1);
   pinMode(Reset, OUTPUT);
   digitalWrite(Reset, LOW);
-  delay(5);
+  delay(500);
   digitalWrite(Reset, HIGH);
   delay(5);
   Serial.write(syncCommand, sizeof(syncCommand));
   delay(1000);
-  while(Serial.available()) {
-    Serial.print(Serial.read());
+  for(int i = 0; i < 6; i++) {
+    Serial.print((char)Serial.read(), HEX);
+    Serial.print(" ");
   }
 }
-
 
 void loop() {
 }
