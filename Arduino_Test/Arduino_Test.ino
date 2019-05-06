@@ -1,11 +1,9 @@
 // Compiler Linkage
 extern "C" {
+  #include <SoftwareSerial.h>
   #include <stdbool.h>
   #include "commandSet.h"
 }
-// Pin Declaration
-static const int Reset = 7;
-
 /*
  * Simple Test to assess the communication
  * capability of the uCAM-III device
@@ -15,8 +13,15 @@ static const int Reset = 7;
  * 
  * Author: Haomin Yu
  */
+// Pin Declaration
+static const int Reset = 7;
+// Software Serial
+// (pin 2 of Arduino -> TX of uCAM, pin 3 of Arduino -> RX of uCAM)
+SoftwareSerial SoftSer(2,3);
+
 void setup() {
-  Serial.begin(9600, SERIAL_8N1);
+  Serial.begin(9600);
+  SoftSer.begin(115200);
   pinMode(Reset, OUTPUT);
   digitalWrite(Reset, LOW);
   delay(5);

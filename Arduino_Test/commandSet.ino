@@ -33,7 +33,7 @@ bool initializeCamera() {
  * (With a small built-in delay)
  */
 void sendSyncCommand() {
-  Serial.write(syncCommand, sizeof(syncCommand));
+  SoftSer.write(syncCommand, sizeof(syncCommand));
   delay(1);
 }
 
@@ -43,24 +43,24 @@ void sendSyncCommand() {
  */
 bool receiveSyncCommand() {
   bool isSyncCommand = true;
-  char incoming = 0;
+  byte incoming = 0;
   // Checking if first byte is 0xAA
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isSyncCommand = isSyncCommand && (incoming == 0xAA);
   // Checking if second byte is 0x0D
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isSyncCommand = isSyncCommand && (incoming == 0x0D);
   // Checking if third byte is 0x00
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isSyncCommand = isSyncCommand && (incoming == 0x00);
   // Checking if fourth byte is 0x00
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isSyncCommand = isSyncCommand && (incoming == 0x00);
   // Checking if fifth byte is 0x00
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isSyncCommand = isSyncCommand && (incoming == 0x00);
   // Checking if sixth byte is 0x00
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isSyncCommand = isSyncCommand && (incoming == 0x00);
   return isSyncCommand;
 }
@@ -71,7 +71,7 @@ bool receiveSyncCommand() {
  * (With a small built-in delay)
  */
 void sendAckSyncCommand() {
-  Serial.write(ackSyncCommand, sizeof(ackSyncCommand));
+  SoftSer.write(ackSyncCommand, sizeof(ackSyncCommand));
   delay(1);
 }
 
@@ -81,23 +81,23 @@ void sendAckSyncCommand() {
  */
 bool receiveAckCommand() {
   bool isAckCommand = true;
-  char incoming = 0;
+  byte incoming = 0;
   // Checking if first byte is 0xAA
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0xAA);
   // Checking if second byte is 0x0E
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0x0E);
   // Checking if third byte is 0x0D
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0x0D);
   // Throwing away fourth byte (Debugging byte)
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   // Checking if fifth byte is 0x00
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0x00);
   // Checking if sixth byte is 0x00
-  incoming = Serial.read();
+  incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0x00);
   return isAckCommand;
 }
