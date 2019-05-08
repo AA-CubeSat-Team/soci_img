@@ -11,3 +11,9 @@ Directory for uCamIII tests on Arduino Uno or related hardware
 Directory for testing data syncing with uCamIII
 + Sync Successful as of May 8, 2019
 ```
+
+```diff
+# Arduino_Test_2
+Directory for testing image transmission with uCamIII
+- To be tested on May 10, 2019
+```
