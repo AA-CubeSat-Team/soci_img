@@ -110,6 +110,7 @@ bool receiveAckCommand(byte commandID) {
 static const unsigned short MAX_INIT_ATTEMPTS     = 10;
 static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
 static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
+static const unsigned short MAX_GET_PICTURE_ATTEMPTS = 10;
 bool takePictureJPEG_640_480() {
   Serial.println("====================");
   bool successful = false;
@@ -161,7 +162,21 @@ bool takePictureJPEG_640_480() {
     attempts++;
   } while ((attempts < MAX_SNAPSHOT_ATTEMPTS) && !successful);
   // GET PICTURE command for snapshot picture
-  
+  successful = false;
+  attempts   = 0;
+  do {
+    delay(10);
+    SoftSer.write(getPictureSnapshot, sizeof(getPictureSnapshot));
+    if(receiveAckCommand(0x04)) {
+      Serial.println("* uCamIII has received get picture command");
+      successful = true;
+    }
+    else {
+      Serial.println("uCamIII failed to receive get picture command");
+      successful = false;
+    }
+    attempts++;
+  } while ((attempts < MAX_GET_PICTURE_ATTEMPTS) && !successful);
   
   Serial.println("====================");
   return true;
