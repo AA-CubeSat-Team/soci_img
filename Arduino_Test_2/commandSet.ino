@@ -104,13 +104,48 @@ bool receiveAckCommand(byte commandID) {
 }
 
 /*
+ * Reads the DATA command and returns the size of
+ * the image if successful
+ * Returns 0 if fails
+ */
+unsigned long receiveDataCommand() {
+  bool isDataCommand = true;
+  byte incoming      = 0;
+  unsigned long imageSize = 0;
+  // Checking if first byte is 0xAA
+  incoming = SoftSer.read();
+  isDataCommand = isDataCommand && (incoming == 0xAA);
+  // Checking if second byte is 0x0A
+  incoming = SoftSer.read();
+  isDataCommand = isDataCommand && (incoming == 0x0A);
+  // Checking if third byte is 0x01
+  incoming = SoftSer.read();
+  isDataCommand = isDataCommand && (incoming == 0x01);
+  // Calculating image size with fourth, fifth, and sixth byte
+  imageSize = SoftSer.read();
+  imageSize += SoftSer.read() << 8;
+  imageSize += SoftSer.read() << 16;
+  if(isDataCommand) {
+    return imageSize;
+  }
+  else {
+    return 0;
+  }
+}
+
+/*
  * Takes a JPEG snapshot picture with 640 x 480 resolution
  * (Returns whether the process was successful)
+ ***
+ * This function is testing the steps found on the page 15
+ * of the specification for uCamIII
  */
 static const unsigned short MAX_INIT_ATTEMPTS     = 10;
 static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
 static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
-static const unsigned short MAX_GET_PICTURE_ATTEMPTS = 10;
+static const unsigned short MAX_GET_PICTURE_ATTEMPTS    = 10;
+static const unsigned short MAX_GET_IMAGE_SIZE_ATTEMPTS = 10;
+static const unsigned int PACKAGE_SIZE_BYTES = 512; 
 bool takePictureJPEG_640_480() {
   Serial.println("====================");
   bool successful = false;
@@ -120,7 +155,7 @@ bool takePictureJPEG_640_480() {
     delay(10);
     SoftSer.write(initJpegVgaCommand, sizeof(initJpegVgaCommand));
     if(receiveAckCommand(0x01)) {
-      Serial.println("* uCamIII has acknowledged the INITIAL command");
+      Serial.println("** uCamIII has acknowledged the INITIAL command");
       successful = true;
     }
     else {
@@ -136,7 +171,7 @@ bool takePictureJPEG_640_480() {
     delay(10);
     SoftSer.write(setPackageSize512Bytes, sizeof(setPackageSize512Bytes));
     if(receiveAckCommand(0x06)) {
-      Serial.println("* uCamIII has set the package size");
+      Serial.println("** uCamIII has set the package size");
       successful = true;
     }
     else {
@@ -152,7 +187,7 @@ bool takePictureJPEG_640_480() {
     delay(10);
     SoftSer.write(snapshotCompressedPicture, sizeof(snapshotCompressedPicture));
     if(receiveAckCommand(0x05)) {
-      Serial.println("* uCamIII has the snapshot command");
+      Serial.println("** uCamIII has the snapshot command");
       successful = true;
     }
     else {
@@ -168,7 +203,7 @@ bool takePictureJPEG_640_480() {
     delay(10);
     SoftSer.write(getPictureSnapshot, sizeof(getPictureSnapshot));
     if(receiveAckCommand(0x04)) {
-      Serial.println("* uCamIII has received get picture command");
+      Serial.println("** uCamIII has received get picture command");
       successful = true;
     }
     else {
@@ -177,6 +212,30 @@ bool takePictureJPEG_640_480() {
     }
     attempts++;
   } while ((attempts < MAX_GET_PICTURE_ATTEMPTS) && !successful);
+  // Grabbing the image size and calculating the number of packages
+  successful = false;
+  attempts   = 0;
+  unsigned long imageSize = 0;
+  do {
+    delay(10);
+    imageSize = receiveDataCommand();
+    if(imageSize > 0) {
+      Serial.print("** uCamIII has received the image size = ");
+      Serial.print(imageSize);
+      Serial.println(" bytes");
+      successful = true;
+    }
+    else {
+      Serial.println("uCamIII failed to receive image size");
+      successful = false;
+    }
+    attempts++;
+  } while ((attempts < MAX_GET_IMAGE_SIZE_ATTEMPTS) && !successful);
+  // Grabbing the image packages
+  unsigned int packages = imageSize / (PACKAGE_SIZE_BYTES - 6);
+  Serial.print("** Grabbing ");
+  Serial.print(packages);
+  Serial.println(" packages...");
   
   Serial.println("====================");
   return true;
