@@ -134,6 +134,29 @@ unsigned long receiveDataCommand() {
 }
 
 /*
+ * Sent the ACK command for the package ID
+ * matching 'ID'
+ */
+void sendAckPackageCommand(unsigned int ID) {
+  SoftSer.write((byte)0xAA);
+  SoftSer.write((byte)0x0E);
+  SoftSer.write((byte)0x00);
+  SoftSer.write((byte)0x00);
+  byte fifthByte = ID % 0xFF;
+  byte sixthByte = ID / 0xFF;
+  SoftSer.write(fifthByte);
+  SoftSer.write(sixthByte);
+}
+
+/*
+ * Receives a package with the package ID
+ * matching 'ID'
+ */
+void receivePackage(unsigned int ID) {
+  
+}
+
+/*
  * Takes a JPEG snapshot picture with 640 x 480 resolution
  * (Returns whether the process was successful)
  ***
@@ -232,11 +255,14 @@ bool takePictureJPEG_640_480() {
     attempts++;
   } while ((attempts < MAX_GET_IMAGE_SIZE_ATTEMPTS) && !successful);
   // Grabbing the image packages
-  unsigned int packages = imageSize / (PACKAGE_SIZE_BYTES - 6);
+  unsigned int packages = ceil(imageSize * 1.0 / (PACKAGE_SIZE_BYTES - 6));
   Serial.print("** Grabbing ");
   Serial.print(packages);
   Serial.println(" packages...");
-  
+  for(unsigned int i = 0; i < packages; i++) {
+    sendAckPackageCommand(i);
+    receivePackage(i);
+  }
   Serial.println("====================");
   return true;
 }
