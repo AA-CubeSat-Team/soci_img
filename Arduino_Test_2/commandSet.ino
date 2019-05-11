@@ -149,11 +149,33 @@ void sendAckPackageCommand(unsigned int ID) {
 }
 
 /*
- * Receives a package with the package ID
- * matching 'ID'
+ * Receives a package with the package ID matching 'ID', and puts the data in
+ * the given 'pictureArray' starting at '*nextIndexPtr'
  */
-void receivePackage(unsigned int ID) {
-  
+void receivePackage(unsigned int ID, unsigned long* nextIndexPtr, byte* pictureArray) {
+  // Grabbing ID
+  unsigned int incomingID = SoftSer.read();
+  incomingID += SoftSer.read() << 8;
+  if(ID != incomingID) {
+    Serial.print("ID Mismatch! Expected: ");
+    Serial.print(ID);
+    Serial.print(", but received: ");
+    Serial.println(incomingID);
+  }
+  // Grabbing data size
+  unsigned int incomingDataSize = SoftSer.read();
+  incomingDataSize += SoftSer.read() << 8;
+  Serial.print("Received data size: ");
+  Serial.println(incomingDataSize);
+  // Writing data into the given 'pictureArray'
+  for(int i = 0; i < incomingDataSize; i++) {
+    pictureArray[*nextIndexPtr + i] = SoftSer.read();
+  }
+  // Throwing away verify code for now
+  SoftSer.read();
+  SoftSer.read();
+  // Updating the value in 'nextIndexPtr'
+  *nextIndexPtr = *nextIndexPtr + incomingDataSize;
 }
 
 /*
@@ -256,13 +278,15 @@ bool takePictureJPEG_640_480() {
   } while ((attempts < MAX_GET_IMAGE_SIZE_ATTEMPTS) && !successful);
   // Grabbing the image packages
   byte pictureArray[imageSize];
+  unsigned long startIndex = 0;
+  unsigned long* nextIndexPtr = &startIndex;
   unsigned int packages = ceil(imageSize * 1.0 / (PACKAGE_SIZE_BYTES - 6));
   Serial.print("** Grabbing ");
   Serial.print(packages);
   Serial.println(" packages...");
   sendAckPackageCommand(0);
   for(unsigned int i = 1; i <= packages; i++) {
-    receivePackage(i);
+    receivePackage(i, nextIndexPtr, pictureArray);
     sendAckPackageCommand(i);
   }
   Serial.println("====================");
