@@ -168,7 +168,7 @@ static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
 static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
 static const unsigned short MAX_GET_PICTURE_ATTEMPTS    = 10;
 static const unsigned short MAX_GET_IMAGE_SIZE_ATTEMPTS = 10;
-static const unsigned int PACKAGE_SIZE_BYTES = 512; 
+static const unsigned int   PACKAGE_SIZE_BYTES = 512; 
 bool takePictureJPEG_640_480() {
   Serial.println("====================");
   bool successful = false;
@@ -259,9 +259,10 @@ bool takePictureJPEG_640_480() {
   Serial.print("** Grabbing ");
   Serial.print(packages);
   Serial.println(" packages...");
-  for(unsigned int i = 0; i < packages; i++) {
-    sendAckPackageCommand(i);
+  sendAckPackageCommand(0);
+  for(unsigned int i = 1; i <= packages; i++) {
     receivePackage(i);
+    sendAckPackageCommand(i);
   }
   Serial.println("====================");
   return true;
