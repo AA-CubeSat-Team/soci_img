@@ -142,8 +142,8 @@ void sendAckPackageCommand(unsigned int ID) {
   SoftSer.write((byte)0x0E);
   SoftSer.write((byte)0x00);
   SoftSer.write((byte)0x00);
-  byte fifthByte = ID % 0xFF;
-  byte sixthByte = ID / 0xFF;
+  byte fifthByte = ID % 256;
+  byte sixthByte = ID / 256;
   SoftSer.write(fifthByte);
   SoftSer.write(sixthByte);
 }
@@ -255,6 +255,7 @@ bool takePictureJPEG_640_480() {
     attempts++;
   } while ((attempts < MAX_GET_IMAGE_SIZE_ATTEMPTS) && !successful);
   // Grabbing the image packages
+  byte pictureArray[imageSize];
   unsigned int packages = ceil(imageSize * 1.0 / (PACKAGE_SIZE_BYTES - 6));
   Serial.print("** Grabbing ");
   Serial.print(packages);
