@@ -6,6 +6,8 @@ import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.FilenameUtils;
+
 /*
  * Convert byte arrays into viewable images
  * Currently supported types:
@@ -41,11 +43,16 @@ public class ByteArrayToImage {
     }
     
     /*
-     * Converts the given bytes in 'data' into an image file of type
+     * Converts the given bytes written in plain text in 'data' into an image file of type
      * matching 'imageType'
-     * (Works best when 'data' is a txt file)
+     * 
+     * Throws IllegalArgumentException if 'data' is not a txt file
      */
     public static void convertToImage(File data, String imageType) throws IOException {
+        String extension = FilenameUtils.getExtension(data.getAbsolutePath());
+        if(!extension.equalsIgnoreCase("txt")) {
+            throw new IllegalArgumentException("Expected txt file, but received " + extension + "file");
+        }
         convertToImage(Files.readAllBytes(data.toPath()), imageType);
     }
     
