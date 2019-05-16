@@ -15,5 +15,5 @@ Directory for testing data syncing with uCamIII
 ```diff
 # Arduino_Test_2
 Directory for testing image transmission with uCamIII
-- To be tested on May 15, 2019
+- Currently under testing
 ```

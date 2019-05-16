@@ -11,12 +11,17 @@ extern "C" {
  * 
  * Author: Haomin Yu
  */
-
+static const int MAX_SYNC_ATTEMPTS = 60;
+static const unsigned short MAX_INIT_ATTEMPTS     = 10;
+static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
+static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
+static const unsigned short MAX_GET_PICTURE_ATTEMPTS    = 10;
+static const unsigned short MAX_GET_IMAGE_SIZE_ATTEMPTS = 10;
+static const unsigned int   PACKAGE_SIZE_BYTES = 64;
 /*
  * Initializes the uCAM-III
  * (Necessary upon power-on)
  */
-static const int MAX_SYNC_ATTEMPTS = 60;
 bool initializeCamera() {
   int syncAttempts = 0;
   bool ackReceived = false;
@@ -122,9 +127,9 @@ unsigned long receiveDataCommand() {
   incoming = SoftSer.read();
   isDataCommand = isDataCommand && (incoming == 0x01);
   // Calculating image size with fourth, fifth, and sixth byte
-  imageSize = SoftSer.read();
-  imageSize += SoftSer.read() << 8;
-  imageSize += SoftSer.read() << 16;
+  imageSize  = SoftSer.read();
+  imageSize |= SoftSer.read() << 8;
+  imageSize |= SoftSer.read() << 16;
   if(isDataCommand) {
     return imageSize;
   }
@@ -142,8 +147,8 @@ void sendAckPackageCommand(unsigned int ID) {
   SoftSer.write((byte)0x0E);
   SoftSer.write((byte)0x00);
   SoftSer.write((byte)0x00);
-  byte fifthByte = ID % 256;
-  byte sixthByte = ID / 256;
+  byte fifthByte = ID & 0xFF;
+  byte sixthByte = ID >> 8;
   SoftSer.write(fifthByte);
   SoftSer.write(sixthByte);
 }
@@ -152,10 +157,10 @@ void sendAckPackageCommand(unsigned int ID) {
  * Receives a package with the package ID matching 'ID', and puts the data in
  * the given 'pictureArray' starting at '*nextIndexPtr'
  */
-void receivePackage(unsigned int ID, unsigned long* nextIndexPtr, byte* pictureArray) {
+void receivePackage(unsigned int ID) {
   // Grabbing ID
   unsigned int incomingID = SoftSer.read();
-  incomingID += SoftSer.read() << 8;
+  incomingID |= SoftSer.read() << 8;
   if(ID != incomingID) {
     Serial.print("ID Mismatch! Expected: ");
     Serial.print(ID);
@@ -164,18 +169,19 @@ void receivePackage(unsigned int ID, unsigned long* nextIndexPtr, byte* pictureA
   }
   // Grabbing data size
   unsigned int incomingDataSize = SoftSer.read();
-  incomingDataSize += SoftSer.read() << 8;
-  Serial.print("Received data size: ");
-  Serial.println(incomingDataSize);
+  incomingDataSize |= SoftSer.read() << 8;
   // Writing data into the given 'pictureArray'
   for(int i = 0; i < incomingDataSize; i++) {
-    pictureArray[*nextIndexPtr + i] = SoftSer.read();
+    byte incomingData = SoftSer.read();
+    if(incomingData < 0x10) {
+      Serial.print(0x00, HEX);
+    }
+    Serial.print(incomingData, HEX);
   }
+  Serial.println();
   // Throwing away verify code for now
   SoftSer.read();
   SoftSer.read();
-  // Updating the value in 'nextIndexPtr'
-  *nextIndexPtr = *nextIndexPtr + incomingDataSize;
 }
 
 /*
@@ -185,12 +191,6 @@ void receivePackage(unsigned int ID, unsigned long* nextIndexPtr, byte* pictureA
  * This function is testing the steps found on the page 15
  * of the specification for uCamIII
  */
-static const unsigned short MAX_INIT_ATTEMPTS     = 10;
-static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
-static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
-static const unsigned short MAX_GET_PICTURE_ATTEMPTS    = 10;
-static const unsigned short MAX_GET_IMAGE_SIZE_ATTEMPTS = 10;
-static const unsigned int   PACKAGE_SIZE_BYTES = 512; 
 bool takePictureJPEG_640_480() {
   Serial.println("====================");
   bool successful = false;
@@ -209,12 +209,12 @@ bool takePictureJPEG_640_480() {
     }
     attempts++;
   } while ((attempts < MAX_INIT_ATTEMPTS) && !successful);
-  // Setting package size to 512 bytes
+  // Setting package size to 32 bytes
   successful = false;
   attempts   = 0;
   do {
     delay(10);
-    SoftSer.write(setPackageSize512Bytes, sizeof(setPackageSize512Bytes));
+    SoftSer.write(setPackageSize64Bytes, sizeof(setPackageSize64Bytes));
     if(receiveAckCommand(0x06)) {
       Serial.println("** uCamIII has set the package size");
       successful = true;
@@ -277,7 +277,6 @@ bool takePictureJPEG_640_480() {
     attempts++;
   } while ((attempts < MAX_GET_IMAGE_SIZE_ATTEMPTS) && !successful);
   // Grabbing the image packages
-  byte pictureArray[imageSize];
   unsigned long startIndex = 0;
   unsigned long* nextIndexPtr = &startIndex;
   unsigned int packages = ceil(imageSize * 1.0 / (PACKAGE_SIZE_BYTES - 6));
@@ -285,9 +284,11 @@ bool takePictureJPEG_640_480() {
   Serial.print(packages);
   Serial.println(" packages...");
   sendAckPackageCommand(0);
-  for(unsigned int i = 1; i <= packages; i++) {
-    receivePackage(i, nextIndexPtr, pictureArray);
+  delay(5);
+  for(int i = 1; i <= packages; i++) {
+    receivePackage(i);
     sendAckPackageCommand(i);
+    delay(5);
   }
   Serial.println("====================");
   return true;

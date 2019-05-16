@@ -17,6 +17,10 @@ static const byte ackSyncCommand[] = {0xAA, 0x0E, 0x0D, 0x00, 0x00, 0x00};
 static const byte initJpegVgaCommand[] = {0xAA, 0x01, 0x00, 0x07, 0x07, 0x07};
 // SET PACKAGE SIZE command for 512 bytes
 static const byte setPackageSize512Bytes[] = {0xAA, 0x06, 0x08, 0x00, 0x02, 0x00};
+// SET PACKAGE SIZE command for 64 bytes
+static const byte setPackageSize64Bytes[] = {0xAA, 0x06, 0x08, 0x40, 0x00, 0x00};
+// SET PACKAGE SIZE command for 32 bytes
+static const byte setPackageSize32Bytes[] = {0xAA, 0x06, 0x08, 0x20, 0x00, 0x00};
 // SNAPSHOT command for compressed picture
 static const byte snapshotCompressedPicture[] = {0xAA, 0x05, 0x00, 0x00, 0x00, 0x00};
 // GET PICTURE command for snapshot picture

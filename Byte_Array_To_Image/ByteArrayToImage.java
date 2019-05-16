@@ -53,7 +53,7 @@ public class ByteArrayToImage {
         if(!extension.equalsIgnoreCase("txt")) {
             throw new IllegalArgumentException("Expected txt file, but received " + extension + "file");
         }
-        convertToImage(Files.readAllBytes(data.toPath()), imageType);
+        //convertToImage(Files.readAllBytes(data.toPath()), imageType);
     }
     
     /*
