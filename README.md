@@ -22,5 +22,5 @@ Directory for testing image transmission with uCamIII
 ```diff
 # Byte_Array_To_Image
 Directory for algorithms used to convert bytes to images
-- Conversion Successful for JPG as of May 16, 2019
++ Conversion Successful for JPG as of May 16, 2019
 ```
