@@ -15,5 +15,11 @@ Directory for testing data syncing with uCamIII
 ```diff
 # Arduino_Test_2
 Directory for testing image transmission with uCamIII
-- Currently under testing
++ Data Transmission Successful as of May 15, 2019
+```
+
+```diff
+# Byte_Array_To_Image
+Directory for algorithms used to convert bytes to images
+- Currently cannot successfully convert. Could be due to corrupt hex dump
 ```
