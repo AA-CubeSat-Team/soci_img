@@ -1,11 +1,11 @@
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 
-import javax.imageio.ImageIO;
-
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 /*
@@ -48,12 +48,28 @@ public class ByteArrayToImage {
      * 
      * Throws IllegalArgumentException if 'data' is not a txt file
      */
-    public static void convertToImage(File data, String imageType) throws IOException {
+    public static void convertToImage(File data, String imageType) throws IOException, DecoderException {
         String extension = FilenameUtils.getExtension(data.getAbsolutePath());
         if(!extension.equalsIgnoreCase("txt")) {
             throw new IllegalArgumentException("Expected txt file, but received " + extension + "file");
         }
-        //convertToImage(Files.readAllBytes(data.toPath()), imageType);
+        List<String> lineBytes = Files.readAllLines(data.toPath());
+        // Figuring out the size of the byte array
+        int lines = lineBytes.size();
+        int firstLineBytes = lineBytes.get(0).length() / 2;
+        int lastLineBytes = lineBytes.get(lines - 1).length() / 2;
+        int byteArraySize = firstLineBytes * (lines - 1) + lastLineBytes;
+        byte[] byteArray = new byte[byteArraySize];
+        // Filling the 'byteArray'
+        int nextIndex = 0;
+        for(String lineByte: lineBytes) {
+            byte[] decoded = Hex.decodeHex(lineByte);
+            for(int i = 0; i < decoded.length; i++) {
+                byteArray[nextIndex++] = decoded[i];
+            }
+        }
+        // Converting to image
+        convertToImage(byteArray, imageType);
     }
     
     /*
@@ -61,8 +77,6 @@ public class ByteArrayToImage {
      * Returns true if successful
      */
     private static boolean convertToJPG(byte[] data) throws IOException {
-        ByteArrayInputStream stream = new ByteArrayInputStream(data);
-        BufferedImage image = ImageIO.read(stream);
         int fileNumber  = 0;
         File outputFile = null;
         String fileName = null;
@@ -71,7 +85,7 @@ public class ByteArrayToImage {
             outputFile = new File(fileName);
         }
         while(outputFile.exists());
-        ImageIO.write(image, "jpg", new File(fileName));
+        FileUtils.writeByteArrayToFile(outputFile, data);
         return true;
     }
 }
