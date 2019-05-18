@@ -17,7 +17,7 @@ static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
 static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
 static const unsigned short MAX_GET_PICTURE_ATTEMPTS    = 10;
 static const unsigned short MAX_GET_IMAGE_SIZE_ATTEMPTS = 10;
-static const unsigned int   PACKAGE_SIZE_BYTES = 64;
+static const unsigned int   PACKAGE_SIZE_BYTES = 32;
 /*
  * Initializes the uCAM-III
  * (Necessary upon power-on)
@@ -154,10 +154,11 @@ void sendAckPackageCommand(unsigned int ID) {
 }
 
 /*
- * Receives a package with the package ID matching 'ID', and puts the data in
- * the given 'pictureArray' starting at '*nextIndexPtr'
+ * Receives a package with the package ID matching 'ID'
+ * (Returns true if successful)
  */
-void receivePackage(unsigned int ID) {
+bool receivePackage(unsigned int ID) {
+  bool isPackageValid = true;
   // Grabbing ID
   unsigned int incomingID = SoftSer.read();
   incomingID |= SoftSer.read() << 8;
@@ -166,22 +167,37 @@ void receivePackage(unsigned int ID) {
     Serial.print(ID);
     Serial.print(", but received: ");
     Serial.println(incomingID);
+    isPackageValid = false;
   }
   // Grabbing data size
   unsigned int incomingDataSize = SoftSer.read();
   incomingDataSize |= SoftSer.read() << 8;
-  // Writing data into the given 'pictureArray'
-  for(int i = 0; i < incomingDataSize; i++) {
-    byte incomingData = SoftSer.read();
-    if(incomingData < 0x10) {
-      Serial.print(0x00, HEX);
+  // Outputting data to the serial monitor
+  unsigned int availableBytes = SoftSer.available();
+  if(availableBytes != (PACKAGE_SIZE_BYTES - 4)) {
+    Serial.print("Available bytes: ");
+    Serial.println(availableBytes);
+    Serial.print("Expected bytes: ");
+    Serial.println(PACKAGE_SIZE_BYTES - 4);
+    isPackageValid = false;
+    for(int i = 0; i < availableBytes; i++) {
+      SoftSer.read();
     }
-    Serial.print(incomingData, HEX);
   }
-  Serial.println();
-  // Throwing away verify code for now
-  SoftSer.read();
-  SoftSer.read();
+  else {
+    for(int i = 0; i < incomingDataSize; i++) {
+      byte incomingData = SoftSer.read();
+      if(incomingData < 0x10) {
+        Serial.print(0x00, HEX);
+      }
+      Serial.print(incomingData, HEX);
+    }
+    Serial.print("Verify Code: ");
+    Serial.print(SoftSer.read());
+    Serial.print(" ");
+    Serial.print(SoftSer.read());
+  }
+  return isPackageValid;
 }
 
 /*
@@ -214,7 +230,7 @@ bool takePictureJPEG_640_480() {
   attempts   = 0;
   do {
     delay(10);
-    SoftSer.write(setPackageSize64Bytes, sizeof(setPackageSize64Bytes));
+    SoftSer.write(setPackageSize32Bytes, sizeof(setPackageSize32Bytes));
     if(receiveAckCommand(0x06)) {
       Serial.println("** uCamIII has set the package size");
       successful = true;
@@ -284,12 +300,31 @@ bool takePictureJPEG_640_480() {
   Serial.print(packages);
   Serial.println(" packages...");
   sendAckPackageCommand(0);
-  delay(5);
-  for(int i = 1; i <= packages; i++) {
-    receivePackage(i);
+  delay(10);
+  for(int i = 1; i <= 5; i++) {
+    if(!receivePackage(i)) {
+      i--;
+    }
     sendAckPackageCommand(i);
-    delay(5);
+    delay(10);
   }
   Serial.println("====================");
+  // Debugging information
+  for(int i = 0; i < 58; i++) {
+    byte incomingData = SoftSer.read();
+    if(incomingData < 0x10) {
+      Serial.print(0x00, HEX);
+    }
+    Serial.print(incomingData, HEX);
+  }
+  Serial.println();
+  for(int i = 0; i < 58; i++) {
+    byte incomingData = SoftSer.read();
+    if(incomingData < 0x10) {
+      Serial.print(0x00, HEX);
+    }
+    Serial.print(incomingData, HEX);
+  }
+  Serial.println();
   return true;
 }
