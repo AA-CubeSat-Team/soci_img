@@ -15,8 +15,8 @@ Directory for testing data syncing with uCamIII
 ```diff
 # Arduino_Test_2
 Directory for testing image transmission with uCamIII
-+ Data Transmission Successful as of May 15, 2019
-- Data Corruption in Current Version
++ Data Transmission Successful as of May 24, 2019
+- (Current Version may be unstable)
 ```
 
 ```diff
