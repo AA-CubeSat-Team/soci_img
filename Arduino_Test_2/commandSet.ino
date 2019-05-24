@@ -12,6 +12,7 @@ extern "C" {
  * Author: Haomin Yu
  */
 static const int MAX_SYNC_ATTEMPTS = 60;
+static const unsigned short MAX_CBE_ATTEMPTS      = 10;
 static const unsigned short MAX_INIT_ATTEMPTS     = 10;
 static const unsigned short MAX_SET_SIZE_ATTEMPTS = 10;
 static const unsigned short MAX_SNAPSHOT_ATTEMPTS = 10;
@@ -175,7 +176,7 @@ void receivePackage(unsigned int ID) {
   unsigned int incomingDataSize = incomingDataSizeLow | (incomingDataSizeHigh << 8);
   // Outputting data to the serial monitor
   for(int i = 0; i < incomingDataSize; i++) {
-    delay(10);
+    delay(5);
     byte incomingData = SoftSer.read();
     verifySum += (unsigned int)incomingData;
     if(incomingData < 0x10) {
@@ -206,6 +207,24 @@ bool takePictureJPEG_640_480() {
   Serial.println("====================");
   bool successful = false;
   unsigned short attempts = 0;
+  // Setting the CONTRAST, BRIGHTNESS, and EXPOSURE
+  const byte CONTRAST   = 0x03;
+  const byte BRIGHTNESS = 0x01;
+  const byte EXPOSURE   = 0x01;
+  const byte CBE_Command[] = {0xAA, 0x14, CONTRAST, BRIGHTNESS, EXPOSURE, 0x00};
+  do {
+    delay(10);
+    SoftSer.write(CBE_Command, sizeof(CBE_Command));
+    if(receiveAckCommand(0x14)) {
+      Serial.println("** uCamIII has successfully set CONTRAST, BRIGHTNESS, and EXPOSURE");
+      successful = true;
+    }
+    else {
+      Serial.println("uCamIII failed to set CONTRAST, BRIGHTNESS, and EXPOSURE");
+      successful = false;
+    }
+    attempts++;
+  } while ((attempts < MAX_CBE_ATTEMPTS) && !successful);
   // Initializing with INITIAL command with JPEG and VGA settings
   do {
     delay(10);
@@ -295,11 +314,11 @@ bool takePictureJPEG_640_480() {
   Serial.print(packages);
   Serial.println(" packages...");
   sendAckPackageCommand(0);
-  delay(10);
+  delay(5);
   for(int i = 1; i <= packages; i++) {
     receivePackage(i);
     sendAckPackageCommand(i);
-    delay(10);
+    delay(5);
   }
   Serial.println("====================");
   return true;
