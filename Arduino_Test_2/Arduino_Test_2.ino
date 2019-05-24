@@ -21,7 +21,7 @@ SoftwareSerial SoftSer(2,3);
 
 void setup() {
   Serial.begin(9600);
-  SoftSer.begin(115200);
+  SoftSer.begin(57600);
   pinMode(Reset, OUTPUT);
   digitalWrite(Reset, LOW);
   delay(5);
@@ -42,6 +42,5 @@ void setup() {
     Serial.println("Initialization Failed!");
   }
 }
-
 
 void loop() {}

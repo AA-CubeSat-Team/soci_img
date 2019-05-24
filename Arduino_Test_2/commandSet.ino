@@ -155,49 +155,44 @@ void sendAckPackageCommand(unsigned int ID) {
 
 /*
  * Receives a package with the package ID matching 'ID'
- * (Returns true if successful)
  */
-bool receivePackage(unsigned int ID) {
-  bool isPackageValid = true;
+static unsigned int verifySum = 0;
+void receivePackage(unsigned int ID) {
+  verifySum = 0;
   // Grabbing ID
-  unsigned int incomingID = SoftSer.read();
-  incomingID |= SoftSer.read() << 8;
+  unsigned int incomingIDLow  = SoftSer.read();
+  unsigned int incomingIDHigh = SoftSer.read();
+  unsigned int incomingID = incomingIDLow | (incomingIDHigh << 8);
   if(ID != incomingID) {
     Serial.print("ID Mismatch! Expected: ");
     Serial.print(ID);
     Serial.print(", but received: ");
     Serial.println(incomingID);
-    isPackageValid = false;
   }
   // Grabbing data size
-  unsigned int incomingDataSize = SoftSer.read();
-  incomingDataSize |= SoftSer.read() << 8;
+  unsigned int incomingDataSizeLow  = SoftSer.read();
+  unsigned int incomingDataSizeHigh = SoftSer.read();
+  unsigned int incomingDataSize = incomingDataSizeLow | (incomingDataSizeHigh << 8);
   // Outputting data to the serial monitor
-  unsigned int availableBytes = SoftSer.available();
-  if(availableBytes != (PACKAGE_SIZE_BYTES - 4)) {
-    Serial.print("Available bytes: ");
-    Serial.println(availableBytes);
-    Serial.print("Expected bytes: ");
-    Serial.println(PACKAGE_SIZE_BYTES - 4);
-    isPackageValid = false;
-    for(int i = 0; i < availableBytes; i++) {
-      SoftSer.read();
+  for(int i = 0; i < incomingDataSize; i++) {
+    delay(10);
+    byte incomingData = SoftSer.read();
+    verifySum += (unsigned int)incomingData;
+    if(incomingData < 0x10) {
+      Serial.print(0x00, HEX);
     }
+    Serial.print(incomingData, HEX);
   }
-  else {
-    for(int i = 0; i < incomingDataSize; i++) {
-      byte incomingData = SoftSer.read();
-      if(incomingData < 0x10) {
-        Serial.print(0x00, HEX);
-      }
-      Serial.print(incomingData, HEX);
-    }
-    Serial.print("Verify Code: ");
-    Serial.print(SoftSer.read());
-    Serial.print(" ");
-    Serial.print(SoftSer.read());
+  Serial.println();
+  // Checking verify code
+  byte verifyLowByte  = SoftSer.read();
+  byte verifyHighByte = SoftSer.read();
+  verifySum += incomingIDLow + incomingIDHigh;
+  verifySum += incomingDataSizeLow + incomingDataSizeHigh;
+  byte calculatedLowByte = verifyLowByte & 0xFF;
+  if(!(verifyHighByte == 0x00 && verifyLowByte == calculatedLowByte)) {
+    Serial.println("========== VERIFY FAILED ==========");
   }
-  return isPackageValid;
 }
 
 /*
@@ -301,30 +296,11 @@ bool takePictureJPEG_640_480() {
   Serial.println(" packages...");
   sendAckPackageCommand(0);
   delay(10);
-  for(int i = 1; i <= 5; i++) {
-    if(!receivePackage(i)) {
-      i--;
-    }
+  for(int i = 1; i <= packages; i++) {
+    receivePackage(i);
     sendAckPackageCommand(i);
     delay(10);
   }
   Serial.println("====================");
-  // Debugging information
-  for(int i = 0; i < 58; i++) {
-    byte incomingData = SoftSer.read();
-    if(incomingData < 0x10) {
-      Serial.print(0x00, HEX);
-    }
-    Serial.print(incomingData, HEX);
-  }
-  Serial.println();
-  for(int i = 0; i < 58; i++) {
-    byte incomingData = SoftSer.read();
-    if(incomingData < 0x10) {
-      Serial.print(0x00, HEX);
-    }
-    Serial.print(incomingData, HEX);
-  }
-  Serial.println();
   return true;
 }
