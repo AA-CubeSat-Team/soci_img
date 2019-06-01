@@ -15,22 +15,10 @@ void setup() {
   SoftSer.begin(57600);
   // Testing code
   if(syncCamera()) {
-    Serial.println("Sync Successful");
+    Serial.println("Successful");
   }
   else {
-    Serial.println("Sync Failed");
-  }
-  if(setPackageSize(32)) {
-    Serial.println("Set Package Size Successful");
-  }
-  else {
-    Serial.println("Set Package Size Failed");
-  }
-  if(setCBE(uCamIII_DEFAULT, uCamIII_DEFAULT, uCamIII_DEFAULT)) {
-    Serial.println("Set CBE Successful");
-  }
-  else {
-    Serial.println("Set CBE Failed");
+    Serial.println("Failed");
   }
 }
 

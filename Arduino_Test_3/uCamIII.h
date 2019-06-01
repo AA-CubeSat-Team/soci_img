@@ -47,8 +47,10 @@ extern "C" {
 
 // Function prototypes
 bool sendSyncCommand();
+bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);
 bool sendSetPackageSizeCommand(unsigned int packageSize);
 bool sendSetCBECommand(char contrast, char brightness, char exposure);
+bool sendSetSleepTimeCommand(char seconds);
 bool receiveAckCommand(char commandID);
 
 #ifdef __cplusplus

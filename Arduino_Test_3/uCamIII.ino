@@ -7,8 +7,10 @@
 
 // Function prototypes
 bool sendSyncCommand();
+bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);
 bool sendSetPackageSizeCommand(unsigned int packageSize);
 bool sendSetCBECommand(char contrast, char brightness, char exposure);
+bool sendSetSleepTimeCommand(char seconds);
 bool receiveAckCommand(char commandID);
 
 /*
@@ -37,6 +39,15 @@ bool sendSyncCommand() {
 }
 
 /*
+ * 
+ */
+bool sendInitializeCommand(char format, char rawResolution, char jpgResolution) {
+  sendCommand(uCamIII_CMD_INIT, uCamIII_CMD_NA,
+              format, rawResolution, jpgResolution);
+  return receiveAckCommand(uCamIII_CMD_INIT);
+}
+
+/*
  * Sets the package size to 'packageSize' bytes
  * (Returns true if successful, false otherwise)
  */
@@ -56,6 +67,16 @@ bool sendSetCBECommand(char contrast, char brightness, char exposure) {
               contrast, brightness, exposure,
               uCamIII_CMD_NA);
   return receiveAckCommand(uCamIII_CMD_SET_CBE);
+}
+
+/*
+ * 
+ */
+bool sendSetSleepTimeCommand(char seconds) {
+  sendCommand(uCamIII_CMD_SLEEP, seconds,
+              uCamIII_CMD_NA, uCamIII_CMD_NA,
+              uCamIII_CMD_NA);
+  return receiveAckCommand(uCamIII_CMD_SLEEP);
 }
 
 /*
