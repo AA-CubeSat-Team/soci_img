@@ -37,8 +37,27 @@ SOFTWARE.
 #ifndef _UCAMIII_H_
 #define _UCAMIII_H_
 
+// Number of bytes per uCamIII command
+#define uCamIII_CMD_SIZE 6
+
+// Compiler Linkage
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// Function prototypes
+bool sendSyncCommand();
+bool sendSetPackageSizeCommand(unsigned int packageSize);
+bool sendSetCBECommand(char contrast, char brightness, char exposure);
+bool receiveAckCommand(char commandID);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
 enum uCamIII_CMD
-{ uCamIII_CMD_INIT          = 0x01
+{ uCamIII_CMD_NA            = 0x00
+, uCamIII_CMD_INIT          = 0x01
 , uCamIII_CMD_GET_PICTURE   = 0x04
 , uCamIII_CMD_SNAPSHOT      = 0x05
 , uCamIII_CMD_SET_PACKSIZE  = 0x06
