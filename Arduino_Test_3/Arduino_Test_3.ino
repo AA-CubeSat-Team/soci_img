@@ -1,5 +1,10 @@
-
+/*
+ * TODO
+ * 
+ * Author: Haomin Yu
+ */
 #include <SoftwareSerial.h>
+#include "ArduinoCommunication.h"
 #include "commandSet.h"
 #include "uCamIII.h"
 

@@ -47,11 +47,14 @@ extern "C" {
 
 // Function prototypes
 bool sendSyncCommand();
+bool sendResetCommand(char resetType);
 bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);
 bool sendSetPackageSizeCommand(unsigned int packageSize);
 bool sendSetCBECommand(char contrast, char brightness, char exposure);
 bool sendSetSleepTimeCommand(char seconds);
 bool receiveAckCommand(char commandID);
+bool sendTakeSnapshotCommand(char snapshotType);
+bool sendTakePictureCommand(char pictureType);
 
 #ifdef __cplusplus
 } // extern "C"

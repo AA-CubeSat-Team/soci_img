@@ -3,23 +3,28 @@
  * 
  * Author: Haomin Yu
  */
-
 #include <stdbool.h>
 #include "uCamIII.h"
 
 // Function prototypes
 bool syncCamera();
+bool resetCamera(char resetType);
 bool initializeCamera(char format, char rawResolution, char jpgResolution);
 bool setPackageSize(unsigned int packageSize);
 bool setCBE(char contrast, char brightness, char exposure);
 bool setSleepTime(char seconds);
+bool takeSnapshot(char snapshotType);
+bool takePicture(char pictureType);
 
 // Defined maximum attempts
-static const unsigned short MAX_SYNC_ATTEMPTS = 60;
+static const unsigned short MAX_SYNC_ATTEMPTS       = 60;
+static const unsigned short MAX_RESET_ATTEMPTS      = 10;
 static const unsigned short MAX_INITIALIZE_ATTEMPTS = 10;
 static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 10;
 static const unsigned short MAX_SET_CBE_ATTEMPTS    = 10;
 static const unsigned short MAX_SET_SLEEP_ATTEMPTS  = 10;
+static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 10;
+static const unsigned short MAX_GET_PIC_ATTEMPTS    = 10;
 
 /*
  * Attempts to sync with the uCamIII with a maximum of
@@ -34,6 +39,21 @@ bool syncCamera() {
     delay(5 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
   return syncAttempts < MAX_SYNC_ATTEMPTS;
+}
+
+/*
+ * Resets the uCamIII with a maximum of 
+ * MAX_RESET_ATTEMPTS attempts
+ * (Returns true if successful. False otherwise)
+ */
+bool resetCamera(char resetType) {
+  int resetAttempts = 0;
+  bool ackReceived  = false;
+  do {
+    ackReceived = sendResetCommand(resetType);
+    delay(1 + resetAttempts++);
+  } while((resetAttempts < MAX_RESET_ATTEMPTS) && !ackReceived);
+  return resetAttempts < MAX_RESET_ATTEMPTS;
 }
 
 /*
@@ -94,4 +114,33 @@ bool setSleepTime(char seconds) {
     delay(1 + setSleepTimeAttempts++);
   } while((setSleepTimeAttempts < MAX_SET_SLEEP_ATTEMPTS) && !ackReceived);
   return setSleepTimeAttempts < MAX_SET_SLEEP_ATTEMPTS;
+}
+
+/*
+ * Takes a snapshot of type 'snapshotType'
+ * 'Skip Frame'(Parameter 1 and 2) is set to 0x00
+ * (Returns true if successful. False otherwise)
+ */
+bool takeSnapshot(char snapshotType) {
+  int takeSnapshotAttempts = 0;
+  bool ackReceived         = false;
+  do {
+    ackReceived = sendTakeSnapshotCommand(snapshotType);
+    delay(1 + takeSnapshotAttempts++);
+  } while((takeSnapshotAttempts < MAX_SNAPSHOT_ATTEMPTS) && !ackReceived);
+  return takeSnapshotAttempts < MAX_SNAPSHOT_ATTEMPTS;
+}
+
+/*
+ * Takes a picture of type 'pictureType'
+ * (Returns true if successful. False otherwise)
+ */
+bool takePicture(char pictureType) {
+  int takePictureAttempts = 0;
+  bool ackReceived        = false;
+  do {
+    ackReceived = sendTakePictureCommand(pictureType);
+    delay(1 + takePictureAttempts++);
+  } while((takePictureAttempts < MAX_GET_PIC_ATTEMPTS) && !ackReceived);
+  return takePictureAttempts < MAX_GET_PIC_ATTEMPTS;
 }

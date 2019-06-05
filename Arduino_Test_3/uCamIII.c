@@ -3,28 +3,31 @@
  * 
  * Author: Haomin Yu
  */
+#include <stdbool.h>
+#include "ArduinoCommunication.h"
 #include "uCamIII.h"
 
 // Function prototypes
 bool sendSyncCommand();
+bool sendResetCommand(char resetType);
 bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);
 bool sendSetPackageSizeCommand(unsigned int packageSize);
 bool sendSetCBECommand(char contrast, char brightness, char exposure);
 bool sendSetSleepTimeCommand(char seconds);
 bool receiveAckCommand(char commandID);
+bool sendTakeSnapshotCommand(char snapshotType);
+bool sendTakePictureCommand(char pictureType);
 
 /*
- * Sends a command in the form of described in Page 8 of
- * the uCamIII specification
+ * Attempts to reset the uCamIII
  * (Returns true if successful, false otherwise)
  */
-bool sendCommand(char commandByte,
-                 char parameter1, char parameter2,
-                 char parameter3, char parameter4) {
-  char toSend[uCamIII_CMD_SIZE] = {uCamIII_STARTBYTE, commandByte,
-                                   parameter1, parameter2,
-                                   parameter3, parameter4};
-  SoftSer.write(toSend, sizeof(toSend));
+bool sendResetCommand(char resetType) {
+  sendCommand(uCamIII_CMD_RESET,
+              resetType, 
+              uCamIII_CMD_NA, uCamIII_CMD_NA,
+              uCamIII_RESET_FORCE);
+  return receiveAckCommand(uCamIII_CMD_RESET);
 }
 
 /*
@@ -70,7 +73,9 @@ bool sendSetCBECommand(char contrast, char brightness, char exposure) {
 }
 
 /*
- * 
+ * Attempts to set the time of inactivity before sleeping
+ * to 'seconds'
+ * (Returns true if successful, false otherwise)
  */
 bool sendSetSleepTimeCommand(char seconds) {
   sendCommand(uCamIII_CMD_SLEEP, seconds,
@@ -80,29 +85,23 @@ bool sendSetSleepTimeCommand(char seconds) {
 }
 
 /*
- * Attempts to receive a ACK command through serial
- * that has the matching 'commandID'
+ * Attempts to take a snapshot of type 'snapshotType'
  * (Returns true if successful, false otherwise)
  */
-bool receiveAckCommand(char commandID) {
-  bool isAckCommand = true;
-  char incoming = 0;
-  // Checking if first byte is 0xAA
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == 0xAA);
-  // Checking if second byte is 0x0E
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == 0x0E);
-  // Checking if third byte is 0x0D
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == commandID);
-  // Throwing away fourth byte (Debugging byte)
-  incoming = SoftSer.read();
-  // Checking if fifth byte is 0x00
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == 0x00);
-  // Checking if sixth byte is 0x00
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == 0x00);
-  return isAckCommand;
+bool sendTakeSnapshotCommand(char snapshotType) {
+  sendCommand(uCamIII_CMD_SNAPSHOT, snapshotType,
+              uCamIII_CMD_NA, uCamIII_CMD_NA,
+              uCamIII_CMD_NA);
+  return receiveAckCommand(uCamIII_CMD_SNAPSHOT);
+}
+
+/*
+ * Attempts to take a icture of type 'pictureType'
+ * (Returns true if successful, false otherwise)
+ */
+bool sendTakePictureCommand(char pictureType) {
+  sendCommand(uCamIII_CMD_GET_PICTURE, pictureType,
+              uCamIII_CMD_NA, uCamIII_CMD_NA,
+              uCamIII_CMD_NA);
+  return receiveAckCommand(uCamIII_CMD_GET_PICTURE);
 }
