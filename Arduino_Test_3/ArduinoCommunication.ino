@@ -32,14 +32,13 @@ bool sendCommand(char commandByte,
 bool receiveAckCommand(char commandID) {
   bool isAckCommand = true;
   char incoming = 0;
-  delay(1);
   // Checking if first byte is 0xAA
   incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0xAA);
   // Checking if second byte is 0x0E
   incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == 0x0E);
-  // Checking if third byte is 0x0D
+  // Checking if third byte is 'commandID'
   incoming = SoftSer.read();
   isAckCommand = isAckCommand && (incoming == commandID);
   // Throwing away fourth byte (Debugging byte)
