@@ -18,6 +18,10 @@ bool sendCommand(char commandByte,
                  char parameter1, char parameter2,
                  char parameter3, char parameter4);
 bool receiveAckCommand(char commandID);
+void hardwareReset(int resetPin, int msec);
+void ackPackage(unsigned int ID);
+bool receivePackage(unsigned int ID);
+bool readData(byte pictureType, unsigned int packageSize);
 
 #ifdef __cplusplus
 } // extern "C"

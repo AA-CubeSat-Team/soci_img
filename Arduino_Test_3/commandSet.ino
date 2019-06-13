@@ -18,13 +18,13 @@ bool takePicture(char pictureType);
 
 // Defined maximum attempts
 static const unsigned short MAX_SYNC_ATTEMPTS       = 60;
-static const unsigned short MAX_RESET_ATTEMPTS      = 10;
-static const unsigned short MAX_INITIALIZE_ATTEMPTS = 10;
-static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 10;
-static const unsigned short MAX_SET_CBE_ATTEMPTS    = 10;
-static const unsigned short MAX_SET_SLEEP_ATTEMPTS  = 10;
-static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 10;
-static const unsigned short MAX_GET_PIC_ATTEMPTS    = 10;
+static const unsigned short MAX_RESET_ATTEMPTS      = 40;
+static const unsigned short MAX_INITIALIZE_ATTEMPTS = 40;
+static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 30;
+static const unsigned short MAX_SET_CBE_ATTEMPTS    = 30;
+static const unsigned short MAX_SET_SLEEP_ATTEMPTS  = 30;
+static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 40;
+static const unsigned short MAX_GET_PIC_ATTEMPTS    = 40;
 
 /*
  * Attempts to sync with the uCamIII with a maximum of

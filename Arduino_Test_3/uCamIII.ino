@@ -55,7 +55,7 @@ bool sendInitializeCommand(char format, char rawResolution, char jpgResolution) 
  * (Returns true if successful, false otherwise)
  */
 bool sendSetPackageSizeCommand(unsigned int packageSize) {
-  sendCommand(uCamIII_CMD_SET_PACKSIZE, 0x08, // 0x08 is predefined the command
+  sendCommand(uCamIII_CMD_SET_PACKSIZE, 0x08, // 0x08 is predefined for the command
               packageSize & 0xFF, packageSize >> 8,
               uCamIII_CMD_NA);
   return receiveAckCommand(uCamIII_CMD_SET_PACKSIZE);

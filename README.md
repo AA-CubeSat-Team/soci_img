@@ -21,7 +21,7 @@ Directory for testing image transmission with uCamIII(Prototype Version)
 ```diff
 # Arduino_Test_3
 Directory for testing image transmission with uCamIII(Stable Version)
-- Currently Under Development
++ Version Stable as of June 12, 2019
 ```
 
 ```diff
