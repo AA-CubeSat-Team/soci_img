@@ -14,9 +14,6 @@
 #include "commandSet.h"
 #include "uCamIII.h"
 
-// Class constants
-static const int ANALOG_RESOLUTION = 1023;
-
 // Pin Assignments
 static const int nextPicture = A0;
 static const int rxPin = 2;
@@ -28,14 +25,24 @@ static const int Reset = 7;
 // (pin 3 of Arduino -> RX of uCAM)
 SoftwareSerial SoftSer(rxPin, txPin);
 
+// Class constants
+static const int ANALOG_RESOLUTION = 1023;
+
+// Class variables
+static unsigned int RESET_TIME   = 5;
+static unsigned int PACKAGE_SIZE = 32;
+static byte IMAGE_TYPE = uCamIII_COMP_JPEG;
+static byte IMAGE_RES  = uCamIII_640x480;
+static byte  SNAP_TYPE = uCamIII_SNAP_JPEG;
+
 void setup() {
   Serial.begin(57600);
   SoftSer.begin(57600);
   pinMode(Reset, OUTPUT);
-  hardwareReset(Reset, 5);
+  hardwareReset(Reset, RESET_TIME);
   if(syncCamera()) Serial.println("Sync Successful");
-  if(initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480)) Serial.println("Init Successful");
-  if(setPackageSize(32)) Serial.println("Set Size Successful");
+  if(initializeCamera(IMAGE_TYPE, IMAGE_RES, IMAGE_RES)) Serial.println("Init Successful");
+  if(setPackageSize(PACKAGE_SIZE)) Serial.println("Set Size Successful");
   Serial.println("Initialization complete! \n==============================");
 }
 
@@ -43,7 +50,7 @@ void loop() {
    static boolean previouslyOff = true;
    if(analogRead(nextPicture) == ANALOG_RESOLUTION) {
       if(previouslyOff) {
-         if(takeSnapshot(uCamIII_SNAP_JPEG)) Serial.println("Snapshot Successful");
+         if(takeSnapshot(SNAP_TYPE)) Serial.println("Snapshot Successful");
          if(takePicture(uCamIII_TYPE_SNAPSHOT)) Serial.println("Getting picture...");
          if(readData(uCamIII_TYPE_SNAPSHOT, 32)) Serial.println("==============================");
          previouslyOff = false;
