@@ -2,7 +2,7 @@
 Repository for the Imaging Team
 
 ## MSP430F5529_Test_*
-Directory for uCamIII tests on MSP430F5529
+Directory for uCamIII tests on MSP430F5529 with Energia
 
 ```diff
 # MSP430F5529_Test_1
