@@ -1,0 +1,19 @@
+/*
+ * Tests the hardware reset capability of the board
+ */
+
+void setup() {
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
+
+  for (int i = 0; i < 5; i++) {
+      digitalWrite(RED_LED, HIGH);
+      digitalWrite(GREEN_LED, HIGH);
+      delay(500);
+      digitalWrite(RED_LED, LOW);
+      digitalWrite(GREEN_LED, LOW);
+      delay(500);
+  }
+}
+
+void loop() {}
