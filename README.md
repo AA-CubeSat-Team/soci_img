@@ -1,5 +1,5 @@
 # soci_img
-Repository for the Imaging Team
+Development History
 
 ## MSP430F5529_Test_*
 Directory for uCamIII tests on MSP430F5529 with Energia
