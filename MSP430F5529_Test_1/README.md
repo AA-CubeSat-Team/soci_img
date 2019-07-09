@@ -146,14 +146,16 @@ All responses from the MSP430 will be one of the following formats
 <ACK> <% of data corrupted>
 <ACK> <Size high byte> <Size low byte>
 <ACK> <Data> ... <Data>
+
+<NAK> is represented by 0x00, and <ACK> by 0x01
 ```
-<NAK>(0x00) response
+NAK(0x00) response
 ```
 <NAK> is a response when a command is "not acknowledged".
 Whenever this response is given, an <Error> response will follow, providing
 more information as to why the command failed.
 ```
-<Error>: Incomplete Command(0x00)
+Error: Incomplete Command(0x00)
 ```
 This error is thrown when an incoming command is incomplete.
 For example, if the command TAKE_PICTURE(0x00) is sent without a slot number, the
