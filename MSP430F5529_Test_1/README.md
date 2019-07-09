@@ -1,4 +1,4 @@
-# Design Documentation
+# Design Documentation for MSP430F5529
 
 ## Hardware Setup
 Currently N/A, as we have not yet completed the project
