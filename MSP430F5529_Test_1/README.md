@@ -4,7 +4,7 @@
 Currently N/A, as we have not yet completed the project
 
 ## Communication Protocols
-We have yet to decide whether to use I2C, UART, or SPI.
+We have yet to decide whether to use I2C, UART, or SPI.  
 However, we are currently considering SPI.
 
 ## Commands to the MSP430F5529
