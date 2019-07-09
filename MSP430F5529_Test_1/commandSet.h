@@ -8,12 +8,12 @@
 #ifndef __COMMANDSET_H__
 #define __COMMANDSET_H__
 
-// Compiler Linkage
+/* Compiler Linkage */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Function prototypes
+/* Function prototypes */
 bool syncCamera();
 bool resetCamera(char resetType);
 bool initializeCamera(char format, char rawResolution, char jpgResolution);

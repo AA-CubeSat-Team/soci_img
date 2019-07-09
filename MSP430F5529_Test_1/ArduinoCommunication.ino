@@ -4,7 +4,7 @@
  * Author: Haomin Yu
  */
 
-// Function prototypes
+/* Function prototypes */
 bool sendCommand(char commandByte,
                  char parameter1, char parameter2,
                  char parameter3, char parameter4);

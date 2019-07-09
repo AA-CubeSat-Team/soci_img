@@ -37,15 +37,15 @@ SOFTWARE.
 #ifndef _UCAMIII_H_
 #define _UCAMIII_H_
 
-// Number of bytes per uCamIII command
+/* Number of bytes per uCamIII command */
 #define uCamIII_CMD_SIZE 6
 
-// Compiler Linkage
+/* Compiler Linkage */
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Function prototypes
+/* Function prototypes */
 bool sendSyncCommand();
 bool sendResetCommand(char resetType);
 bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);

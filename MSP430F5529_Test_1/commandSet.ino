@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include "uCamIII.h"
 
-// Function prototypes
+/* Function prototypes */
 bool syncCamera();
 bool resetCamera(char resetType);
 bool initializeCamera(char format, char rawResolution, char jpgResolution);
@@ -16,7 +16,7 @@ bool setSleepTime(char seconds);
 bool takeSnapshot(char snapshotType);
 bool takePicture(char pictureType);
 
-// Defined maximum attempts
+/* Defined maximum attempts */
 static const unsigned short MAX_SYNC_ATTEMPTS       = 60;
 static const unsigned short MAX_RESET_ATTEMPTS      = 40;
 static const unsigned short MAX_INITIALIZE_ATTEMPTS = 40;

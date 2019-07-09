@@ -14,21 +14,23 @@
 #include "commandSet.h"
 #include "uCamIII.h"
 
-// Pin Assignments
+/* Pin Assignments */
 static const int nextPicture = A0;
 static const int rxPin = 2;
 static const int txPin = 3;
 static const int Reset = 7;
 
-// Setting up software serial
-// (pin 2 of Arduino -> TX of uCAM)
-// (pin 3 of Arduino -> RX of uCAM)
+/**
+ * Setting up software serial
+ * (pin 2 of Arduino -> TX of uCAM)
+ * (pin 3 of Arduino -> RX of uCAM)
+ */
 SoftwareSerial SoftSer(rxPin, txPin);
 
-// Class constants
+/* Class constants */
 static const int ANALOG_RESOLUTION = 1023;
 
-// Class variables
+/* Class variables */
 static unsigned int RESET_TIME   = 5;
 static unsigned int PACKAGE_SIZE = 32;
 static byte IMAGE_TYPE = uCamIII_COMP_JPEG;
