@@ -4,7 +4,8 @@
 Currently N/A, as we have not yet completed the project
 
 ## Communication Protocols
-We have yet to decide whether to use I2C, UART, or SPI
+We have yet to decide whether to use I2C, UART, or SPI.
+However, we are currently considering SPI.
 
 ## Commands to the MSP430F5529
 All commands send to the MSP430 should follow one of the following formats
@@ -32,12 +33,16 @@ TAKE_PICTURE(0x00) command
 ```
 Usage: <Command> <Picture#>
 
+Note: Taking a new picture will overwrite the previous one at that slot
+
 /* Take a picture and store it at slot 2 */
 Example: 0x00 0x02  
 ```
 GET_THUMBNAIL_SIZE(0x01) command
 ```
 Usage: <Command> <Picture#>
+
+Note: Size will be 0, if there is no thumbnail at that slot
 
 /* Gets the size of the thumbnail of the picture stored at slot 4 in bytes */
 Example: 0x01 0x04
@@ -46,12 +51,17 @@ GET_PICTURE_SIZE(0x02) command
 ```
 Usage: <Command> <Picture#>
 
+Note: Size will be 0, if there is no picture at that slot
+
 /* Gets the size of the picture stored at slot 1 in bytes */
 Example: 0x02 0x01  
 ```
 GET_THUMBNAIL(0x03) commmand
 ```
 Usage: <Command> <Picture#>
+
+Note: An error will be thrown, if no thumbnail exist at that slot
+(See 'Responses from the MSP430F5529') section for more information
 
 /* Gets the data of the thumbnail of the picture stored at slot 0 */
 Example: 0x03 0x00
@@ -60,6 +70,9 @@ GET_PICTURE(0x04) commmand
 ```
 Usage: <Command> <Picture#>
 
+Note: An error will be thrown, if no picture exist at that slot
+(See 'Responses from the MSP430F5529') section for more information
+
 /* Gets the data of the picture stored at slot 2 */
 Example: 0x04 0x02
 ```
@@ -67,13 +80,15 @@ SET_CONTRAST(0x05) command
 ```
 Usage: <Command> <Integer>
 
-======================
+===========================
+Contrast         <Integer>
+===========================
 Min              0x00
 Low              0x01
 Normal(Default)  0x02
 High             0x03
 Max              0x04
-======================
+===========================
 
 /* Sets the contrast to 'Normal' */
 Example: 0x05 0x02
@@ -82,13 +97,15 @@ SET_BRIGTHNESS(0x06) command
 ```
 Usage: <Command> <Integer>
 
-======================
+===========================
+Brightness       <Integer>
+===========================
 Min              0x00
 Low              0x01
 Normal(Default)  0x02
 High             0x03
 Max              0x04
-======================
+===========================
 
 /* Sets the brightness to 'Low' */
 Example: 0x06 0x01
@@ -97,13 +114,15 @@ SET_EXPOSURE(0x07) command
 ```
 Usage: <Command> <Integer>
 
-===================
+========================
+Exposure      <Integer>
+========================
 -2            0x00
 -1            0x01
  0 (Default)  0x02
 +1            0x03
 +2            0x04
-===================
+========================
 
 /* Sets the exposure to '+2' */
 Example: 0x07 0x04
@@ -124,7 +143,30 @@ Example: 0x08 0x05
 All responses from the MSP430 will be one of the following formats
 ```
 <NAK> <Error>
-<ACK> <Data>
+<ACK> <% of data corrupted>
+<ACK> <Size high byte> <Size low byte>
+<ACK> <Data> ... <Data>
+```
+<NAK>(0x00) response
+```
+<NAK> is a response when a command is "not acknowledged".
+Whenever this response is given, an <Error> response will follow, providing
+more information as to why the command failed.
+```
+<Error>: Incomplete Command(0x00)
+```
+This error is thrown when an incoming command is incomplete.
+For example, if the command TAKE_PICTURE(0x00) is sent without a slot number, the
+response will be 0x00 0x00, representing "not acknowledged, due to incomplete command"
+
+Note: This error might also be thrown if bytes in a single command is sent too slowly.
+
+For example, if you intended to send the command 0x00 0x03, which represents
+"take a picture and store it at slot 3", but with a notable delay between "0x00"
+and "0x03"
+
+This is implemented mainly to prevent the MSP430 from being stuck in a particular state.
+Thus, it is highly recommended that the delay between bytes in a single command be minimized.
 ```
 // TODO
 
