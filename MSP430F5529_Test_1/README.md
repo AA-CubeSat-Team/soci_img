@@ -191,9 +191,13 @@ This error is thrown when <Command> is not in the range of 0x00 and 0x08 inclusi
 This response is given when the command has been successfully executed.
 Depending to what command it is responding, <ACK> may be followed by one or more bytes.
 ```
-#### \<ACK> <% of data corrupted>
+\<ACK> response from TAKE_PICTURE(0x00) command
 ```
+The response for the TAKE_PICTURE(0x00) command will follow the format <ACK> <% of data corrupted>
 
+<% of data corrupted> represents the percentage of the data corrupted for this picture.
+Note: This percentage will be rounded up, meaning that if there is data corruption
+at all, the percentage will at least be 1%.
 ```
 // TODO
 
