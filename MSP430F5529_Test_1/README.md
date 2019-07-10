@@ -29,7 +29,7 @@ SET_BRIGTHNESS     (0x06)
 SET_EXPOSURE       (0x07)
 SET_SLEEP_TIME     (0x08)
 ```
-#### TAKE_PICTURE(0x00) command
+#### TAKE_PICTURE(0x00) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-take_picture0x00-command)
 ```
 Usage: <Command> <Picture#>
 
