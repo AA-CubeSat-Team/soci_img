@@ -38,7 +38,7 @@ Note: Taking a new picture will overwrite the previous one at that slot
 /* Take a picture and store it at slot 2 */
 Example: 0x00 0x02  
 ```
-#### GET_THUMBNAIL_SIZE(0x01) command
+#### GET_THUMBNAIL_SIZE(0x01) command ---> [See Responses]()
 ```
 Usage: <Command> <Picture#>
 
@@ -47,7 +47,7 @@ Note: Size will be 0, if there is no thumbnail at that slot
 /* Gets the size of the thumbnail of the picture stored at slot 4 in bytes */
 Example: 0x01 0x04
 ```
-#### GET_PICTURE_SIZE(0x02) command
+#### GET_PICTURE_SIZE(0x02) command ---> [See Responses]()
 ```
 Usage: <Command> <Picture#>
 
@@ -56,7 +56,7 @@ Note: Size will be 0, if there is no picture at that slot
 /* Gets the size of the picture stored at slot 1 in bytes */
 Example: 0x02 0x01  
 ```
-#### GET_THUMBNAIL(0x03) commmand
+#### GET_THUMBNAIL(0x03) commmand ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail0x03-or-get_picture0x04-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -66,7 +66,7 @@ Note: An error will be thrown, if no thumbnail exist at that slot
 /* Gets the data of the thumbnail of the picture stored at slot 0 */
 Example: 0x03 0x00
 ```
-#### GET_PICTURE(0x04) commmand
+#### GET_PICTURE(0x04) commmand ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail0x03-or-get_picture0x04-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -220,8 +220,7 @@ the format <ACK> <Data> ... <Data>.
 // TODO
 
 ```
-#### \<ACK> response from SET_CONTRAST(0x05), SET_BRIGTHNESS(0x06), 
-                          SET_EXPOSURE(0x07), or SET_SLEEP_TIME(0x08) command
+#### \<ACK> response from SET_CONTRAST(0x05), SET_BRIGTHNESS(0x06), SET_EXPOSURE(0x07), or SET_SLEEP_TIME(0x08) command
 ```
 The response for the SET_CONTRAST(0x05), SET_BRIGTHNESS(0x06), SET_EXPOSURE(0x07), or 
 SET_SLEEP_TIME(0x08) command is simply <ACK> if successful.
