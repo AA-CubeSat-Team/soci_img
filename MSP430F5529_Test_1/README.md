@@ -149,7 +149,7 @@ All responses from the MSP430 will be one of the following formats
 
 <NAK> is represented by 0x00, and <ACK> by 0x01
 ```
-NAK(0x00) response
+#### NAK(0x00) response
 ```
 <NAK> is a response when a command is "not acknowledged".
 Whenever this response is given, an <Error> response will follow, providing
@@ -185,7 +185,7 @@ Error: Invalid Command(0x02)
 ```
 This error is thrown when <Command> is not in the range of 0x00 and 0x08 inclusive.
 ```
-ACK(0x01) response
+#### ACK(0x01) response
 ```
 <ACK> is a response when a command is "acknowledged".
 This response is given when the command has been successfully executed.
