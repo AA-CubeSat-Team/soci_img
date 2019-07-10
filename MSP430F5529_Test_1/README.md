@@ -143,6 +143,7 @@ Example: 0x08 0x05
 All responses from the MSP430 will be one of the following formats
 ```
 <NAK> <Error>
+<ACK>
 <ACK> <% of data corrupted>
 <ACK> <Size high byte> <Size low byte>
 <ACK> <Data> ... <Data>
@@ -195,11 +196,36 @@ Depending to what command it is responding, <ACK> may be followed by one or more
 ```
 The response for the TAKE_PICTURE(0x00) command will follow the format <ACK> <% of data corrupted>
 
-<% of data corrupted> represents the percentage of the data corrupted for this picture.
+<% of data corrupted> represents the percentage of the data corrupted for this picture, which
+will be in range of 0 and 100 inclusive.
+
 Note: This percentage will be rounded up, meaning that if there is data corruption
 at all, the percentage will at least be 1%.
 ```
+#### \<ACK> response from GET_THUMBNAIL_SIZE(0x01) or GET_PICTURE_SIZE(0x02) command
+```
+The response for the TAKE_PICTURE(0x00) or GET_PICTURE_SIZE(0x02) command will follow
+the format <ACK> <Size high byte> <Size low byte>.
+
+The size returned is split into <Size high byte> <Size low byte>, so as to cover a larger range.
+
+For example, if the size returned is 1715, which is 0x06B3 in hexadecimal, then 
+<Size high byte> will be 0x06, with <Size low byte> being 0xB3.
+```
+#### \<ACK> response from GET_THUMBNAIL(0x03) or GET_PICTURE(0x04) command
+```
+The response for the GET_THUMBNAIL(0x03) or GET_PICTURE(0x04) command will follow
+the format <ACK> <Data> ... <Data>.
+
 // TODO
+
+```
+#### \<ACK> response from SET_CONTRAST(0x05), SET_BRIGTHNESS(0x06), 
+                          SET_EXPOSURE(0x07), or SET_SLEEP_TIME(0x08) command
+```
+The response for the SET_CONTRAST(0x05), SET_BRIGTHNESS(0x06), SET_EXPOSURE(0x07), or 
+SET_SLEEP_TIME(0x08) command is simply <ACK> if successful.
+```
 
 ## Operation Modes(Normal/Safe/Idle)
 The MSP430 does not have the capability to turn itself off.
