@@ -29,7 +29,7 @@ SET_BRIGTHNESS     (0x06)
 SET_EXPOSURE       (0x07)
 SET_SLEEP_TIME     (0x08)
 ```
-TAKE_PICTURE(0x00) command
+#### TAKE_PICTURE(0x00) command
 ```
 Usage: <Command> <Picture#>
 
@@ -38,7 +38,7 @@ Note: Taking a new picture will overwrite the previous one at that slot
 /* Take a picture and store it at slot 2 */
 Example: 0x00 0x02  
 ```
-GET_THUMBNAIL_SIZE(0x01) command
+#### GET_THUMBNAIL_SIZE(0x01) command
 ```
 Usage: <Command> <Picture#>
 
@@ -47,7 +47,7 @@ Note: Size will be 0, if there is no thumbnail at that slot
 /* Gets the size of the thumbnail of the picture stored at slot 4 in bytes */
 Example: 0x01 0x04
 ```
-GET_PICTURE_SIZE(0x02) command
+#### GET_PICTURE_SIZE(0x02) command
 ```
 Usage: <Command> <Picture#>
 
@@ -56,7 +56,7 @@ Note: Size will be 0, if there is no picture at that slot
 /* Gets the size of the picture stored at slot 1 in bytes */
 Example: 0x02 0x01  
 ```
-GET_THUMBNAIL(0x03) commmand
+#### GET_THUMBNAIL(0x03) commmand
 ```
 Usage: <Command> <Picture#>
 
@@ -66,7 +66,7 @@ Note: An error will be thrown, if no thumbnail exist at that slot
 /* Gets the data of the thumbnail of the picture stored at slot 0 */
 Example: 0x03 0x00
 ```
-GET_PICTURE(0x04) commmand
+#### GET_PICTURE(0x04) commmand
 ```
 Usage: <Command> <Picture#>
 
@@ -76,7 +76,7 @@ Note: An error will be thrown, if no picture exist at that slot
 /* Gets the data of the picture stored at slot 2 */
 Example: 0x04 0x02
 ```
-SET_CONTRAST(0x05) command
+#### SET_CONTRAST(0x05) command
 ```
 Usage: <Command> <Integer>
 
@@ -93,7 +93,7 @@ Max              0x04
 /* Sets the contrast to 'Normal' */
 Example: 0x05 0x02
 ```
-SET_BRIGTHNESS(0x06) command
+#### SET_BRIGTHNESS(0x06) command
 ```
 Usage: <Command> <Integer>
 
@@ -110,7 +110,7 @@ Max              0x04
 /* Sets the brightness to 'Low' */
 Example: 0x06 0x01
 ```
-SET_EXPOSURE(0x07) command
+#### SET_EXPOSURE(0x07) command
 ```
 Usage: <Command> <Integer>
 
@@ -127,7 +127,7 @@ Exposure      <Integer>
 /* Sets the exposure to '+2' */
 Example: 0x07 0x04
 ```
-SET_SLEEP_TIME(0x08) command
+#### SET_SLEEP_TIME(0x08) command
 ```
 Usage: <Command> <Integer>
 
@@ -155,7 +155,7 @@ All responses from the MSP430 will be one of the following formats
 Whenever this response is given, an <Error> response will follow, providing
 more information as to why the command failed.
 ```
-\<Error>: Incomplete Command(0x00)
+#### \<Error>: Incomplete Command(0x00)
 ```
 This error is thrown when an incoming command is incomplete.
 For example, if the command TAKE_PICTURE(0x00) is sent without a slot number, the
@@ -170,7 +170,7 @@ and "0x03"
 This is implemented mainly to prevent the MSP430 from being stuck in a particular state.
 Thus, it is highly recommended that the delay between bytes in a single command be minimized.
 ```
-\<Error>: Invalid Slot(0x01)
+#### \<Error>: Invalid Slot(0x01)
 ```
 This error is thrown when <Picture#> is not in the range of 0x00 and 0x04 inclusive.
 
@@ -181,17 +181,20 @@ Note: This is only applicable to the following commands, as others do not involv
 > GET_THUMBNAIL      (0x03)
 > GET_PICTURE        (0x04)
 ```
-\<Error>: Invalid Command(0x02)
+#### \<Error>: Invalid Command(0x02)
 ```
 This error is thrown when <Command> is not in the range of 0x00 and 0x08 inclusive.
 ```
-#### ACK(0x01) response
+### ACK(0x01) response
 ```
 <ACK> is a response when a command is "acknowledged".
 This response is given when the command has been successfully executed.
 Depending to what command it is responding, <ACK> may be followed by one or more bytes.
 ```
+#### \<ACK> <% of data corrupted>
+```
 
+```
 // TODO
 
 ## Operation Modes(Normal/Safe/Idle)
