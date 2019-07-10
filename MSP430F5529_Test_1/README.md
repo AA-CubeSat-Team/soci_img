@@ -76,7 +76,7 @@ Note: An error will be thrown, if no picture exist at that slot
 /* Gets the data of the picture stored at slot 2 */
 Example: 0x04 0x02
 ```
-#### SET_CONTRAST(0x05) command
+#### SET_CONTRAST(0x05) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
@@ -93,7 +93,7 @@ Max              0x04
 /* Sets the contrast to 'Normal' */
 Example: 0x05 0x02
 ```
-#### SET_BRIGTHNESS(0x06) command
+#### SET_BRIGTHNESS(0x06) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
@@ -110,7 +110,7 @@ Max              0x04
 /* Sets the brightness to 'Low' */
 Example: 0x06 0x01
 ```
-#### SET_EXPOSURE(0x07) command
+#### SET_EXPOSURE(0x07) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
@@ -127,7 +127,7 @@ Exposure      <Integer>
 /* Sets the exposure to '+2' */
 Example: 0x07 0x04
 ```
-#### SET_SLEEP_TIME(0x08) command
+#### SET_SLEEP_TIME(0x08) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
