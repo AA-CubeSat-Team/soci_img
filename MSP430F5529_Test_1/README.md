@@ -170,6 +170,28 @@ and "0x03"
 This is implemented mainly to prevent the MSP430 from being stuck in a particular state.
 Thus, it is highly recommended that the delay between bytes in a single command be minimized.
 ```
+Error: Invalid Slot(0x01)
+```
+This error is thrown when <Picture#> is not in the range of 0x00 and 0x04 inclusive.
+
+Note: This is only applicable to the following commands, as others do not involve slots:
+> TAKE_PICTURE       (0x00)
+> GET_THUMBNAIL_SIZE (0x01)
+> GET_PICTURE_SIZE   (0x02)
+> GET_THUMBNAIL      (0x03)
+> GET_PICTURE        (0x04)
+```
+Error: Invalid Command(0x02)
+```
+This error is thrown when <Command> is not in the range of 0x00 and 0x08 inclusive.
+```
+ACK(0x01) response
+```
+<ACK> is a response when a command is "acknowledged".
+This response is given when the command has been successfully executed.
+Depending to what command it is responding, <ACK> may be followed by one or more bytes.
+```
+
 // TODO
 
 ## Operation Modes(Normal/Safe/Idle)
