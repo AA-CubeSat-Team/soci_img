@@ -155,7 +155,7 @@ All responses from the MSP430 will be one of the following formats
 Whenever this response is given, an <Error> response will follow, providing
 more information as to why the command failed.
 ```
-Error: Incomplete Command(0x00)
+Incomplete Command(0x00) Error
 ```
 This error is thrown when an incoming command is incomplete.
 For example, if the command TAKE_PICTURE(0x00) is sent without a slot number, the
@@ -170,7 +170,7 @@ and "0x03"
 This is implemented mainly to prevent the MSP430 from being stuck in a particular state.
 Thus, it is highly recommended that the delay between bytes in a single command be minimized.
 ```
-Error: Invalid Slot(0x01)
+Invalid Slot(0x01) Error
 ```
 This error is thrown when <Picture#> is not in the range of 0x00 and 0x04 inclusive.
 
@@ -181,7 +181,7 @@ Note: This is only applicable to the following commands, as others do not involv
 > GET_THUMBNAIL      (0x03)
 > GET_PICTURE        (0x04)
 ```
-Error: Invalid Command(0x02)
+Invalid Command(0x02) Error
 ```
 This error is thrown when <Command> is not in the range of 0x00 and 0x08 inclusive.
 ```
