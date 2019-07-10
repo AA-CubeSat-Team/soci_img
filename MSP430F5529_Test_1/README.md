@@ -191,7 +191,7 @@ This error is thrown when <Command> is not in the range of 0x00 and 0x08 inclusi
 This response is given when the command has been successfully executed.
 Depending to what command it is responding, <ACK> may be followed by one or more bytes.
 ```
-\<ACK> response from TAKE_PICTURE(0x00) command
+#### \<ACK> response from TAKE_PICTURE(0x00) command
 ```
 The response for the TAKE_PICTURE(0x00) command will follow the format <ACK> <% of data corrupted>
 
