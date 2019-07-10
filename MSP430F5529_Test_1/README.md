@@ -38,7 +38,7 @@ Note: Taking a new picture will overwrite the previous one at that slot
 /* Take a picture and store it at slot 2 */
 Example: 0x00 0x02  
 ```
-#### GET_THUMBNAIL_SIZE(0x01) command ---> [See Responses]()
+#### GET_THUMBNAIL_SIZE(0x01) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail_size0x01-or-get_picture_size0x02-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -47,7 +47,7 @@ Note: Size will be 0, if there is no thumbnail at that slot
 /* Gets the size of the thumbnail of the picture stored at slot 4 in bytes */
 Example: 0x01 0x04
 ```
-#### GET_PICTURE_SIZE(0x02) command ---> [See Responses]()
+#### GET_PICTURE_SIZE(0x02) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail_size0x01-or-get_picture_size0x02-command)
 ```
 Usage: <Command> <Picture#>
 
