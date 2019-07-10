@@ -3,7 +3,7 @@
 ## Hardware Setup
 Currently N/A, as we have not yet completed the project
 
-## Communication Protocols
+## Communication Protocol
 We have yet to decide whether to use I2C, UART, or SPI.  
 However, we are currently considering SPI.
 
@@ -217,7 +217,7 @@ For example, if the size returned is 1715, which is 0x06B3 in hexadecimal, then
 The response for the GET_THUMBNAIL(0x03) or GET_PICTURE(0x04) command will follow
 the format <ACK> <Data> ... <Data>.
 
-// TODO
+// TODO - Implementation incomplete & Communication Protocol unknown
 
 ```
 #### \<ACK> response from SET_CONTRAST(0x05), SET_BRIGTHNESS(0x06), SET_EXPOSURE(0x07), or SET_SLEEP_TIME(0x08) command
