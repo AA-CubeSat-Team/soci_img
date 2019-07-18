@@ -250,4 +250,4 @@ MAX_INITIALIZE_ATTEMPTS = 60 <==> MIA(60)
 MAX_SET_SIZE_ATTEMPTS   = 40 <==> MSSA(40)
 MAX_SET_CBE_ATTEMPTS    = 40 <==> MSCA(40)
 ```
-![Flowchart for the Initialization Process](Initialization Flowchart.pdf)
+![Flowchart for the Initialization Process](https://github.com/AA-CubeSat-Team/soci_img/blob/master/Initialization%20Flowchart.png)
