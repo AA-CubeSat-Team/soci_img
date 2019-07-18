@@ -243,3 +243,11 @@ However, you will lose all pictures and settings, and you will need to
 wait for the MSP430 and the uCamIII to initialize once you power it back on.
 
 ## Internal States and Diagrams
+In the initialization flowchart shown below, references are made to the following constants:
+```
+> MAX_SYNC_ATTEMPTS       = 60 // Referred to as MSA
+> MAX_INITIALIZE_ATTEMPTS = 60 // Referred to as MIA
+> MAX_SET_SIZE_ATTEMPTS   = 40 // Referred to as MSSA
+> MAX_SET_CBE_ATTEMPTS    = 40 // Referred to as MSCA
+```
+![Flowchart for the Initialization Process](https://github.com/AA-CubeSat-Team/soci_img/blob/master/Initialization%20Flowchart.pdf)
