@@ -1,18 +1,12 @@
 # Development History
 
 ## MSP430F5529_Test_*
-Directory for uCamIII tests on MSP430F5529 with Energia
-
-```diff
-# Arduino_Test_Unit
-Directory for Units Tests for Board and Programmer Evaluation
-- Not yet tested
-```
+Directory for uCamIII tests on MSP430F5529
 
 ```diff
 # MSP430F5529_Test_1
 Directory for initial tests with MSP430F5529
-- Under Development
++ Development Halted(Deprecated after July 20, 2019 meeting)
 ```
 
 ## Arduino_Test_*
