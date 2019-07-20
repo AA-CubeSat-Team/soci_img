@@ -29,7 +29,7 @@ SET_BRIGTHNESS     (0x06)
 SET_EXPOSURE       (0x07)
 SET_SLEEP_TIME     (0x08)
 ```
-#### TAKE_PICTURE(0x00) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-take_picture0x00-command)
+#### TAKE_PICTURE(0x00) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-take_picture0x00-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -38,7 +38,7 @@ Note: Taking a new picture will overwrite the previous one at that slot
 /* Take a picture and store it at slot 2 */
 Example: 0x00 0x02  
 ```
-#### GET_THUMBNAIL_SIZE(0x01) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail_size0x01-or-get_picture_size0x02-command)
+#### GET_THUMBNAIL_SIZE(0x01) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-get_thumbnail_size0x01-or-get_picture_size0x02-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -47,7 +47,7 @@ Note: Size will be 0, if there is no thumbnail at that slot
 /* Gets the size of the thumbnail of the picture stored at slot 4 in bytes */
 Example: 0x01 0x04
 ```
-#### GET_PICTURE_SIZE(0x02) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail_size0x01-or-get_picture_size0x02-command)
+#### GET_PICTURE_SIZE(0x02) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-get_thumbnail_size0x01-or-get_picture_size0x02-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -56,7 +56,7 @@ Note: Size will be 0, if there is no picture at that slot
 /* Gets the size of the picture stored at slot 1 in bytes */
 Example: 0x02 0x01  
 ```
-#### GET_THUMBNAIL(0x03) commmand ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail0x03-or-get_picture0x04-command)
+#### GET_THUMBNAIL(0x03) commmand ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-get_thumbnail0x03-or-get_picture0x04-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -66,7 +66,7 @@ Note: An error will be thrown, if no thumbnail exist at that slot
 /* Gets the data of the thumbnail of the picture stored at slot 0 */
 Example: 0x03 0x00
 ```
-#### GET_PICTURE(0x04) commmand ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-get_thumbnail0x03-or-get_picture0x04-command)
+#### GET_PICTURE(0x04) commmand ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-get_thumbnail0x03-or-get_picture0x04-command)
 ```
 Usage: <Command> <Picture#>
 
@@ -76,7 +76,7 @@ Note: An error will be thrown, if no picture exist at that slot
 /* Gets the data of the picture stored at slot 2 */
 Example: 0x04 0x02
 ```
-#### SET_CONTRAST(0x05) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
+#### SET_CONTRAST(0x05) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
@@ -93,7 +93,7 @@ Max              0x04
 /* Sets the contrast to 'Normal' */
 Example: 0x05 0x02
 ```
-#### SET_BRIGTHNESS(0x06) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
+#### SET_BRIGTHNESS(0x06) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
@@ -110,7 +110,7 @@ Max              0x04
 /* Sets the brightness to 'Low' */
 Example: 0x06 0x01
 ```
-#### SET_EXPOSURE(0x07) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
+#### SET_EXPOSURE(0x07) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
@@ -127,7 +127,7 @@ Exposure      <Integer>
 /* Sets the exposure to '+2' */
 Example: 0x07 0x04
 ```
-#### SET_SLEEP_TIME(0x08) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/MSP430F5529_Test_1#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
+#### SET_SLEEP_TIME(0x08) command ---> [See Responses](https://github.com/AA-CubeSat-Team/soci_img/tree/master/#ack-response-from-set_contrast0x05-set_brigthness0x06-set_exposure0x07-or-set_sleep_time0x08-command)
 ```
 Usage: <Command> <Integer>
 
