@@ -1,33 +1,29 @@
 # Development History
 
-## MSP430F5529_Test_*
-Directory for uCamIII tests on MSP430F5529
-
-```diff
-# MSP430F5529_Test_1
-Directory for initial tests with MSP430F5529
-+ Development Halted(Deprecated after July 20, 2019 meeting)
-```
-
 ## Arduino_Test_*
 Directory for uCamIII tests on Arduino Uno or related hardware
 
 ```diff
-# Arduino_Test_1
-Directory for testing data syncing with uCamIII
-+ Sync Successful as of May 8, 2019
-```
-
-```diff
-# Arduino_Test_2
-Directory for testing image transmission with uCamIII(Prototype Version)
-+ Data Transmission Successful as of May 24, 2019
+# Arduino_Test_4
+Directory for testing image transmission with Arduino Pro Mini and uCamIII
 ```
 
 ```diff
 # Arduino_Test_3
-Directory for testing image transmission with uCamIII(Stable Version)
+Directory for testing image transmission with Arduino Uno and uCamIII(Stable Version)
 + Version Stable as of June 12, 2019
+```
+
+```diff
+# Arduino_Test_2
+Directory for testing image transmission with Arduino Uno and uCamIII(Prototype Version)
++ Data Transmission Successful as of May 24, 2019
+```
+
+```diff
+# Arduino_Test_1
+Directory for testing data syncing with Arduino Uno and uCamIII
++ Sync Successful as of May 8, 2019
 ```
 
 ## Byte_Array_To_Image
