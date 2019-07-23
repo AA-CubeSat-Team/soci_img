@@ -27,6 +27,11 @@ Directory for testing data syncing with Arduino Uno and uCamIII
 + Sync Successful as of May 8, 2019
 ```
 
+```diff
+# Arduino_Test_Unit
+Directory for unit testing functionalities for Arduino related devices
+```
+
 ## Byte_Array_To_Image
 ```diff
 Directory for algorithms used to convert bytes to images
