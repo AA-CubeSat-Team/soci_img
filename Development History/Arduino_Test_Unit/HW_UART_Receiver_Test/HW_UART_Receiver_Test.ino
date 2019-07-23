@@ -1,6 +1,7 @@
 
 /**
  * Tests the data transmission via UART as receiver device
+ * (Hardware Serial)
  */
 
 /* Pin Assignments */

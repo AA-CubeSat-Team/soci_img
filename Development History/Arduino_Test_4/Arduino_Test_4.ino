@@ -38,28 +38,27 @@ static byte IMAGE_RES  = uCamIII_640x480;
 static byte  SNAP_TYPE = uCamIII_SNAP_JPEG;
 
 void setup() {
-//  Serial.begin(57600);
-//  SoftSer.begin(57600);
-//  pinMode(Reset, OUTPUT);
-//  hardwareReset(Reset, RESET_TIME);
-//  if(syncCamera()) Serial.println("Sync Successful");
-//  if(initializeCamera(IMAGE_TYPE, IMAGE_RES, IMAGE_RES)) Serial.println("Init Successful");
-//  if(setPackageSize(PACKAGE_SIZE)) Serial.println("Set Size Successful");
-//  Serial.println("Initialization complete! \n==============================");
-    
+  Serial.begin(57600);
+  SoftSer.begin(57600);
+  pinMode(Reset, OUTPUT);
+  hardwareReset(Reset, RESET_TIME);
+  if(syncCamera()) Serial.println("Sync Successful");
+  if(initializeCamera(IMAGE_TYPE, IMAGE_RES, IMAGE_RES)) Serial.println("Init Successful");
+  if(setPackageSize(PACKAGE_SIZE)) Serial.println("Set Size Successful");
+  Serial.println("Initialization complete! \n==============================");
 }
 
 void loop() {
-//   static boolean previouslyOff = true;
-//   if(analogRead(nextPicture) == ANALOG_RESOLUTION) {
-//      if(previouslyOff) {
-//         if(takeSnapshot(SNAP_TYPE)) Serial.println("Snapshot Successful");
-//         if(takePicture(uCamIII_TYPE_SNAPSHOT)) Serial.println("Getting picture...");
-//         if(readData(uCamIII_TYPE_SNAPSHOT, PACKAGE_SIZE)) Serial.println("==============================");
-//         previouslyOff = false;
-//      }
-//   }
-//   else {
-//      previouslyOff = true;
-//   }
+   static boolean previouslyOff = true;
+   if(analogRead(nextPicture) == ANALOG_RESOLUTION) {
+      if(previouslyOff) {
+         if(takeSnapshot(SNAP_TYPE)) Serial.println("Snapshot Successful");
+         if(takePicture(uCamIII_TYPE_SNAPSHOT)) Serial.println("Getting picture...");
+         if(readData(uCamIII_TYPE_SNAPSHOT, PACKAGE_SIZE)) Serial.println("==============================");
+         previouslyOff = false;
+      }
+   }
+   else {
+      previouslyOff = true;
+   }
 }
