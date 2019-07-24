@@ -8,11 +8,21 @@
 bool sendCommand(char commandByte,
                  char parameter1, char parameter2,
                  char parameter3, char parameter4);
+void sendExternalError(char param2);
+void sendExternalACK(char param2);
 bool receiveAckCommand(char commandID);
 void hardwareReset(int resetPin, int msec);
 void ackPackage(unsigned int ID);
 bool receivePackage(unsigned int ID);
 bool readData(byte pictureType, unsigned int packageSize);
+
+/* Class Constants */
+const static unsigned int ERROR_RESPONSE_SIZE = 2;
+const static unsigned int   ACK_RESPONSE_SIZE = 2;
+
+/* Possible Responses */
+const static byte NAK = 0x00;
+const static byte ACK = 0x01;
 
 /*
  * Sends a command in the form of described in Page 8 of
@@ -26,6 +36,24 @@ bool sendCommand(char commandByte,
                                    parameter1, parameter2,
                                    parameter3, parameter4};
   SoftSer.write(toSend, sizeof(toSend));
+}
+
+/**
+ * Send a <NAK> message to an external device with the
+ * given 'param2' in the form of <NAK> <param2>
+ */
+void sendExternalError(char param2) {
+  byte toSend[ERROR_RESPONSE_SIZE] = {NAK, param2};
+  Serial.write(toSend, sizeof(toSend));
+}
+
+/**
+ * Send a <ACK> message to an external device with the
+ * given 'param2' in the form of <ACK> <param2>
+ */
+void sendExternalACK(byte param2) {
+  byte toSend[ACK_RESPONSE_SIZE] = {ACK, param2};
+  Serial.write(toSend, sizeof(toSend));
 }
 
 /*

@@ -11,11 +11,20 @@
  */
 #include <SoftwareSerial.h>
 #include "ArduinoCommunication.h"
-#include "commandSet.h"
+#include "commandInterpreter.h"
 #include "uCamIII.h"
 
+/* Function Prototypes */
+void hardwareReset(int resetPin, int msec);
+bool syncCamera();
+bool initializeCamera(char format, char rawResolution, char jpgResolution);
+bool setPackageSize(unsigned int packageSize);
+bool setCBE(char contrast, char brightness, char exposure);
+bool setSleepTime(char seconds);
+void sendExternalError(char param2);
+void interpretCommand(byte command, byte param2);
+
 /* Pin Assignments */
-static const int nextPicture = A0;
 static const int rxPin = 2;
 static const int txPin = 3;
 static const int Reset = 7;
@@ -31,34 +40,41 @@ SoftwareSerial SoftSer(rxPin, txPin);
 static const int ANALOG_RESOLUTION = 1023;
 
 /* Class variables */
-static unsigned int RESET_TIME   = 5;
-static unsigned int PACKAGE_SIZE = 32;
-static byte IMAGE_TYPE = uCamIII_COMP_JPEG;
-static byte IMAGE_RES  = uCamIII_640x480;
-static byte  SNAP_TYPE = uCamIII_SNAP_JPEG;
+static const unsigned int RESET_TIME   = 5;
+static const unsigned int PACKAGE_SIZE = 32;
+static const unsigned int DEFAULT_SLEEP_TIME = 0;
+static const byte DEFAULT_CONTRAST   = 0x02;
+static const byte DEFAULT_BRIGHTNESS = 0x02;
+static const byte DEFAULT_EXPOSURE   = 0x02;
+static const byte IMAGE_TYPE = uCamIII_COMP_JPEG;
+static const byte  SNAP_TYPE = uCamIII_SNAP_JPEG;
+static const byte IMAGE_RES  = uCamIII_640x480;
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(115200, SERIAL_8N1);
   SoftSer.begin(57600);
   pinMode(Reset, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   hardwareReset(Reset, RESET_TIME);
-  if(syncCamera()) Serial.println("Sync Successful");
-  if(initializeCamera(IMAGE_TYPE, IMAGE_RES, IMAGE_RES)) Serial.println("Init Successful");
-  if(setPackageSize(PACKAGE_SIZE)) Serial.println("Set Size Successful");
-  Serial.println("Initialization complete! \n==============================");
+  
+  if(syncCamera() && initializeCamera(IMAGE_TYPE, IMAGE_RES, IMAGE_RES) &&
+     setPackageSize(PACKAGE_SIZE) && setSleepTime(DEFAULT_SLEEP_TIME) &&
+     setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE)) {
+    digitalWrite(LED_BUILTIN, HIGH);
+  }
+  else {
+    digitalWrite(LED_BUILTIN, LOW);
+  }
 }
 
 void loop() {
-   static boolean previouslyOff = true;
-   if(analogRead(nextPicture) == ANALOG_RESOLUTION) {
-      if(previouslyOff) {
-         if(takeSnapshot(SNAP_TYPE)) Serial.println("Snapshot Successful");
-         if(takePicture(uCamIII_TYPE_SNAPSHOT)) Serial.println("Getting picture...");
-         if(readData(uCamIII_TYPE_SNAPSHOT, PACKAGE_SIZE)) Serial.println("==============================");
-         previouslyOff = false;
-      }
-   }
-   else {
-      previouslyOff = true;
-   }
+  if(Serial.available() > 0) {
+    delay(5);
+    if(Serial.available() == 1) {
+      sendExternalError(INCOMPLETE_COMMAND);
+    }
+    else {
+      interpretCommand(Serial.read(), Serial.read());
+    }
+  }
 }

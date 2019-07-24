@@ -17,6 +17,8 @@ extern "C" {
 bool sendCommand(char commandByte,
                  char parameter1, char parameter2,
                  char parameter3, char parameter4);
+void sendExternalError(char param2);
+void sendExternalACK(char param2);
 bool receiveAckCommand(char commandID);
 void hardwareReset(int resetPin, int msec);
 void ackPackage(unsigned int ID);

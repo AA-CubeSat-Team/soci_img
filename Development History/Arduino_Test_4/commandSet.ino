@@ -3,7 +3,6 @@
  * 
  * Author: Haomin Yu
  */
-#include <stdbool.h>
 #include "uCamIII.h"
 
 /* Function prototypes */
