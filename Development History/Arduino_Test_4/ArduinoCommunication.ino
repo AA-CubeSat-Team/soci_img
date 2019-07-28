@@ -3,6 +3,7 @@
  * 
  * Author: Haomin Yu
  */
+#include "sdReadWrite.h"
 
 /* Function prototypes */
 bool sendCommand(char commandByte,
@@ -111,7 +112,7 @@ void ackPackage(unsigned int ID) {
  * (Print out indication message if error occurs)
  * (Returns true if successful, false otherwise)
  */
-bool receivePackage(unsigned int ID) {
+bool receivePackage(unsigned int ID, File toWrite) {
   bool isPackageValid    = true;
   unsigned int verifySum = 0;
   // Grabbing ID
@@ -132,10 +133,11 @@ bool receivePackage(unsigned int ID) {
     delay(5);
     byte incomingData = SoftSer.read();
     verifySum += (unsigned int)incomingData;
-    if(incomingData < 0x10) {
-      Serial.print(0x00, HEX);
-    }
-    Serial.print(incomingData, HEX);
+      toWrite.write(incomingData);
+//    if(incomingData < 0x10) {
+//      Serial.print(0x00, HEX);
+//    }
+//    Serial.print(incomingData, HEX);
   }
   Serial.println();
   // Checking verify code
@@ -156,19 +158,23 @@ bool receivePackage(unsigned int ID) {
  * (Returns true if successful, false otherwise)
  * (Assumes to be called after the 'takePicture(char)' function)
  */
-bool readData(byte pictureType, unsigned int packageSize) {
+bool readData(byte pictureType, unsigned int packageSize, unsigned int slot) {
+  SD.remove(pictureNames[slot]);
+  File toWrite = SD.open(pictureNames[slot], FILE_WRITE);
   if(SoftSer.read() != uCamIII_STARTBYTE || SoftSer.read() != uCamIII_CMD_DATA ||
      SoftSer.read() != pictureType) {return false;}
   unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16;
-  Serial.print("Received image size = "); Serial.print(imageSize); Serial.println(" bytes"); 
+  //Serial.print("Received image size = "); Serial.print(imageSize); Serial.println(" bytes"); 
   int packages = ceil(imageSize * 1.0 / (packageSize - 6));
-  Serial.print("Total of "); Serial.print(packages); Serial.println(" packages");
+  sdWriteImageInfo(imageSize);
+  //Serial.print("Total of "); Serial.print(packages); Serial.println(" packages");
   ackPackage(0);
   delay(5);
   for(int i = 1; i <= packages; i++) {
-    receivePackage(i);
+    receivePackage(i, toWrite);
     ackPackage(i);
     delay(5);
   }
+  toWrite.close();
   return true;
 }

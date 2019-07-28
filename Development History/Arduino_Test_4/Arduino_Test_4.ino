@@ -9,6 +9,7 @@
  * 
  * Author: Haomin Yu
  */
+#include <SD.h>
 #include <SoftwareSerial.h>
 #include "ArduinoCommunication.h"
 #include "commandInterpreter.h"
@@ -53,6 +54,7 @@ static const byte IMAGE_RES  = uCamIII_640x480;
 void setup() {
   Serial.begin(115200, SERIAL_8N1);
   SoftSer.begin(57600);
+  SD.begin();
   pinMode(Reset, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   hardwareReset(Reset, RESET_TIME);

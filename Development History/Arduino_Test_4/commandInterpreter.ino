@@ -20,7 +20,7 @@ void interpretCommand(byte command, byte param2) {
   switch(command) {
     case TAKE_PICTURE:
       if(isSlotValid(param2)) {
-        // TODO
+        
       }
       break;
     case GET_THUMBNAIL_SIZE:
