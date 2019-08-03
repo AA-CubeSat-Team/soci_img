@@ -11,7 +11,7 @@ When completed, change the "Status" of that task to
 ```
 
 ## generateThumbnail
-```
+```diff
 Status:
 - Not under development
 
