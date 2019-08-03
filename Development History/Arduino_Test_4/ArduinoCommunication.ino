@@ -166,7 +166,7 @@ bool readData(byte pictureType, unsigned int packageSize, unsigned int slot) {
   unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16;
   //Serial.print("Received image size = "); Serial.print(imageSize); Serial.println(" bytes"); 
   int packages = ceil(imageSize * 1.0 / (packageSize - 6));
-  sdWriteImageInfo(imageSize);
+  //sdWriteImageInfo(imageSize);
   //Serial.print("Total of "); Serial.print(packages); Serial.println(" packages");
   ackPackage(0);
   delay(5);
