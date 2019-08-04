@@ -24,4 +24,8 @@ pictures to use for this thumbnail generation.
 
 Corresponding hex dump of the image is provided in text files, so as to save you
 the trouble of using a hex editor.
+
+Helpful Links:
+1. https://stackoverflow.com/questions/5413022/is-the-2nd-and-3rd-byte-of-a-jpeg-image-always-the-app0-or-app1-marker
+2. https://en.wikipedia.org/wiki/JPEG#Syntax_and_structure
 ```
