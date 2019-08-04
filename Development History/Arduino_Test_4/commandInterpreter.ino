@@ -20,27 +20,27 @@ void interpretCommand(byte command, byte param2) {
   switch(command) {
     case TAKE_PICTURE:
       if(isSlotValid(param2)) {
-        
+        // TODO 
       }
       break;
     case GET_THUMBNAIL_SIZE:
       if(isSlotValid(param2)) {
-        // TODO
+        // TODO - Need to test SD
       }
       break;
     case GET_PICTURE_SIZE:
       if(isSlotValid(param2)) {
-        // TODO
+        // TODO - Need to test SD
       }
       break;
     case GET_THUMBNAIL:
       if(isSlotValid(param2)) {
-        // TODO
+        sdReadFileAndTransmit(thumbnailNames[param2]);
       }
       break;
     case GET_PICTURE:
       if(isSlotValid(param2)) {
-        // TODO
+        sdReadFileAndTransmit(pictureNames[param2]);
       }
       break;
     case SET_CONTRAST:
