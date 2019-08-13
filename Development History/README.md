@@ -38,3 +38,9 @@ Directory for unit testing functionalities for Arduino related devices
 Directory for algorithms used to convert bytes to images
 + Conversion Successful for JPG as of May 16, 2019
 ```
+
+## MSP430F5529_Documentation
+```
+Folder containing documentation for the MSP430F5529.
+Hardware is no longer used for this system, but documentation is kept as backup
+```
