@@ -8,6 +8,9 @@
 #ifndef __SDREADWRITE_H__
 #define __SDREADWRITE_H__
 
+/* Function Prototypes */
+bool sdReadFileAndTransmit(String fileName);
+
 /* Files names for pictures and thumbnails */
 static String pictureNames[]
   = {"PICTURE0.jpg", "PICTURE1.jpg", "PICTURE2.jpg", "PICTURE3.jpg", "PICTURE4.jpg"};

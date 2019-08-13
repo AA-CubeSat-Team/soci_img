@@ -1,7 +1,10 @@
 
 /**
- * 
+ * Handles SD card reads and writes
  */
+
+// Function Prototypes
+bool sdReadFileAndTransmit(String fileName);
 
 /**
  * Attempts to read the file named 'fileName' from the

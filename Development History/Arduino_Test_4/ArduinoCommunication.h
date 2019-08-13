@@ -19,11 +19,12 @@ bool sendCommand(char commandByte,
                  char parameter3, char parameter4);
 void sendExternalError(char param2);
 void sendExternalACK(char param2);
+void sendFileSize(int fileSize);
 bool receiveAckCommand(char commandID);
 void hardwareReset(int resetPin, int msec);
 void ackPackage(unsigned int ID);
 bool receivePackage(unsigned int ID);
-bool readData(byte pictureType, unsigned int packageSize);
+bool readData(byte pictureType, unsigned int packageSize, unsigned int slot);
 
 #ifdef __cplusplus
 } // extern "C"

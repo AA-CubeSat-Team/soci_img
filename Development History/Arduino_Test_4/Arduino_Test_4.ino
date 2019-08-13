@@ -15,6 +15,7 @@
 #include "commandInterpreter.h"
 #include "uCamIII.h"
 
+
 /* Function Prototypes */
 void hardwareReset(int resetPin, int msec);
 bool syncCamera();
@@ -49,7 +50,7 @@ static const byte DEFAULT_BRIGHTNESS = 0x02;
 static const byte DEFAULT_EXPOSURE   = 0x02;
 static const byte IMAGE_TYPE = uCamIII_COMP_JPEG;
 static const byte  SNAP_TYPE = uCamIII_SNAP_JPEG;
-static const byte IMAGE_RES  = uCamIII_640x480;
+static const byte IMAGE_RES  = uCamIII_160x128; // uCamIII_160x128 vs uCamIII_640x480
 
 void setup() {
   Serial.begin(115200, SERIAL_8N1);

@@ -13,13 +13,15 @@
 extern "C" {
 #endif
 
-/* Function prototypes */
+/* Function Prototypes */
 bool takeSnapshot(char snapshotType);
 bool takePicture(char pictureType);
+bool readData(byte pictureType, unsigned int packageSize, unsigned int slot);
 bool setCBE(char contrast, char brightness, char exposure);
 bool setSleepTime(char seconds);
 void sendExternalError(char param2);
 void sendExternalACK(char param2);
+void sendFileSize(int fileSize);
 
 /* Recognized Commands */
 const static byte TAKE_PICTURE       = 0x00;

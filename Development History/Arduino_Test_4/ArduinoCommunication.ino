@@ -11,15 +11,17 @@ bool sendCommand(char commandByte,
                  char parameter3, char parameter4);
 void sendExternalError(char param2);
 void sendExternalACK(char param2);
+void sendFileSize(int fileSize);
 bool receiveAckCommand(char commandID);
 void hardwareReset(int resetPin, int msec);
 void ackPackage(unsigned int ID);
 bool receivePackage(unsigned int ID);
-bool readData(byte pictureType, unsigned int packageSize);
+bool readData(byte pictureType, unsigned int packageSize, unsigned int slot);
 
 /* Class Constants */
-const static unsigned int ERROR_RESPONSE_SIZE = 2;
-const static unsigned int   ACK_RESPONSE_SIZE = 2;
+const static unsigned short ERROR_RESPONSE_SIZE = 2;
+const static unsigned short   ACK_RESPONSE_SIZE = 2;
+const static unsigned short  SIZE_RESPONSE_SIZE = 3;
 
 /* Possible Responses */
 const static byte NAK = 0x00;
@@ -54,6 +56,16 @@ void sendExternalError(char param2) {
  */
 void sendExternalACK(byte param2) {
   byte toSend[ACK_RESPONSE_SIZE] = {ACK, param2};
+  Serial.write(toSend, sizeof(toSend));
+}
+
+/**
+ * Send a <ACK> message to an external device with the
+ * given 'fileSize' in the form of <ACK> <HighByte> <LowByte>
+ */
+void sendFileSize(int fileSize) {
+  byte toSend[SIZE_RESPONSE_SIZE] 
+    = {ACK, (fileSize >> 8) & 0xFF, fileSize & 0xFF};
   Serial.write(toSend, sizeof(toSend));
 }
 
