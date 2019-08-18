@@ -4,21 +4,21 @@
 #include <SPI.h>
 #include <SD.h>
 
-const static int SS_Pin = 4;
+const static int SS_Pin = 10;
 
 void setup() {
   Serial.begin(9600);
   while (!Serial) {}
-  Serial.print("Initializing SD card...");
+  Serial.println("Initializing SD card...");
   if (!SD.begin(SS_Pin)) {
-    Serial.println("initialization failed!");
+    Serial.println("Initialization failed!");
     while (1);
   }
   Serial.println("Initialization done!");
 
   File root = SD.open("/");
   printDirectory(root, 0);
-  Serial.println("done!");
+  Serial.println("Done!");
 }
 
 void loop() {}

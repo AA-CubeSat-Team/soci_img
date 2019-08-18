@@ -5,7 +5,7 @@
 #include <SD.h>
 
 static const String testFileName = "testReadWrite.txt";
-static const int SS_Pin = 4;
+static const int SS_Pin = 10;
 static const unsigned int bytesToTest = 30000;
 
 void setup() {
