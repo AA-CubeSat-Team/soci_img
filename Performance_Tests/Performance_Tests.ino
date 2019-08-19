@@ -5,45 +5,10 @@
  * 
  * Author: Haomin Yu
  */
-
-
-/* Times to run the test for.
- * Must not be more than 500 due to memory restrictions
- */
-static const unsigned int TEST_TIMES = 400;
-
-/* Maximum number of images allowed */
-static const unsigned int IMAGES_COUNT = 5;
-
-/* Stores the time taken for each attempt */
-static unsigned int timeStorage[TEST_TIMES];
-
-/* Stores additional information for each test */
-static byte testInfo[TEST_TIMES];
-
-/* Whether to print the testInfo array */
-static bool printInfoArray = false;
-
-/* Header for printing the result */
-static String header = "";
-
-/* Commands that can be tested */
-static const byte TAKE_PICTURE       = 0x00;
-static const byte GET_THUMBNAIL_SIZE = 0x01;
-static const byte GET_PICTURE_SIZE   = 0x02;
-static const byte GET_THUMBNAIL      = 0x03;
-static const byte GET_PICTURE        = 0x04;
-static const byte SET_CONTRAST       = 0x05;
-static const byte SET_BRIGTHNESS     = 0x06;
-static const byte SET_EXPOSURE       = 0x07;
-static const byte SET_SLEEP_TIME     = 0x08;
+#include "Performance_Tests.h"
 
 /* Unused port used for the seed of random generation */
 static const unsigned short UNUSED_PORT = A0;
-
-/* Possible responses */
-static const byte NAK = 0x00;
-static const byte ACK = 0x01;
 
 void setup() {
   Serial.begin(115200);
@@ -67,7 +32,6 @@ void testCommand(byte command) {
   }
   else if(command == GET_THUMBNAIL_SIZE || command == GET_PICTURE_SIZE) {
     printInfoArray = true;
-    static unsigned int storedSize[IMAGES_COUNT];
     for(int i = 0; i < IMAGES_COUNT; i++) {
       byte toSend[] = {command, i};
       Serial.write(toSend, sizeof(toSend));
@@ -147,8 +111,44 @@ void testCommand(byte command) {
   }
 }
 
+/* Fills the 'storedSize' with sizes based on 'command'
+ * which must be:
+ * 0x01 (Thumbnail Size) or 0x02 (Picture Size)
+ */
+void fetchImageSizes(byte command) {
+  if((command != GET_THUMBNAIL_SIZE) && (command != GET_PICTURE_SIZE)) {
+    Serial.print("ERROR! 'command' = "); Serial.println(command, HEX);
+    while(1) {}
+  }
+  const unsigned short REPEAT_TIMES = 5;
+  unsigned int tempSizeStorage[REPEAT_TIMES];
+  for(int i = 0; i < IMAGES_COUNT; i++) {
+    for(int j = 0; j < REPEAT_TIMES; j++) {
+      byte toSend[] = {command, (byte)i};
+      Serial.write(toSend, sizeof(toSend));
+      while(!Serial.available()) {}
+      delay(5);
+      if(Serial.read() != ACK) {
+        Serial.println("FAILED on ACK");
+        while(1) {}
+      }
+      tempSizeStorage[j] = (Serial.read() << 8) | Serial.read();
+    }
+    // Checking if the result is consistent
+    unsigned int firstSize = tempSizeStorage[0];
+    for(int j = 1; j < REPEAT_TIMES; j++) {
+      if(tempSizeStorage[j] != firstSize) {
+        Serial.println("ERROR: Sizes mismatch");
+        while(1) {}
+      }
+    }
+    storedSize[i] = firstSize;
+  }
+}
+
 /* Print out all stored time in 'timeStorage', one element per line */
 void printResults(bool enableInfo) {
+  Serial.println(header);
   for(int i = 0; i < TEST_TIMES; i++) {
     Serial.print(timeStorage[i], DEC);
     if(enableInfo) {
