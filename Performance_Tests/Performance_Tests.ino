@@ -28,7 +28,21 @@ void testCommand(byte command) {
     
   }
   else if(command == TAKE_PICTURE) {
-    
+    header = "time(ms)\tpercent error";
+    for(int i = 0; i < TEST_TIMES; i++) {
+      byte toSend[] = {command, (byte)random(IMAGES_COUNT)};
+      long startTime = millis();
+      Serial.write(toSend, sizeof(toSend));
+      while(!Serial.available()) {}
+      byte receivedResponse = Serial.read();
+      long endTime = millis();
+      testInfo[i] = toSend[1];
+      if(receivedResponse != ACK) {
+        timeStorage[i] = 0;
+        continue;
+      }
+      timeStorage[i] = endTime - startTime;
+    }
   }
   else if(command == GET_THUMBNAIL_SIZE || command == GET_PICTURE_SIZE) {
     header = "time(ms)\tslot number";
