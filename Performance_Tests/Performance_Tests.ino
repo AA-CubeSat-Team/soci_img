@@ -7,11 +7,19 @@
  */
 
 
-/* Times to run the test for */
-static const unsigned int TEST_TIMES = 500;
+/* Times to run the test for.
+ * Must not be more than 500 due to memory restrictions
+ */
+static const unsigned int TEST_TIMES = 400;
+
+/* Maximum number of images allowed */
+static const unsigned int IMAGES_COUNT = 5;
 
 /* Stores the time taken for each attempt */
 static unsigned int timeStorage[TEST_TIMES];
+
+/* Stores additional information for each test */
+static byte testInfo[TEST_TIMES];
 
 /* Commands that can be tested */
 static const byte TAKE_PICTURE       = 0x00;
@@ -31,11 +39,14 @@ static const unsigned short UNUSED_PORT = A0;
 static const byte NAK = 0x00;
 static const byte ACK = 0x01;
 
+/* Whether to print the testInfo array */
+static bool printInfoArray = false;
+
 void setup() {
   Serial.begin(115200);
   randomSeed(analogRead(UNUSED_PORT));
   testCommand(SET_CONTRAST);
-  printResults();
+  printResults(printInfoArray);
 }
 
 /* Tests the 'command' 'TEST_TIMES' number of times and
@@ -45,14 +56,55 @@ void setup() {
  * without function calls to get more accurate timings
  */
 void testCommand(byte command) {
-  if(command == TAKE_PICTURE) {
+  if(command == GET_THUMBNAIL || command == GET_PICTURE) {
+    
+  }
+  else if(command == TAKE_PICTURE) {
     
   }
   else if(command == GET_THUMBNAIL_SIZE || command == GET_PICTURE_SIZE) {
-    
-  }
-  else if(command == GET_THUMBNAIL || command == GET_PICTURE) {
-    
+    printInfoArray = true;
+    static unsigned int storedSize[IMAGES_COUNT];
+    for(int i = 0; i < IMAGES_COUNT; i++) {
+      byte toSend[] = {command, i};
+      Serial.write(toSend, sizeof(toSend));
+      while(!Serial.available()) {}
+      if(Serial.read() == ACK) {
+        storedSize[i] = (Serial.read() << 8) | Serial.read();
+      }
+      else {
+        Serial.print("\nFAIL! At i = "); Serial.println(i);
+        while(1) {}
+      }
+    }
+    for(int i = 0; i < TEST_TIMES; i++) {
+      byte toSend[] = {command, (byte)random(-2, IMAGES_COUNT + 2)};
+      bool valid = (toSend[1] >= 0x00) && (toSend[1] < (byte)IMAGES_COUNT);
+      byte expectedResponse = valid? ACK:NAK;
+      unsigned int startTime = millis();
+      Serial.write(toSend, sizeof(toSend));
+      while(!Serial.available()) {}
+      byte receivedResponse = Serial.read();
+      unsigned int receivedSize = (Serial.read() << 8) | Serial.read();
+      unsigned int endTime = millis();
+      testInfo[i] = toSend[1];
+      if(receivedResponse == expectedResponse) {
+        if(valid) {
+          if(receivedSize == storedSize[toSend[1]]) {
+            timeStorage[i] = endTime - startTime;
+          }
+          else {
+            timeStorage[i] = 0;
+          }
+        }
+        else {
+          timeStorage[i] = endTime - startTime;
+        }
+      }
+      else {
+        timeStorage[i] = 0;
+      }
+    }
   }
   else if(command == SET_CONTRAST || command == SET_BRIGTHNESS
        || command == SET_EXPOSURE) {
@@ -60,11 +112,13 @@ void testCommand(byte command) {
       byte toSend[] = {command, (byte)random(-2, 7)};
       bool valid = (toSend[1] >= 0x00) && (toSend[1] <= 0x04);
       byte expectedResponse = valid? ACK:NAK;
-      long startTime = millis();
+      unsigned int startTime = millis();
       Serial.write(toSend, sizeof(toSend));
-      byte received = Serial.read();
-      if(received == expectedResponse) {
-        timeStorage[i] = millis() - startTime;
+      while(!Serial.available()) {}
+      byte receivedResponse = Serial.read();
+      unsigned int endTime = millis();
+      if(receivedResponse == expectedResponse) {
+        timeStorage[i] = endTime - startTime;
       }
       else {
         timeStorage[i] = 0;
@@ -74,13 +128,14 @@ void testCommand(byte command) {
   else if(command == SET_SLEEP_TIME) {
     for(int i = 0; i < TEST_TIMES; i++) {
       byte toSend[] = {command, (byte)random(0, 300)};
-      byte expectedResponse = ACK; /* Always valid */
-      long startTime = millis();
+      byte expectedResponse = ACK; /* Always expect valid */
+      unsigned int startTime = millis();
       Serial.write(toSend, sizeof(toSend));
       while(!Serial.available()) {}
-      byte received = Serial.read();
-      if(received == expectedResponse) {
-        timeStorage[i] = millis() - startTime;
+      byte receivedResponse = Serial.read();
+      unsigned int endTime = millis();
+      if(receivedResponse == expectedResponse) {
+        timeStorage[i] = endTime - startTime;
       }
       else {
         timeStorage[i] = 0;
@@ -90,9 +145,13 @@ void testCommand(byte command) {
 }
 
 /* Print out all stored time in 'timeStorage', one element per line */
-void printResults() {
+void printResults(bool enableInfo) {
   for(int i = 0; i < TEST_TIMES; i++) {
-    Serial.println(timeStorage[i], DEC);
+    Serial.print(timeStorage[i], DEC);
+    if(enableInfo) {
+      Serial.print(" "); Serial.print(testInfo[i]);
+    }
+    Serial.println();
   }
 }
 
