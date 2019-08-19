@@ -1,6 +1,6 @@
 /**
  * Tests the performance of the IMG software from the point
- * of view of an external device.
+ * of view of an external device. (Built for v1.0.0)
  * Intended to be uploaded to an arduino Uno or similar device
  * 
  * Author: Haomin Yu
@@ -21,6 +21,12 @@ static unsigned int timeStorage[TEST_TIMES];
 /* Stores additional information for each test */
 static byte testInfo[TEST_TIMES];
 
+/* Whether to print the testInfo array */
+static bool printInfoArray = false;
+
+/* Header for printing the result */
+static String header = "";
+
 /* Commands that can be tested */
 static const byte TAKE_PICTURE       = 0x00;
 static const byte GET_THUMBNAIL_SIZE = 0x01;
@@ -39,9 +45,6 @@ static const unsigned short UNUSED_PORT = A0;
 static const byte NAK = 0x00;
 static const byte ACK = 0x01;
 
-/* Whether to print the testInfo array */
-static bool printInfoArray = false;
-
 void setup() {
   Serial.begin(115200);
   randomSeed(analogRead(UNUSED_PORT));
@@ -51,7 +54,7 @@ void setup() {
 
 /* Tests the 'command' 'TEST_TIMES' number of times and
  * stores the time taken each time in 'timeStorage'
- *******************************************************
+ ********************************************************
  * Function is purposely written in a verbose fashion
  * without function calls to get more accurate timings
  */
@@ -126,15 +129,16 @@ void testCommand(byte command) {
     }
   }
   else if(command == SET_SLEEP_TIME) {
+    header = "time(ms)\tsleep time(seconds)";
     for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(0, 300)};
-      byte expectedResponse = ACK; /* Always expect valid */
+      byte toSend[] = {command, (byte)random(256)};
       unsigned int startTime = millis();
       Serial.write(toSend, sizeof(toSend));
       while(!Serial.available()) {}
       byte receivedResponse = Serial.read();
       unsigned int endTime = millis();
-      if(receivedResponse == expectedResponse) {
+      testInfo[i] = toSend[1];
+      if(receivedResponse == ACK) {
         timeStorage[i] = endTime - startTime;
       }
       else {
@@ -149,7 +153,7 @@ void printResults(bool enableInfo) {
   for(int i = 0; i < TEST_TIMES; i++) {
     Serial.print(timeStorage[i], DEC);
     if(enableInfo) {
-      Serial.print(" "); Serial.print(testInfo[i]);
+      Serial.print("\t"); Serial.print(testInfo[i]);
     }
     Serial.println();
   }
