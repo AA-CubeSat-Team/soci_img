@@ -111,16 +111,15 @@ void testCommand(byte command) {
   }
   else if(command == SET_CONTRAST || command == SET_BRIGTHNESS
        || command == SET_EXPOSURE) {
+    header = "time(ms)\tCBE value";
     for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(-2, 7)};
-      bool valid = (toSend[1] >= 0x00) && (toSend[1] <= 0x04);
-      byte expectedResponse = valid? ACK:NAK;
+      byte toSend[] = {command, (byte)random(0, 5)};
       unsigned int startTime = millis();
       Serial.write(toSend, sizeof(toSend));
       while(!Serial.available()) {}
       byte receivedResponse = Serial.read();
       unsigned int endTime = millis();
-      if(receivedResponse == expectedResponse) {
+      if(receivedResponse == ACK) {
         timeStorage[i] = endTime - startTime;
       }
       else {
