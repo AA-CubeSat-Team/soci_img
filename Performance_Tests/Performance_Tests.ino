@@ -25,7 +25,7 @@ void setup() {
  */
 void testCommand(byte command) {
   if(command == GET_THUMBNAIL || command == GET_PICTURE) {
-    
+    // TODO
   }
   else if(command == TAKE_PICTURE) {
     header = "time(ms)\tpercent error";
