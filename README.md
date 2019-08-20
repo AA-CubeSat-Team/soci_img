@@ -38,19 +38,32 @@ The IMG system consists of the following components
 ### External Setup
 
 ## Usage of Commands
-Currently the following commands are supported
+Below are tables demonstrating communication bytes which will be later mentioned in this section.
 
-Command Description | Command Byte
-------------------- | -------------
-Take Picture        | 0x00
-Get Thumbnail Size  | 0x01
-Get Picture Size    | 0x02
-Get Thumbnail       | 0x03
-Get Picture         | 0x04
-Set Contrast        | 0x05
-Set Brightness      | 0x06
-Set Exposure        | 0x07
-Set Sleep Time      | 0x08
+\<Command> Description | \<Command> Byte
+---------------------- | ---------------
+Take Picture          | 0x00
+Get Thumbnail Size    | 0x01
+Get Picture Size      | 0x02
+Get Thumbnail         | 0x03
+Get Picture           | 0x04
+Set Contrast          | 0x05
+Set Brightness        | 0x06
+Set Exposure          | 0x07
+Set Sleep Time        | 0x08
+
+\<Response> Description | \<Response> Byte
+----------------------- | ----------------
+Not Acknowledged        | 0x00
+Acknowledge             | 0x01
+
+\<Error> Description | \<Error> Byte
+---------------------| -------------
+Incomplete Command   | 0x00
+Invalid Command      | 0x01
+Invalid Slot         | 0x02
+Invalid Integer      | 0x03
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Take Picture
 
