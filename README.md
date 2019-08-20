@@ -12,15 +12,29 @@ Interface for interacting with the imaging system
     - [Send Command](#send-command)
     - [Receive Response](#receive-response)
   * [Get Thumbnail Size](#get-thumbnail-size)
-    - [Send Command]()
-    - [Receive Response]()
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Get Picture Size](#get-picture-size)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Get Thumbnail](#get-thumbnail)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Get Picture](#get-picture)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Set Contrast](#set-contrast)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Set Brightness](#set-brightness)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Set Exposure](#set-exposure)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
   * [Set Sleep Time](#set-sleep-time)
+    - [Send Command](#send-command)
+    - [Receive Response](#receive-response)
 - [Implementation Details](#implementation-details)
 
   
@@ -55,19 +69,51 @@ Set Sleep Time      | 0x08
 
 ### Get Thumbnail Size
 
+#### Send Command
+
+#### Receive Response
+
 ### Get Picture Size 
+
+#### Send Command
+
+#### Receive Response
 
 ### Get Thumbnail
 
+#### Send Command
+
+#### Receive Response
+
 ### Get Picture 
+
+#### Send Command
+
+#### Receive Response
 
 ### Set Contrast  
 
+#### Send Command
+
+#### Receive Response
+
 ### Set Brightness  
+
+#### Send Command
+
+#### Receive Response
 
 ### Set Exposure   
 
+#### Send Command
+
+#### Receive Response
+
 ### Set Sleep Time 
+
+#### Send Command
+
+#### Receive Response
 
 
 ## Internal States and Diagrams
