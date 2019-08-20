@@ -2,12 +2,11 @@
 Interface for interacting with the imaging system
 
 ## Table of Contents
-
-- [System Description](#system-description)
+- [System Overview](#system-overview)
 - [Hardware Setup](#hardware-setup)
   * [Internal Setup](#internal-setup)
   * [External Setup](#external-setup)
-- [Usage](#usage)
+- [Usage of Commands](#usage-of-commands)
   * [Take Picture](#take-picture)
   * [Get Thumbnail Size](#get-thumbnail-size)
   * [Get Picture Size](#get-picture-size)
@@ -17,18 +16,28 @@ Interface for interacting with the imaging system
   * [Set Brightness](#set-brightness)
   * [Set Exposure](#set-exposure)
   * [Set Sleep Time](#set-sleep-time)
-- [Implementation Details](#implementation-details)
+- [Internal States and Diagrams](#internal-states-and-diagrams)
 
-  
-## System Description
+## System Overview
+This system is built to provide ease of access to the uCamIII camera from an external system.
+
+Currently, the system is capable of storing a maximum of 5 thumbnail-picture pairs, until the external system is ready to retrieve the thumbnail or picture.
+Given the memory capacity of our current SD card(16 GB), the maximum can be increased to hundreds if necessary.
+
+The system uses UART at baud rate of 115200 to transmit data, which can be lowered if current rate causes unstability in the external system.
+(Note: It is known that a baud rate of 115200 does not work for software serial)
 
 ## Hardware Setup
+The IMG system consists of the following components
+* [uCamIII from 4D Systems](https://4dsystems.com.au/ucam-iii)
+* Arduino Pro Mini 328 - 3.3V/8MHz
+* [MicroSD card breakout board+ from Adafruit](https://www.adafruit.com/product/254)
 
 ### Internal Setup
 
 ### External Setup
 
-## Usage
+## Usage of Commands
 Currently the following commands are supported
 
 Command Description | Command Byte
