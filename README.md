@@ -90,7 +90,14 @@ Set Sleep Time      | 0x08
 
 
 ## Internal States and Diagrams
-In the initialization flowchart shown below, references are made to the following constants:
+Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
+Then, the system will attempt to initialize the type and resolution of the image to be taken.   
+Then, the system will attempt to set the package size for later data retrieval from the uCamIII.
+Finally, the system will attempt set the default contrast, brightness, and exposure of the camera.
+
+Below, a visual representation of the initialization process in the form of a flowchart is provided.
+In the initialization flowchart shown below, references are made to the following MAX_X_ATTEMPTS constants.
+These constants are fairly arbitrary, but it is known that syncing and initialization usually take a bit more attempts.
 ```
 MAX_SYNC_ATTEMPTS       = 60 <==> MSA(60)
 MAX_INITIALIZE_ATTEMPTS = 60 <==> MIA(60)
@@ -101,7 +108,7 @@ MAX_SET_CBE_ATTEMPTS    = 40 <==> MSCA(40)
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/Initialization_Flowchart.png" width="750" title="Initialization Flowchart">
 </p>
 
-After initialization, the MSP430 waits for command bytes from an external device, and executes the commands if valid, as shown below
+After initialization, the system waits for command bytes from an external device, and executes the commands if valid, as shown below.
 <p align="center">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/Runtime_Flowchart.png" width="750" title="Operation Mode Flowchart">
 </p>
