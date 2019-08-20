@@ -93,7 +93,8 @@ Set Sleep Time      | 0x08
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
 Then, the system will attempt to initialize the type and resolution of the image to be taken.   
 Then, the system will attempt to set the package size for later data retrieval from the uCamIII.   
-Finally, the system will attempt set the default contrast, brightness, and exposure of the camera.
+Finally, the system will attempt set the default contrast, brightness, and exposure of the camera.   
+If any of the four processes fails more than the preset limit shown below, the system will be reset and camera re-synced.
 
 Below, a visual representation of the initialization process in the form of a flowchart is provided.   
 In the initialization flowchart shown below, references are made to the following MAX_X_ATTEMPTS constants.   
