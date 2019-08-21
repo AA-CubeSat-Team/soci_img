@@ -16,7 +16,7 @@ Interface for interacting with the imaging system
   * [Set Brightness](#set-brightness)
   * [Set Exposure](#set-exposure)
   * [Set Sleep Time](#set-sleep-time)
-- [Possibly Asked Questions(PAQ)](#possibly-asked-questions(PAQ))
+- [Possibly Asked Questions(PAQ)](#possibly-asked-questionspaq)
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
@@ -72,12 +72,12 @@ Invalid Integer      | 0x03
 ### Take Picture
 Usage: \<Command> \<Slot>   
 Signals the IMG system to take a picture and generate a thumbnail to store at \<Slot>   
-Currently, \<Slot> must be between 0x00 and 0x04, but this is not a hard limit as explained above.   
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
 The response will be in the form of \<Response> \<Info>.   
 \<Info> is a \<Error> if \<Response> was "Not Acknowledged" or 0x00, or is the \<Slot> passed to the system if \<Response> was "Acknowledged" or 0x01.
 
-Possible responses are:
+#### Possible responses are:
 ```
 /* Acknowledged. Image has been successfully stored at slot 0x04 */
 0x01 0x04
@@ -90,9 +90,9 @@ Possible responses are:
 
 /* See the Possibly Asked Questions(PAQ) section below */
 0x00 0x01
-
 ```
-Example of Usage:   
+
+#### Example of Usage:   
 ```
 /* (Success) Signals the IMG system to take a picture with result stored at slot 0x01 */
 0x00 0x01 
@@ -138,9 +138,12 @@ Example of Usage:
 
 ## Possibly Asked Questions(PAQ)
 I've received bytes 0x00 0x00 from the IMG system. What does this mean?
-> "Not Acknowledged. Incomplete Command Error was thrown." 
-> This can happen if there was too much delay between sending byte.
+> "Not Acknowledged. Incomplete Command Error was thrown."   
+> This can happen if there was too much delay between the bytes sent to the IMG system.
 
+I've received bytes 0x00 0x01 from the IMG system. What does this mean?
+> "Not Acknowledged. Invalid Command."   
+> \<Command> much be between 0x00 and 0x08 inclusive.
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
