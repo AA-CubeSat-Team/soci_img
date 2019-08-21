@@ -85,7 +85,7 @@ If failed, the response will be in the form of \<Response> \<Error>
 /* Signals the IMG system to take a picture at slot 0x03 (Will succeed) */
 0x00 0x03 
 
-/* Signals the IMG system to take a picture at slot 0x03 (Will fail: Slot at 0x05 is invalid) */
+/* Signals the IMG system to take a picture at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
 0x00 0x05 
 ```
 
@@ -120,7 +120,7 @@ If failed, the response will be in the form of \<Response> \<Error>
 /* Requests the size of thumbnail at slot 0x04 (Will succeed) */
 0x01 0x04 
 
-/* Requests the size of thumbnail at slot 0x03 (Will fail: Slot at 0x05 is invalid) */
+/* Requests the size of thumbnail at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
 0x01 0x05 
 ```
 
@@ -140,8 +140,39 @@ If failed, the response will be in the form of \<Response> \<Error>
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture Size 
+Usage: \<Command> \<Slot>   
+Requests the size of the full-sized picture stored at \<Slot>   
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
+If successful, the response will be in the form of \<Response> \<Size High Byte> \<Size Low Byte>   
+If failed, the response will be in the form of \<Response> \<Error>   
 
+#### Example of Usage:  
+```
+/* Requests the size of thumbnail at slot 0x03 (Will succeed) */
+0x02 0x03 
+
+/* Requests the size of thumbnail at slot 0x00 (Will succeed) */
+0x02 0x00 
+
+/* Requests the size of thumbnail at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
+0x02 0x05 
+```
+
+#### Possible responses are:
+```
+/* Acknowledged. Thumbnail size is 0x2A8D */
+0x01 0x2A 0x8D
+
+/* Not Acknowledged. The given <Slot> was out of bounds */
+0x00 0x02
+
+/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
+0x00 0x00
+
+/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
+0x00 0x01
+```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail
 
