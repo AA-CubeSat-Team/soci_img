@@ -97,10 +97,10 @@ If failed, the response will be in the form of \<Response> \<Error>
 /* Not Acknowledged. The given <Slot> was out of bounds */
 0x00 0x02
 
-/* See the Possibly Asked Questions(PAQ) section below */
+/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
 0x00 0x00
 
-/* See the Possibly Asked Questions(PAQ) section below */
+/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
 0x00 0x01
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -126,7 +126,17 @@ If failed, the response will be in the form of \<Response> \<Error>
 
 #### Possible responses are:
 ```
+/* Acknowledged. Thumbnail size is 0x037F */
+0x01 0x03 0x7F
 
+/* Not Acknowledged. The given <Slot> was out of bounds */
+0x00 0x02
+
+/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
+0x00 0x00
+
+/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
+0x00 0x01
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture Size 
