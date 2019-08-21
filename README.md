@@ -94,13 +94,13 @@ The response will be in the form of \<Response> \<Info>.
 
 #### Example of Usage:   
 ```
-/* (Success) Signals the IMG system to take a picture with result stored at slot 0x01 (Will succeed) */
+/* (Success) Signals the IMG system to take a picture at slot 0x01 (Will succeed) */
 0x00 0x01 
 
-/* Signals the IMG system to take a picture with result stored at slot 0x03. (Will succeed) */
+/* Signals the IMG system to take a picture at slot 0x03. (Will succeed) */
 0x00 0x03 
 
-/* Signals the IMG system to take a picture with result to be stored at slot 0x03. (Will fail: Slot at 0x05 is invalid */
+/* Signals the IMG system to take a picture at slot 0x03. (Will fail: Slot at 0x05 is invalid */
 0x00 0x05 
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
