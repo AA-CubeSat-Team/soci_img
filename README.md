@@ -16,6 +16,7 @@ Interface for interacting with the imaging system
   * [Set Brightness](#set-brightness)
   * [Set Exposure](#set-exposure)
   * [Set Sleep Time](#set-sleep-time)
+- [Possibly Asked Questions(PAQ)](#possibly-asked-questions(PAQ))
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
@@ -24,7 +25,7 @@ This system is built to provide ease of access to the uCamIII camera from an ext
 Currently, the system is capable of storing a maximum of 5 thumbnail-picture pairs, until the external system is ready to retrieve the thumbnail or picture.  
 Given the memory capacity of our current SD card(16 GB), the maximum can be increased to hundreds if necessary.
 
-The system uses UART at baud rate of 115200 to transmit data, which can be lowered if current rate causes unstability in the external system.  
+The system uses **UART** at baud rate of **115200** to transmit data, which can be lowered if current rate causes unstability in the external system.  
 (Note: It is known that a baud rate of 115200 does not work for software serial)
 
 ## Hardware Setup
@@ -32,30 +33,33 @@ The IMG system consists of the following components
 * [uCamIII from 4D Systems](https://4dsystems.com.au/ucam-iii)
 * Arduino Pro Mini 328 - 3.3V/8MHz
 * [MicroSD card breakout board+ from Adafruit](https://www.adafruit.com/product/254)
+* MicroSD card with at least 300 kB memory
 
 ### Internal Setup
+> Undetermined
 
 ### External Setup
+> Undetermined
 
 ## Usage of Commands
 Below are tables demonstrating communication bytes which will be later mentioned in this section.
 
 \<Command> Description | \<Command> Byte
 ---------------------- | ---------------
-Take Picture          | 0x00
-Get Thumbnail Size    | 0x01
-Get Picture Size      | 0x02
-Get Thumbnail         | 0x03
-Get Picture           | 0x04
-Set Contrast          | 0x05
-Set Brightness        | 0x06
-Set Exposure          | 0x07
-Set Sleep Time        | 0x08
+Take Picture           | 0x00
+Get Thumbnail Size     | 0x01
+Get Picture Size       | 0x02
+Get Thumbnail          | 0x03
+Get Picture            | 0x04
+Set Contrast           | 0x05
+Set Brightness         | 0x06
+Set Exposure           | 0x07
+Set Sleep Time         | 0x08
 
 \<Response> Description | \<Response> Byte
 ----------------------- | ----------------
 Not Acknowledged        | 0x00
-Acknowledge             | 0x01
+Acknowledged            | 0x01
 
 \<Error> Description | \<Error> Byte
 ---------------------| -------------
@@ -66,8 +70,39 @@ Invalid Integer      | 0x03
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Take Picture
+Usage: \<Command> \<Slot>   
+Signals the IMG system to take a picture and generate a thumbnail to store at \<Slot>   
+Currently, \<Slot> must be between 0x00 and 0x04, but this is not a hard limit as explained above.   
 
+The response will be in the form of \<Response> \<Info>.   
+\<Info> is a \<Error> if \<Response> was "Not Acknowledged" or 0x00, or is the \<Slot> passed to the system if \<Response> was "Acknowledged" or 0x01.
 
+Possible responses are:
+```
+/* Acknowledged. Image has been successfully stored at slot 0x04 */
+0x01 0x04
+
+/* Not Acknowledged. The given <Slot> was out of bounds */
+0x00 0x02
+
+/* See the Possibly Asked Questions(PAQ) section below */
+0x00 0x00
+
+/* See the Possibly Asked Questions(PAQ) section below */
+0x00 0x01
+
+```
+Example of Usage:   
+```
+/* (Success) Signals the IMG system to take a picture with result stored at slot 0x01 */
+0x00 0x01 
+
+/* (Success) Signals the IMG system to take a picture with result stored at slot 0x03 */
+0x00 0x03 
+
+/* (Fail) Slot at 0x05 is out of bounds */
+0x00 0x05 
+```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail Size
 
@@ -101,6 +136,11 @@ Invalid Integer      | 0x03
 
 
 
+## Possibly Asked Questions(PAQ)
+I've received bytes 0x00 0x00 from the IMG system. What does this mean?
+> "Not Acknowledged. Incomplete Command Error was thrown." 
+> This can happen if there was too much delay between sending byte.
+
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
@@ -122,6 +162,7 @@ MAX_SET_CBE_ATTEMPTS    = 40 <==> MSCA(40)
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/Initialization_Flowchart.png" width="750" title="Initialization Flowchart">
 </p>
 
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 After initialization, the system waits for command bytes from an external device, and executes the commands if valid, as shown below.
 <p align="center">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/Runtime_Flowchart.png" width="750" title="Operation Mode Flowchart">
