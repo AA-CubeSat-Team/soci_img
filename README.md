@@ -74,18 +74,18 @@ Usage: \<Command> \<Slot>
 Signals the IMG system to take a picture and generate a thumbnail to store at \<Slot>   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
-The response will be in the form of \<Response> \<Info>.   
-\<Info> is a \<Error> if \<Response> was "Not Acknowledged" or 0x00, or is the \<Slot> passed to the system if \<Response> was "Acknowledged" or 0x01.
+If successful, the response will be in the form of \<Response> \<Slot>   
+If failed, the response will be in the form of \<Response> \<Error>   
 
 #### Example of Usage:   
 ```
-/* (Success) Signals the IMG system to take a picture at slot 0x01 (Will succeed) */
+/* Signals the IMG system to take a picture at slot 0x01 (Will succeed) */
 0x00 0x01 
 
-/* Signals the IMG system to take a picture at slot 0x03. (Will succeed) */
+/* Signals the IMG system to take a picture at slot 0x03 (Will succeed) */
 0x00 0x03 
 
-/* Signals the IMG system to take a picture at slot 0x03. (Will fail: Slot at 0x05 is invalid */
+/* Signals the IMG system to take a picture at slot 0x03 (Will fail: Slot at 0x05 is invalid) */
 0x00 0x05 
 ```
 
@@ -105,8 +105,29 @@ The response will be in the form of \<Response> \<Info>.
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail Size
+Usage: \<Command> \<Slot>   
+Requests the size of the thumbnail stored at \<Slot>   
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
+If successful, the response will be in the form of \<Response> \<Size High Byte> \<Size Low Byte>   
+If failed, the response will be in the form of \<Response> \<Error>   
 
+#### Example of Usage:  
+```
+/* Requests the size of thumbnail at slot 0x02 (Will succeed) */
+0x01 0x02 
+
+/* Requests the size of thumbnail at slot 0x04 (Will succeed) */
+0x01 0x04 
+
+/* Requests the size of thumbnail at slot 0x03 (Will fail: Slot at 0x05 is invalid) */
+0x01 0x05 
+```
+
+#### Possible responses are:
+```
+
+```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture Size 
 
