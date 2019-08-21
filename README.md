@@ -77,6 +77,18 @@ Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a ha
 The response will be in the form of \<Response> \<Info>.   
 \<Info> is a \<Error> if \<Response> was "Not Acknowledged" or 0x00, or is the \<Slot> passed to the system if \<Response> was "Acknowledged" or 0x01.
 
+#### Example of Usage:   
+```
+/* (Success) Signals the IMG system to take a picture at slot 0x01 (Will succeed) */
+0x00 0x01 
+
+/* Signals the IMG system to take a picture at slot 0x03. (Will succeed) */
+0x00 0x03 
+
+/* Signals the IMG system to take a picture at slot 0x03. (Will fail: Slot at 0x05 is invalid */
+0x00 0x05 
+```
+
 #### Possible responses are:
 ```
 /* Acknowledged. Image has been successfully stored at slot 0x04 */
@@ -90,18 +102,6 @@ The response will be in the form of \<Response> \<Info>.
 
 /* See the Possibly Asked Questions(PAQ) section below */
 0x00 0x01
-```
-
-#### Example of Usage:   
-```
-/* (Success) Signals the IMG system to take a picture at slot 0x01 (Will succeed) */
-0x00 0x01 
-
-/* Signals the IMG system to take a picture at slot 0x03. (Will succeed) */
-0x00 0x03 
-
-/* Signals the IMG system to take a picture at slot 0x03. (Will fail: Slot at 0x05 is invalid */
-0x00 0x05 
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail Size
