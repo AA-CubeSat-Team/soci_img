@@ -313,7 +313,7 @@ If failed, the response will be in the form of \<Response> \<Error>
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Sleep Time 
 Usage: \<Command> \<Seconds>   
-**Sets the time in seconds the system needs to idle before entering low power mode**
+**Sets the time in seconds the system needs to idle before entering low power mode**   
 When \<Seconds> is set to 0x00, the system will not sleep.
 
 If successful, the response will be in the form of \<Response> \<Seconds>   
