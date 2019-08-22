@@ -3,29 +3,7 @@
  * 
  * Author: Haomin Yu
  */
-#include "sdReadWrite.h"
-
-/* Function prototypes */
-bool sendCommand(char commandByte,
-                 char parameter1, char parameter2,
-                 char parameter3, char parameter4);
-void sendExternalError(char param2);
-void sendExternalACK(char param2);
-void sendFileSize(int fileSize);
-bool receiveAckCommand(char commandID);
-void hardwareReset(int resetPin, int msec);
-void ackPackage(unsigned int ID);
-bool receivePackage(unsigned int ID);
-bool readData(byte pictureType, unsigned int packageSize, unsigned int slot);
-
-/* Class Constants */
-const static unsigned short ERROR_RESPONSE_SIZE = 2;
-const static unsigned short   ACK_RESPONSE_SIZE = 2;
-const static unsigned short  SIZE_RESPONSE_SIZE = 3;
-
-/* Possible Responses */
-const static byte NAK = 0x00;
-const static byte ACK = 0x01;
+#include "SDReadWrite.h"
 
 /*
  * Sends a command in the form of described in Page 8 of
@@ -35,9 +13,9 @@ const static byte ACK = 0x01;
 bool sendCommand(char commandByte,
                  char parameter1, char parameter2,
                  char parameter3, char parameter4) {
-  byte toSend[uCamIII_CMD_SIZE] = {uCamIII_STARTBYTE, commandByte,
-                                   parameter1, parameter2,
-                                   parameter3, parameter4};
+  byte toSend[] = {uCamIII_STARTBYTE, commandByte,
+                   parameter1, parameter2,
+                   parameter3, parameter4};
   SoftSer.write(toSend, sizeof(toSend));
 }
 
@@ -46,7 +24,7 @@ bool sendCommand(char commandByte,
  * given 'param2' in the form of <NAK> <param2>
  */
 void sendExternalError(char param2) {
-  byte toSend[ERROR_RESPONSE_SIZE] = {NAK, param2};
+  byte toSend[] = {NAK, param2};
   Serial.write(toSend, sizeof(toSend));
 }
 
@@ -55,7 +33,7 @@ void sendExternalError(char param2) {
  * given 'param2' in the form of <ACK> <param2>
  */
 void sendExternalACK(byte param2) {
-  byte toSend[ACK_RESPONSE_SIZE] = {ACK, param2};
+  byte toSend[] = {ACK, param2};
   Serial.write(toSend, sizeof(toSend));
 }
 
@@ -64,8 +42,7 @@ void sendExternalACK(byte param2) {
  * given 'fileSize' in the form of <ACK> <HighByte> <LowByte>
  */
 void sendFileSize(int fileSize) {
-  byte toSend[SIZE_RESPONSE_SIZE] 
-    = {ACK, (fileSize >> 8) & 0xFF, fileSize & 0xFF};
+  byte toSend[] = {ACK, (fileSize >> 8) & 0xFF, fileSize & 0xFF};
   Serial.write(toSend, sizeof(toSend));
 }
 

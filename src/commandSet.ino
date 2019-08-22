@@ -5,16 +5,6 @@
  */
 #include "uCamIII.h"
 
-/* Function prototypes */
-bool syncCamera();
-bool resetCamera(char resetType);
-bool initializeCamera(char format, char rawResolution, char jpgResolution);
-bool setPackageSize(unsigned int packageSize);
-bool setCBE(char contrast, char brightness, char exposure);
-bool setSleepTime(char seconds);
-bool takeSnapshot(char snapshotType);
-bool takePicture(char pictureType);
-
 /* Defined maximum attempts */
 static const unsigned short MAX_SYNC_ATTEMPTS       = 60;
 static const unsigned short MAX_RESET_ATTEMPTS      = 40;

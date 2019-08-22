@@ -4,88 +4,66 @@
  * Author: Haomin Yu
  */
 
-/* Function Prototypes */
-bool takeSnapshot(char snapshotType);
-bool takePicture(char pictureType);
-bool readData(byte pictureType, unsigned int packageSize, unsigned int slot);
-bool setCBE(char contrast, char brightness, char exposure);
-bool setSleepTime(char seconds);
-void sendExternalError(char param2);
-void sendExternalACK(char param2);
-void sendFileSize(int fileSize);
-
 /**
- * See https://github.com/AA-CubeSat-Team/soci_img/blob/master/MSP430F5529_Test_1/README.md
- * for what this method expects
+ * For what this method expects, see:
+ * https://github.com/AA-CubeSat-Team/soci_img
  */
 void interpretCommand(byte command, byte param2) {
   switch(command) {
     case TAKE_PICTURE:
-      if(isSlotValid(param2)) {
+      if(ensureSlotValid(param2)) {
         // Take small resolution picture
-        takeSnapshot(SNAP_TYPE);
+        takeSnapshot(uCamIII_SNAP_JPEG);
         takePicture(uCamIII_TYPE_SNAPSHOT);
-        readData(uCamIII_TYPE_SNAPSHOT, PACKAGE_SIZE, param2);
+        readData(uCamIII_TYPE_SNAPSHOT, uCamIII_PACKAGE_SIZE, param2);
         // Change settings to high resolution
-        initializeCamera(uCamIII_640x480, IMAGE_RES, IMAGE_RES);
+        initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480);
         // Take high resolution picture
-        takeSnapshot(SNAP_TYPE);
+        takeSnapshot(uCamIII_SNAP_JPEG);
         takePicture(uCamIII_TYPE_SNAPSHOT);
-        readData(uCamIII_TYPE_SNAPSHOT, PACKAGE_SIZE, param2);
+        readData(uCamIII_TYPE_SNAPSHOT, uCamIII_PACKAGE_SIZE, param2);
         // Change settings to low resolution
-        initializeCamera(uCamIII_160x128, IMAGE_RES, IMAGE_RES);
+        initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128);
       }
       break;
     case GET_THUMBNAIL_SIZE:
-      if(isSlotValid(param2)) {
+      if(ensureSlotValid(param2)) {
         sendFileSize(SD.open(thumbnailNames[param2], FILE_READ).size());
       }
       break;
     case GET_PICTURE_SIZE:
-      if(isSlotValid(param2)) {
+      if(ensureSlotValid(param2)) {
         sendFileSize(SD.open(pictureNames[param2], FILE_READ).size());
       }
       break;
     case GET_THUMBNAIL:
-      if(isSlotValid(param2)) {
-        sdReadFileAndTransmit(thumbnailNames[param2]);
+      if(ensureSlotValid(param2)) {
+        sdReadAndTransmit(thumbnailNames[param2]);
       }
       break;
     case GET_PICTURE:
-      if(isSlotValid(param2)) {
-        sdReadFileAndTransmit(pictureNames[param2]);
+      if(ensureSlotValid(param2)) {
+        sdReadAndTransmit(pictureNames[param2]);
       }
       break;
     case SET_CONTRAST:
-      if(isIntegerParamValid(param2)) {
+      if(ensureIntegerValid(param2)) {
         sendExternalACK(param2);
-      }
-      else {
-        sendExternalError(param2);
       }
       break;
     case SET_BRIGTHNESS:
-      if(isIntegerParamValid(param2)) {
+      if(ensureIntegerValid(param2)) {
         sendExternalACK(param2);
-      }
-      else {
-        sendExternalError(param2);
       }
       break;
     case SET_EXPOSURE:
-      if(isIntegerParamValid(param2)) {
+      if(ensureIntegerValid(param2)) {
         sendExternalACK(param2);
-      }
-      else {
-        sendExternalError(param2);
       }
       break;
     case SET_SLEEP_TIME:
       if(setSleepTime(param2)) {
         sendExternalACK(param2);
-      }
-      else {
-        sendExternalError(param2);
       }
       break;
     default:
@@ -94,12 +72,22 @@ void interpretCommand(byte command, byte param2) {
   }
 }
 
-/* 'slot' is required to be in range of 0x00 and 0x04, or PICTURE_1 and PICTURE_5 */
-boolean isSlotValid(byte slot) {
-  return (slot >= PICTURE_1) && (slot <= PICTURE_5);
+/* Ensures given 'slot' is in range of 0x00 inclusive and MAX_PICTURES exclusive 
+ * Sends <NAK> <INVALID_SLOT> to external device if not valid(I.e. "In range")
+ * Returns whether the 'slot' is valid
+ */
+bool ensureSlotValid(byte slot) {
+  bool isValid = (slot >= 0x00) && (slot < (byte)MAX_PICTURES);
+  if (!isValid) {sendExternalError(INVALID_SLOT);}
+  return isValid;
 }
 
-/* 'integerParam' is required to be in range of 0x00 and 0x04 inclusive */
-boolean isIntegerParamValid(byte integerParam) {
-  return (integerParam >= 0x00) && (integerParam <= 0x04);
+/* Ensures given 'integerParam' is in range of uCamIII_MIN and uCamIII_MAX inclusive 
+ * Sends <NAK> <INVALID_INTEGER> to external device if not valid(I.e. "In range")
+ * Returns whether the 'integerParam' is valid
+ */
+bool ensureIntegerValid(byte integerParam) {
+  bool isValid = (integerParam >= uCamIII_MIN) && (integerParam <= uCamIII_MIN);
+  if (!isValid) {sendExternalError(INVALID_INTEGER);}
+  return isValid;
 }
