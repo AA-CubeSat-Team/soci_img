@@ -4,13 +4,6 @@
 Directory for uCamIII tests on Arduino Uno or related hardware
 
 ```diff
-# Arduino_Test_4
-Directory for testing image transmission with Arduino Pro Mini and uCamIII, with
-attached external SD card
-- Under Development
-```
-
-```diff
 # Arduino_Test_3
 Directory for testing image transmission with Arduino Uno and uCamIII(Stable Version)
 + Version Stable as of June 12, 2019
