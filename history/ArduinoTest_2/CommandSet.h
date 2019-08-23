@@ -2,9 +2,7 @@
  * This file holds the byde code which represents
  * the command set for the camera (uCAM-III)
  * 
- * Author: Haomin Yu
  */
-#pragma once
 
 #ifndef _COMMANDSET_H_
 #define _COMMANDSET_H_

@@ -2,7 +2,7 @@
 extern "C" {
   #include <SoftwareSerial.h>
   #include <stdbool.h>
-  #include "commandSet.h"
+  #include "CommandSet.h"
 }
 /*
  * Simple Test to assess the communication
@@ -11,7 +11,6 @@ extern "C" {
  * NOTE: It is highly recommended that the Reset pin
  *       is connected, although it is optional
  * 
- * Author: Haomin Yu
  */
 // Pin Declaration
 static const int Reset = 7;
@@ -21,7 +20,7 @@ SoftwareSerial SoftSer(2,3);
 
 void setup() {
   Serial.begin(9600);
-  SoftSer.begin(115200);
+  SoftSer.begin(57600);
   pinMode(Reset, OUTPUT);
   digitalWrite(Reset, LOW);
   delay(5);
@@ -32,6 +31,7 @@ void setup() {
     sendAckSyncCommand();
     if(receivedSync) {
       Serial.println("Initialization Successful!");
+      takePictureJPEG_640_480();
     }
     else {
       Serial.println("Received ACK but not SYNC");
@@ -41,6 +41,5 @@ void setup() {
     Serial.println("Initialization Failed!");
   }
 }
-
 
 void loop() {}

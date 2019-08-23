@@ -7,11 +7,10 @@
  * txPin <--> RX of uCAM
  * Reset <--> Reset of uCAM
  * 
- * Author: Haomin Yu
  */
 #include <SoftwareSerial.h>
 #include "ArduinoCommunication.h"
-#include "commandSet.h"
+#include "CommandSet.h"
 #include "uCamIII.h"
 
 // Pin Assignments

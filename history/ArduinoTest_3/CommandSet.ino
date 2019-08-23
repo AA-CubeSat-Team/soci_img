@@ -1,7 +1,6 @@
 /*
  * This file implements only the necessary functions for the AACT team
  * 
- * Author: Haomin Yu
  */
 #include <stdbool.h>
 #include "uCamIII.h"

@@ -1,7 +1,7 @@
 // Compiler Linkage
 extern "C" {
   #include <stdbool.h>
-  #include "commandSet.h"
+  #include "CommandSet.h"
 }
 
 /*
@@ -9,7 +9,6 @@ extern "C" {
  * the uCAM-III device
  * (Designed for Arduino Uno or similar hardware)
  * 
- * Author: Haomin Yu
  */
 
 /*

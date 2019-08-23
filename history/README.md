@@ -1,28 +1,28 @@
 # Development History
 
-## Arduino_Test_*
+## ArduinoTest_*
 Directory for uCamIII tests on Arduino Uno or related hardware
 
 ```diff
-# Arduino_Test_3
+# ArduinoTest_3
 Directory for testing image transmission with Arduino Uno and uCamIII(Stable Version)
 + Version Stable as of June 12, 2019
 ```
 
 ```diff
-# Arduino_Test_2
+# ArduinoTest_2
 Directory for testing image transmission with Arduino Uno and uCamIII(Prototype Version)
 + Data Transmission Successful as of May 24, 2019
 ```
 
 ```diff
-# Arduino_Test_1
+# ArduinoTest_1
 Directory for testing data syncing with Arduino Uno and uCamIII
 + Sync Successful as of May 8, 2019
 ```
 
 ```diff
-# Arduino_Test_Unit
+# ArduinoTest_Unit
 Directory for unit testing functionalities for Arduino related devices
 ```
 

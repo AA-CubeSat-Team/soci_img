@@ -1,8 +1,7 @@
 /*
  * Compiler linkage for public function declared in 
- * commandSet.c
+ * CommandSet.c
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __COMMANDSET_H__
