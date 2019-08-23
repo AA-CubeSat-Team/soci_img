@@ -25,8 +25,8 @@ static const int resetPin = 7;
 
 /**
  * Setting up software serial
- * (pin 2 of Arduino -> TX of uCAM)
- * (pin 3 of Arduino -> RX of uCAM)
+ * (pin 2 of Arduino -> TX of uCamIII)
+ * (pin 3 of Arduino -> RX of uCamIII)
  */
 SoftwareSerial SoftSer(rxPin, txPin);
 
@@ -58,12 +58,15 @@ void setup() {
 void loop() {
   if (Serial.available() > 0) {
     byte command = Serial.read();
-    delay(COMMAND_WAIT_TIME);
-    if (Serial.available() > 0) {
-      interpretCommand(command, Serial.read());
+    unsigned long startTime = millis();
+    bool timedOut = true;
+    while ((millis() - startTime) < COMMAND_WAIT_TIME) {
+      if (Serial.available() > 0) {
+        interpretCommand(command, Serial.read());
+        timedOut = false;
+        break;
+      }
     }
-    else {
-      sendExternalError(INCOMPLETE_COMMAND);
-    }
+    if (timedOut) {sendExternalError(INCOMPLETE_COMMAND);}
   }
 }
