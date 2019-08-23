@@ -1,7 +1,6 @@
 /*
  * Declarations for functions declared in performance.ino
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __PERFORMANCE_TESTS_H__

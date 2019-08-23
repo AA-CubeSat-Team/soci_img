@@ -1,7 +1,6 @@
 /*
  * Declarations for functions declared in unit.ino
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __UNIT_H__
