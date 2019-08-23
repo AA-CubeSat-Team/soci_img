@@ -123,10 +123,6 @@ bool receivePackage(unsigned int ID, File toWrite) {
     byte incomingData = SoftSer.read();
     verifySum += (unsigned int)incomingData;
       toWrite.write(incomingData);
-//    if(incomingData < 0x10) {
-//      Serial.print(0x00, HEX);
-//    }
-//    Serial.print(incomingData, HEX);
   }
   Serial.println();
   // Checking verify code
@@ -153,10 +149,7 @@ bool readData(byte pictureType, unsigned int packageSize, unsigned int slot) {
   if(SoftSer.read() != uCamIII_STARTBYTE || SoftSer.read() != uCamIII_CMD_DATA ||
      SoftSer.read() != pictureType) {return false;}
   unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16;
-  //Serial.print("Received image size = "); Serial.print(imageSize); Serial.println(" bytes"); 
   int packages = ceil(imageSize * 1.0 / (packageSize - 6));
-  //sdWriteImageInfo(imageSize);
-  //Serial.print("Total of "); Serial.print(packages); Serial.println(" packages");
   ackPackage(0);
   delay(5);
   for(int i = 1; i <= packages; i++) {
