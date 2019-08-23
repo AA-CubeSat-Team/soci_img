@@ -1,7 +1,6 @@
-/*
+/**
  * Functions to send and receive data through arduino serial
  * 
- * Author: Haomin Yu
  */
 #include "SDReadWrite.h"
 

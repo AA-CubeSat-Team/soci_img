@@ -1,8 +1,7 @@
-/*
+/**
  * Compiler linkage for public function declared in 
- * sdReadWrite.c
+ * SDReadWrite.c
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __SDREADWRITE_H__

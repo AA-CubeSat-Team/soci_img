@@ -1,4 +1,4 @@
-/*
+/**
  * Stable implementation for commands of 
  * uCamIII for the AACT IMG team
  * 
@@ -7,7 +7,6 @@
  * txPin <--> RX of uCAM
  * Reset <--> Reset of uCAM
  * 
- * Author: Haomin Yu
  */
 #include <SD.h>
 #include <SoftwareSerial.h>

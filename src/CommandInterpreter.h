@@ -1,8 +1,7 @@
-/*
+/**
  * Compiler linkage for public function declared in 
- * commandInterpreter.ino
+ * CommandInterpreter.ino
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __COMMAND_INTERPRETER_H__

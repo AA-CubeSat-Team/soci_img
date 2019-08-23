@@ -1,7 +1,6 @@
-/*
- * Constants for the IMG system
+/**
+ * Constants for the IMG interface system
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __SYSTEM_CONSTANTS_H__

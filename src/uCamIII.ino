@@ -1,7 +1,6 @@
-/*
+/**
  * Contains supporting commands for the uCamIII
  * 
- * Author: Haomin Yu
  */
 #include "ArduinoCommunication.h"
 #include "uCamIII.h"

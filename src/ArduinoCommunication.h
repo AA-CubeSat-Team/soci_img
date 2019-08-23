@@ -1,8 +1,7 @@
-/*
+/**
  * Compiler linkage for public function declared in 
- * Arduino_Communication.ino
+ * ArduinoCommunication.ino
  * 
- * Author: Haomin Yu
  */
 
 #ifndef __ARDUINO_COMMUNICATION_H__

@@ -1,7 +1,6 @@
 /**
  * Interprets commands incoming from external hardware
  * 
- * Author: Haomin Yu
  */
 
 /**
