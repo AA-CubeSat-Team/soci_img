@@ -264,8 +264,23 @@ void testSetExposure() {
 }
 
 /**
- * 
+ * Tests the SET_SLEEP_TIME command, which sets the sleep time countdown
+ * for the system
+ * (Systems need to be reset since test debug with serial)
  */
 void testSetSleepTime() {
-  
+  /* Trying every possible sleep time */
+  for(byte i = 0x00; i <= 0xFF; i++) {
+    sendCommand(SET_SLEEP_TIME, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte seconds = Serial.read();
+    if(response != ACK || seconds != i) {
+      Serial.print("FAIL: Did not give proper response when seconds = "); Serial.println(i);
+      while(true) {}
+    }
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for SET_SLEEP_TIME!");
 }
