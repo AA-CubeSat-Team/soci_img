@@ -38,12 +38,12 @@ void interpretCommand(byte command, byte param2) {
       break;
     case GET_THUMBNAIL:
       if(ensureSlotValid(param2)) {
-        sdReadAndTransmit(thumbnailNames[param2]);
+        sdReadAndTransmit(ensureFileExists(thumbnailNames[param2], param2));
       }
       break;
     case GET_PICTURE:
       if(ensureSlotValid(param2)) {
-        sdReadAndTransmit(pictureNames[param2]);
+        sdReadAndTransmit(ensureFileExists(pictureNames[param2], param2));
       }
       break;
     case SET_CONTRAST:
@@ -72,7 +72,8 @@ void interpretCommand(byte command, byte param2) {
   }
 }
 
-/* Ensures given 'slot' is in range of 0x00 inclusive and MAX_PICTURES exclusive 
+/**
+ * Ensures given 'slot' is in range of 0x00 inclusive and MAX_PICTURES exclusive 
  * Sends <NAK> <INVALID_SLOT> to external device if not valid(I.e. "In range")
  * Returns whether the 'slot' is valid
  */
@@ -82,7 +83,8 @@ bool ensureSlotValid(byte slot) {
   return isValid;
 }
 
-/* Ensures given 'integerParam' is in range of uCamIII_MIN and uCamIII_MAX inclusive 
+/**
+ * Ensures given 'integerParam' is in range of uCamIII_MIN and uCamIII_MAX inclusive 
  * Sends <NAK> <INVALID_INTEGER> to external device if not valid(I.e. "In range")
  * Returns whether the 'integerParam' is valid
  */
@@ -90,4 +92,17 @@ bool ensureIntegerValid(byte integerParam) {
   bool isValid = (integerParam >= uCamIII_MIN) && (integerParam <= uCamIII_MIN);
   if (!isValid) {sendExternalError(INVALID_INTEGER);}
   return isValid;
+}
+
+/**
+ * Ensures file with 'fileName' exists in the SD card
+ * Sends <ACK> <Slot> to external device if file exists
+ * Sends <NAK> <INVALID_COMMAND> to external device if not
+ * Returns the file opened in read mode
+ */
+File ensureFileExists(String fileName, byte slot) {
+  File file = SD.open(fileName, FILE_READ);
+  if (file) {sendExternalACK(slot);}
+  else {sendExternalError(INVALID_COMMAND);}
+  return file;
 }
