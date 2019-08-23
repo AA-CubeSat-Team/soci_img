@@ -29,6 +29,12 @@ static const byte SET_SLEEP_TIME     = 0x08;
 static const byte NAK = 0x00;
 static const byte ACK = 0x01;
 
+/* Possible errors */
+static const byte INCOMPLETE_COMMAND = 0x00;
+static const byte INVALID_COMMAND    = 0x01;
+static const byte INVALID_SLOT       = 0x02;
+static const byte INVALID_INTEGER    = 0x03;
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
