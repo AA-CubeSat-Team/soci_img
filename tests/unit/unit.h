@@ -35,6 +35,10 @@ static const byte INVALID_COMMAND    = 0x01;
 static const byte INVALID_SLOT       = 0x02;
 static const byte INVALID_INTEGER    = 0x03;
 
+/* Files names for pictures and thumbnails */
+static const String pictureNames[]   = {"P0.jpg", "P1.jpg", "P2.jpg", "P3.jpg", "P4.jpg"};
+static const String thumbnailNames[] = {"T0.jpg", "T1.jpg", "T2.jpg", "T3.jpg", "T4.jpg"};
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

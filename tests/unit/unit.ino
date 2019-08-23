@@ -7,9 +7,18 @@
  */
 #include "unit.h"
 
+/* Only uncomment one at a time */
 void setup() {
   Serial.begin(115200);
   //testTakePicture();
+  //testGetThumbnailSize();
+  //testGetPictureSize();
+  //testGetThumbnail();
+  //testGetPicture();
+  //testSetContrast();
+  //testSetBrightness();
+  //testSetExposure();
+  //testSetSleepTime();
 }
 
 void loop() {}
@@ -51,7 +60,7 @@ void checkInvalidSlot(byte command) {
 
 /**
  * Tests the TAKE_PICTURE command, which saves the picture and
- * thumbnail to the SD card. Will require manual verification
+ * thumbnail to the SD card. Will require manual verification.
  * (Systems need to be reset since test debug with serial)
  */
 void testTakePicture() {
@@ -70,6 +79,74 @@ void testTakePicture() {
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests!");
+  Serial.println("SUCCESS: Passed all tests for TAKE_PICTURE!");
   Serial.println("Requires manual checking: Verify files in SD card");
+}
+
+/**
+ * Tests the GET_THUMBNAIL_SIZE command, which returns the size
+ * of the thumbnail stored in the SD card. Will require manual verification.
+ * Assumes that files were already created via the TAKE_PICTURE command
+ * (Systems need to be reset since test debug with serial)
+ */
+void testGetThumbnailSize() {
+  /* Checking error detection of INVALID_SLOT */
+  checkInvalidSlot(GET_THUMBNAIL_SIZE);
+  /* Checking reponse of valid command */
+  unsigned int returnedSizes[IMAGES_COUNT];
+  for(byte i = 0; i < IMAGES_COUNT; i++) {
+    sendCommand(GET_THUMBNAIL_SIZE, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeHighByte = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeLowByte = Serial.read();
+    if(response != ACK) {
+      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+      while(true) {}
+    }
+    returnedSizes[i] = sizeHighByte << 8 | sizeLowByte;
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for GET_THUMBNAIL_SIZE!");
+  Serial.println("Requires manual checking: Verify the following sizes");
+  for(int i = 0; i < IMAGES_COUNT; i++) {
+    Serial.print(thumbnailNames[i]); Serial.print(" has a total of ");
+    Serial.print(returnedSizes[i]);  Serial.println(" bytes");
+  }
+}
+
+/**
+ * Tests the GET_PICTURE_SIZE command, which returns the size
+ * of the picture stored in the SD card. Will require manual verification.
+ * Assumes that files were already created via the TAKE_PICTURE command
+ * (Systems need to be reset since test debug with serial)
+ */
+void testGetPictureSize() {
+  /* Checking error detection of INVALID_SLOT */
+  checkInvalidSlot(GET_PICTURE_SIZE);
+  /* Checking reponse of valid command */
+  unsigned int returnedSizes[IMAGES_COUNT];
+  for(byte i = 0; i < IMAGES_COUNT; i++) {
+    sendCommand(GET_PICTURE_SIZE, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeHighByte = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeLowByte = Serial.read();
+    if(response != ACK) {
+      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+      while(true) {}
+    }
+    returnedSizes[i] = sizeHighByte << 8 | sizeLowByte;
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for GET_PICTURE_SIZE!");
+  Serial.println("Requires manual checking: Verify the following sizes");
+  for(int i = 0; i < IMAGES_COUNT; i++) {
+    Serial.print(pictureNames[i]);  Serial.print(" has a total of ");
+    Serial.print(returnedSizes[i]); Serial.println(" bytes");
+  }
 }
