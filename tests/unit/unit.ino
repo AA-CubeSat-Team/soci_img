@@ -39,8 +39,16 @@ bool isSlotValid(byte slot) {
 }
 
 /**
+ * Returns whether the given 'CBEValue' is valid
+ */
+bool isCBEValid(byte CBEValue) {
+  return (CBEValue >= 0x00) && (CBEValue <= 0x04);
+}
+
+/**
  * Checks whether the IMG system throws an error when
  * given an invalid slot
+ * (Assumes the given 'command' uses a slot)
  */
 void checkInvalidSlot(byte command) {
   for(byte i = 0x00; i <= 0xFF; i++) {
@@ -51,6 +59,27 @@ void checkInvalidSlot(byte command) {
       while(Serial.available() == 0) {}
       byte error = Serial.read();
       if(response != NAK || error != INVALID_SLOT) {
+        Serial.print("FAIL: Did not throw error when slot = "); Serial.println(i);
+        while(true) {}
+      }
+    }
+  }
+}
+
+/**
+ * Checks whether the IMG system throw an error upon
+ * an invalid CBE setting
+ * (Assumes the given 'command' is one of CBE)
+ */
+void checkInvalidCBEValue(byte command) {
+  for(byte i = 0x00; i <= 0xFF; i++) {
+    if(!isCBEValid(i)) {
+      sendCommand(command, i);
+      while(Serial.available() == 0) {}
+      byte response = Serial.read();
+      while(Serial.available() == 0) {}
+      byte error = Serial.read();
+      if(response != NAK || error != INVALID_INTEGER) {
         Serial.print("FAIL: Did not throw error when slot = "); Serial.println(i);
         while(true) {}
       }
@@ -149,4 +178,94 @@ void testGetPictureSize() {
     Serial.print(pictureNames[i]);  Serial.print(" has a total of ");
     Serial.print(returnedSizes[i]); Serial.println(" bytes");
   }
+}
+
+/**
+ * 
+ */
+void testGetThumbnail() {
+  
+}
+
+/**
+ * 
+ */
+void testGetPicture() {
+  
+}
+
+/**
+ * Tests the SET_CONTRAST command, which sets the contrast of future images
+ * (Systems need to be reset since test debug with serial)
+ */
+void testSetContrast() {
+  /* Checking error detection of INVALID_INTEGER */
+  checkInvalidCBEValue(SET_CONTRAST);
+  /* Checking reponse of valid command */
+  for(byte i = 0x00; i <= 0x04; i++) {
+    sendCommand(SET_CONTRAST, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte CBEValue = Serial.read();
+    if(response != ACK || CBEValue != i) {
+      Serial.print("FAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+      while(true) {}
+    }
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for SET_CONTRAST!");
+}
+
+/**
+ * Tests the SET_BRIGTHNESS command, which sets the contrast of future images
+ * (Systems need to be reset since test debug with serial)
+ */
+void testSetBrightness() {
+  /* Checking error detection of INVALID_INTEGER */
+  checkInvalidCBEValue(SET_BRIGTHNESS);
+  /* Checking reponse of valid command */
+  for(byte i = 0x00; i <= 0x04; i++) {
+    sendCommand(SET_BRIGTHNESS, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte CBEValue = Serial.read();
+    if(response != ACK || CBEValue != i) {
+      Serial.print("FAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+      while(true) {}
+    }
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for SET_BRIGTHNESS!");
+}
+
+/**
+ * Tests the SET_EXPOSURE command, which sets the contrast of future images
+ * (Systems need to be reset since test debug with serial)
+ */
+void testSetExposure() {
+  /* Checking error detection of INVALID_INTEGER */
+  checkInvalidCBEValue(SET_EXPOSURE);
+  /* Checking reponse of valid command */
+  for(byte i = 0x00; i <= 0x04; i++) {
+    sendCommand(SET_EXPOSURE, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte CBEValue = Serial.read();
+    if(response != ACK || CBEValue != i) {
+      Serial.print("FAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+      while(true) {}
+    }
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for SET_EXPOSURE!");
+}
+
+/**
+ * 
+ */
+void testSetSleepTime() {
+  
 }
