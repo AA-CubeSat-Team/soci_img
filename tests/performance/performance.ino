@@ -5,7 +5,7 @@
  * 
  * Author: Haomin Yu
  */
-#include "Performance_Tests.h"
+#include "performance.h"
 
 /* Unused port used for the seed of random generation */
 static const unsigned short UNUSED_PORT = A0;
