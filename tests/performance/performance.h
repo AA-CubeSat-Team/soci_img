@@ -1,5 +1,5 @@
 /*
- * Declarations for functions declared in Performance_Tests.ino
+ * Declarations for functions declared in performance.ino
  * 
  * Author: Haomin Yu
  */
