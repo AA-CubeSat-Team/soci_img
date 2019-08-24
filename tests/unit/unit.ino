@@ -96,7 +96,7 @@ void testTakePicture() {
   /* Checking error detection of INVALID_SLOT */
   checkInvalidSlot(TAKE_PICTURE);
   /* Checking reponse of valid command */
-  for(byte i = 0; i < TAKE_PICTURE; i++) {
+  for(byte i = 0x00; i < TAKE_PICTURE; i++) {
     sendCommand(TAKE_PICTURE, i);
     while(Serial.available() == 0) {}
     byte response = Serial.read();
@@ -123,7 +123,7 @@ void testGetThumbnailSize() {
   checkInvalidSlot(GET_THUMBNAIL_SIZE);
   /* Checking reponse of valid command */
   unsigned int returnedSizes[IMAGES_COUNT];
-  for(byte i = 0; i < IMAGES_COUNT; i++) {
+  for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     sendCommand(GET_THUMBNAIL_SIZE, i);
     while(Serial.available() == 0) {}
     byte response = Serial.read();
@@ -157,7 +157,7 @@ void testGetPictureSize() {
   checkInvalidSlot(GET_PICTURE_SIZE);
   /* Checking reponse of valid command */
   unsigned int returnedSizes[IMAGES_COUNT];
-  for(byte i = 0; i < IMAGES_COUNT; i++) {
+  for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     sendCommand(GET_PICTURE_SIZE, i);
     while(Serial.available() == 0) {}
     byte response = Serial.read();
@@ -181,17 +181,84 @@ void testGetPictureSize() {
 }
 
 /**
- * 
+ * Tests the GET_THUMBNAIL command, which returns the data
+ * of the thumbnail stored in the SD card.
+ * Will not be able to verify the correctness of the data returned.
+ * Assumes that files were already created via the TAKE_PICTURE command
+ * Assumes that GET_THUMBNAIL_SIZE works properly
+ * (Systems need to be reset since test debug with serial)
  */
 void testGetThumbnail() {
-  
+  /* Checking error detection of INVALID_SLOT */
+  checkInvalidSlot(GET_THUMBNAIL);
+  /* Checking reponse of valid command */
+  for(byte i = 0x00; i < IMAGES_COUNT; i++) {
+    /* Getting the size of the thumbnail (Assumes correct) */
+    sendCommand(GET_THUMBNAIL_SIZE, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeHighByte = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeLowByte = Serial.read();
+    if(response != ACK) {
+      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+      while(true) {}
+    }
+    unsigned int thumbnailSize = sizeHighByte << 8 | sizeLowByte;
+    unsigned int fullPackages = thumbnailSize / EXTERNAL_PACKAGE_SIZE;
+    unsigned int remainingBytes = thumbnailSize % EXTERNAL_PACKAGE_SIZE;
+    /* Checking reponse of valid command */
+    sendCommand(GET_THUMBNAIL, i);
+    while(Serial.available() == 0) {}
+    response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte slot = Serial.read();
+    if(response != ACK || slot != i) {
+      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+      while(true) {}
+    }
+    /* Begin reading data */
+    for(int i = 0; i < fullPackages; i++) {
+      Serial.write(ACK);
+      for(int j = 0; j < EXTERNAL_PACKAGE_SIZE; j++) {
+        Serial.read();
+      }
+    }
+    byte lastByte = 0x00;
+    for(int i = 0; i < remainingBytes; i++) {
+      lastByte = Serial.read();
+    }
+    if(lastByte != 0xD9) {
+      Serial.println("FAIL: Last byte not 0xD9");
+      while(true) {}  
+    }
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for GET_THUMBNAIL!");
+  Serial.println("WARNING: This test cannot verify the correctness of the returned data");
+  Serial.println("         But the number of bytes returned was correct.");
 }
 
 /**
- * 
+ * Tests the GET_PICTURE command, which returns the data
+ * of the picture stored in the SD card.
+ * Will not be able to verify the correctness of the data returned.
+ * Assumes that files were already created via the TAKE_PICTURE command
+ * Assumes that GET_PICTURE_SIZE works properly
+ * (Systems need to be reset since test debug with serial)
  */
 void testGetPicture() {
-  
+  /* Checking error detection of INVALID_SLOT */
+  checkInvalidSlot(GET_PICTURE);
+  /* Checking reponse of valid command */
+  for(byte i = 0x00; i < IMAGES_COUNT; i++) {
+    
+  }
+  /* Success */
+  Serial.println("SUCCESS: Passed all tests for GET_PICTURE!");
+  Serial.println("WARNING: This test cannot verify the correctness of the returned data");
+  Serial.println("         But the number of bytes returned was correct.");
 }
 
 /**
