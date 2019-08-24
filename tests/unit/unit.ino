@@ -230,7 +230,7 @@ void testGetThumbnail() {
       lastByte = Serial.read();
     }
     if(lastByte != 0xD9) {
-      Serial.println("FAIL: Last byte not 0xD9");
+      Serial.print("FAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
       while(true) {}  
     }
   }
@@ -253,7 +253,46 @@ void testGetPicture() {
   checkInvalidSlot(GET_PICTURE);
   /* Checking reponse of valid command */
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
-    
+    /* Getting the size of the picture (Assumes correct) */
+    sendCommand(GET_PICTURE_SIZE, i);
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeHighByte = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeLowByte = Serial.read();
+    if(response != ACK) {
+      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+      while(true) {}
+    }
+    unsigned int pictureSize = sizeHighByte << 8 | sizeLowByte;
+    unsigned int fullPackages = pictureSize / EXTERNAL_PACKAGE_SIZE;
+    unsigned int remainingBytes = pictureSize % EXTERNAL_PACKAGE_SIZE;
+    /* Checking reponse of valid command */
+    sendCommand(GET_PICTURE, i);
+    while(Serial.available() == 0) {}
+    response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte slot = Serial.read();
+    if(response != ACK || slot != i) {
+      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+      while(true) {}
+    }
+    /* Begin reading data */
+    for(int i = 0; i < fullPackages; i++) {
+      Serial.write(ACK);
+      for(int j = 0; j < EXTERNAL_PACKAGE_SIZE; j++) {
+        Serial.read();
+      }
+    }
+    byte lastByte = 0x00;
+    for(int i = 0; i < remainingBytes; i++) {
+      lastByte = Serial.read();
+    }
+    if(lastByte != 0xD9) {
+      Serial.print("FAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
+      while(true) {}  
+    }
   }
   /* Success */
   Serial.println("SUCCESS: Passed all tests for GET_PICTURE!");
