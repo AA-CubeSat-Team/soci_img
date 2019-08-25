@@ -59,15 +59,17 @@ void testCommand(byte command) {
     }
   }
   else if(command == TAKE_PICTURE) {
-    header = "time(ms)\tpercent error";
+    header = "time(ms)\tslotSent|slotReceived";
     for(int i = 0; i < TEST_TIMES; i++) {
       byte toSend[] = {command, (byte)random(IMAGES_COUNT)};
       long startTime = millis();
       Serial.write(toSend, sizeof(toSend));
       while(!Serial.available()) {}
       byte receivedResponse = Serial.read();
+      while(!Serial.available()) {}
+      byte slot = Serial.read();
       long endTime = millis();
-      testInfo[i] = toSend[1];
+      testInfo[i] = toSend[1] << 4 | slot;
       if(receivedResponse != ACK) {
         timeStorage[i] = 0;
         continue;
