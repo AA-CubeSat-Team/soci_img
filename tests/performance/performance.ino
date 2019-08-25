@@ -12,7 +12,7 @@ static const unsigned short UNUSED_PORT = A0;
 void setup() {
   Serial.begin(115200);
   randomSeed(analogRead(UNUSED_PORT));
-  testCommand(SET_CONTRAST);
+  testCommand(TAKE_PICTURE);
   printResults(printInfoArray);
 }
 
@@ -24,7 +24,39 @@ void setup() {
  */
 void testCommand(byte command) {
   if(command == GET_THUMBNAIL || command == GET_PICTURE) {
-    // TODO
+    header = "time(ms)\tslotSent|slotReceived";
+    fetchImageSizes(command - 0x02);
+    for(int i = 0; i < TEST_TIMES; i++) {
+      byte toSend[] = {command, (byte)random(IMAGES_COUNT)};
+      long startTime = millis();
+      Serial.write(toSend, sizeof(toSend));
+      while(!Serial.available()) {}
+      byte receivedResponse = Serial.read();
+      while(!Serial.available()) {}
+      byte slot = Serial.read();
+      if(receivedResponse != ACK) {
+        timeStorage[i] = 0;
+        continue;
+      }
+      /* Retrieving data */
+      unsigned int totalSize = storedSize[toSend[1]];
+      unsigned int packages = totalSize / EXTERNAL_PACKAGE_SIZE;
+      unsigned int remainingBytes = totalSize % EXTERNAL_PACKAGE_SIZE;
+      for(int i = 0; i < packages; i++) {
+        Serial.write(ACK);
+        while(!Serial.available()) {}
+        for(int j = 0; j < EXTERNAL_PACKAGE_SIZE; j++) {
+          Serial.read();
+        }
+      }
+      Serial.write(ACK);
+      for(int i = 0; i < remainingBytes; i++) {
+        Serial.read();
+      }
+      long endTime = millis();
+      testInfo[i] = toSend[1] << 4 | slot;
+      timeStorage[i] = endTime - startTime;
+    }
   }
   else if(command == TAKE_PICTURE) {
     header = "time(ms)\tpercent error";
@@ -135,7 +167,7 @@ void fetchImageSizes(byte command) {
   }
 }
 
-/* Print out all stored time in 'timeStorage', one element per line */
+/* Print out all stored time in 'timeStorage' and 'testInfo', one test per line */
 void printResults(bool enableInfo) {
   Serial.println(header);
   for(int i = 0; i < TEST_TIMES; i++) {

@@ -14,7 +14,7 @@ extern "C" {
 /* Times to run the test for.
  * Must not be more than 500 due to memory restrictions
  */
-static const unsigned int TEST_TIMES = 400;
+static const unsigned int TEST_TIMES = 300;
 
 /* Maximum number of images allowed */
 static const unsigned int IMAGES_COUNT = 5;
@@ -33,6 +33,9 @@ static bool printInfoArray = true;
 
 /* Header for printing the result */
 static String header = "";
+
+/* Bytes per package */
+static const unsigned int EXTERNAL_PACKAGE_SIZE = 32;
 
 /* Commands that can be tested */
 static const byte TAKE_PICTURE       = 0x00;
