@@ -381,13 +381,13 @@ AVG   | 18220.9
 STDEV |  8570.01
 ```
 
-A visual representation of the 20 sample sizes for the 640x480 JPG is below:
+A visual representation of the 20 sample sizes for the 640x480 JPG picture is below:
 <p align="left">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_640x480.png" width="700" title="Sizes for 640x480 JPG">
 </p>
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-For the picture, which is a 160x128 JPG, 20 samples were taken with analysis below:
+For the thumbnail, which is a 160x128 JPG, 20 samples were taken with analysis below:
 ```
 ===============
 MIN   | 1250
@@ -395,7 +395,7 @@ MAX   | 4862
 AVG   | 3514.5
 STDEV | 1225.34
 ```
-A visual representation of the 20 sample sizes for the 160x128 JPG is below:
+A visual representation of the 20 sample sizes for the 160x128 JPG thumbnail is below:
 <p align="left">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_160x128.png" width="700" title="Sizes for 160x128 JPG">
 </p>
