@@ -365,39 +365,39 @@ I've received bytes 0x00 0x01 from the IMG system. What does this mean?
 Here, we analyze different aspects of the system for better usage of the system.
 
 ### Image Size
-The size of a JPG image for a certain resolution is not constant.   
-This is because JPG uses compression for its image storage, which is affected by the   
-color tone of the image taken.   
+JPG images uses data compression for its image storage which is affected   
+by the color tone of the image taken.   
+**Therefore, size of a JPG image for a certain resolution is not constant.**   
 If the image is more unicolored, the image size will smaller since the compression will be more complete.   
 If the image is richer in detail, the image will naturally have a larger size.   
 This means that depending on the image taken, the size of the image may vary drastically.   
 
-
-For the picture, which is a 640x480 JPG, 20 samples were taken with analysis below:
+For the picture, which is a 640x480 JPG, 20 samples were taken with analysis below:  
 ```
-6198	MIN
-29146	MAX
-18220.9	AVG
-8570.012307	STDEV
-
+================
+MIN   |  6198
+MAX   | 29146
+AVG   | 18220.9
+STDEV |  8570.01
 ```
+
 A visual representation of the 20 sample sizes for the 640x480 JPG is below:
-<p align="center">
-  <img src="" width="750" title="Sizes for 640x480 JPG">
+<p align="left">
+  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_640x480.png" width="700" title="Sizes for 640x480 JPG">
 </p>
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 For the picture, which is a 160x128 JPG, 20 samples were taken with analysis below:
 ```
-1250	MIN
-4862	MAX
-3514.5	AVG
-1225.344098	STDEV
-
+===============
+MIN   | 1250
+MAX   | 4862
+AVG   | 3514.5
+STDEV | 1225.34
 ```
 A visual representation of the 20 sample sizes for the 160x128 JPG is below:
-<p align="center">
-  <img src="" width="750" title="Sizes for 160x128 JPG">
+<p align="left">
+  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_160x128.png" width="700" title="Sizes for 160x128 JPG">
 </p>
 
 ## Internal States and Diagrams
