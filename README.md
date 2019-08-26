@@ -22,7 +22,7 @@ Interface for interacting with the imaging system
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
-This system is built to provide ease of access to the uCamIII camera from an external system.
+This system is built to provide ease of access to the uCamIII camera from an external system.   
 
 Currently, the system is capable of storing a maximum of 5 thumbnail-picture pairs, until the external system is ready to retrieve the thumbnail or picture.  
 Given the memory capacity of our current SD card(16 GB), the maximum can be increased to hundreds if necessary.
