@@ -417,11 +417,11 @@ MAX_SET_SIZE_ATTEMPTS   = 40 <==> MSSA(40)
 MAX_SET_CBE_ATTEMPTS    = 40 <==> MSCA(40)
 ```
 <p align="center">
-  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/Initialization_Flowchart.png" width="750" title="Initialization Flowchart">
+  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/Initialization_Flowchart.png" width="750" title="Initialization Flowchart">
 </p>
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 After initialization, the system waits for command bytes from an external device, and executes the commands if valid, as shown below.
 <p align="center">
-  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/Runtime_Flowchart.png" width="750" title="Operation Mode Flowchart">
+  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/Runtime_Flowchart.png" width="750" title="Operation Mode Flowchart">
 </p>
