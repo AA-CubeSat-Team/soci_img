@@ -178,7 +178,7 @@ If failed, the response will be in the form of \<Response> \<Error>
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail
 Usage: \<Command> \<Slot>   
-**Requests the data bytes representing the thumbnail stored at \<Slot>**
+**Requests the data bytes representing the thumbnail stored at \<Slot>**   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
 
 
@@ -187,7 +187,7 @@ Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a ha
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture 
 Usage: \<Command> \<Slot>   
-**Requests the data bytes representing the picture stored at \<Slot>**
+**Requests the data bytes representing the picture stored at \<Slot>**   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
 
 
