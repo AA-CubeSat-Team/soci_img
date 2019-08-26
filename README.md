@@ -365,8 +365,7 @@ I've received bytes 0x00 0x01 from the IMG system. What does this mean?
 Here, we analyze different aspects of the system for better usage of the system.
 
 ### Image Size
-JPG images uses data compression for its image storage which is affected   
-by the color tone of the image taken.   
+JPG images uses data compression for its image storage which is affected by the color tone of the image taken.   
 **Therefore, size of a JPG image for a certain resolution is not constant.**   
 If the image is more unicolored, the image size will smaller since the compression will be more complete.   
 If the image is richer in detail, the image will naturally have a larger size.   
