@@ -1,4 +1,4 @@
-# soci_img Documentation
+# soci_img Documentation(v1.0.0)
 Interface for interacting with the imaging system
 
 ## Table of Contents
@@ -17,6 +17,8 @@ Interface for interacting with the imaging system
   * [Set Exposure](#set-exposure)
   * [Set Sleep Time](#set-sleep-time)
 - [Possibly Asked Questions(PAQ)](#possibly-asked-questionspaq)
+- [Analysis](#analysis)
+  * [Image Size](#image-size)
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
@@ -175,10 +177,20 @@ If failed, the response will be in the form of \<Response> \<Error>
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail
+Usage: \<Command> \<Slot>   
+**Requests the data bytes representing the thumbnail stored at \<Slot>**
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
+
+
 > Undetermined
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture 
+Usage: \<Command> \<Slot>   
+**Requests the data bytes representing the picture stored at \<Slot>**
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
+
+
 > Undetermined
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -348,6 +360,45 @@ I've received bytes 0x00 0x00 from the IMG system. What does this mean?
 I've received bytes 0x00 0x01 from the IMG system. What does this mean?
 > "Not Acknowledged. Invalid Command."   
 > \<Command> much be between 0x00 and 0x08 inclusive.
+
+## Analysis
+Here, we analyze different aspects of the system for better usage of the system.
+
+### Image Size
+The size of a JPG image for a certain resolution is not constant.   
+This is because JPG uses compression for its image storage, which is affected by the   
+color tone of the image taken.   
+If the image is more unicolored, the image size will smaller since the compression will be more complete.   
+If the image is richer in detail, the image will naturally have a larger size.   
+This means that depending on the image taken, the size of the image may vary drastically.   
+
+
+For the picture, which is a 640x480 JPG, 20 samples were taken with analysis below:
+```
+6198	MIN
+29146	MAX
+18220.9	AVG
+8570.012307	STDEV
+
+```
+A visual representation of the 20 sample sizes for the 640x480 JPG is below:
+<p align="center">
+  <img src="" width="750" title="Sizes for 640x480 JPG">
+</p>
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+For the picture, which is a 160x128 JPG, 20 samples were taken with analysis below:
+```
+1250	MIN
+4862	MAX
+3514.5	AVG
+1225.344098	STDEV
+
+```
+A visual representation of the 20 sample sizes for the 160x128 JPG is below:
+<p align="center">
+  <img src="" width="750" title="Sizes for 160x128 JPG">
+</p>
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
