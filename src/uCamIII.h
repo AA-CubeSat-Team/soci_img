@@ -15,7 +15,6 @@ extern "C" {
 
 /* Function prototypes */
 bool sendSyncCommand();
-bool sendResetCommand(char resetType);
 bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);
 bool sendSetPackageSizeCommand(unsigned int packageSize);
 bool sendSetCBECommand(char contrast, char brightness, char exposure);
@@ -73,12 +72,6 @@ enum uCamIII_PIC_TYPE
 enum uCamIII_SNAP_TYPE 
 { uCamIII_SNAP_JPEG         = 0x00
 , uCamIII_SNAP_RAW          = 0x01
-};
-
-enum uCamIII_RESET_TYPE
-{ uCamIII_RESET_FULL        = 0x00
-, uCamIII_RESET_STATE       = 0x01
-, uCamIII_RESET_FORCE       = 0xFF
 };
 
 enum uCamIII_CBE

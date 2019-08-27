@@ -5,13 +5,12 @@
 
 /* Defined maximum attempts */
 static const unsigned short MAX_SYNC_ATTEMPTS       = 60;
-static const unsigned short MAX_RESET_ATTEMPTS      = 40;
-static const unsigned short MAX_INITIALIZE_ATTEMPTS = 40;
-static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 30;
-static const unsigned short MAX_SET_CBE_ATTEMPTS    = 30;
-static const unsigned short MAX_SET_SLEEP_ATTEMPTS  = 30;
-static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 40;
-static const unsigned short MAX_GET_PIC_ATTEMPTS    = 40;
+static const unsigned short MAX_INITIALIZE_ATTEMPTS = 15;
+static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 15;
+static const unsigned short MAX_SET_CBE_ATTEMPTS    = 10;
+static const unsigned short MAX_SET_SLEEP_ATTEMPTS  = 10;
+static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 15;
+static const unsigned short MAX_GET_PIC_ATTEMPTS    = 15;
 
 /*
  * Attempts to sync with the uCamIII with a maximum of
@@ -26,21 +25,6 @@ bool syncCamera() {
     delay(5 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
   return syncAttempts < MAX_SYNC_ATTEMPTS;
-}
-
-/*
- * Resets the uCamIII with a maximum of 
- * MAX_RESET_ATTEMPTS attempts
- * (Returns true if successful. False otherwise)
- */
-bool resetCamera(char resetType) {
-  int resetAttempts = 0;
-  bool ackReceived  = false;
-  do {
-    ackReceived = sendResetCommand(resetType);
-    delay(1 + resetAttempts++);
-  } while((resetAttempts < MAX_RESET_ATTEMPTS) && !ackReceived);
-  return resetAttempts < MAX_RESET_ATTEMPTS;
 }
 
 /*

@@ -4,18 +4,6 @@
  */
 
 /*
- * Attempts to reset the uCamIII
- * (Returns true if successful, false otherwise)
- */
-bool sendResetCommand(char resetType) {
-  sendCommand(uCamIII_CMD_RESET,
-              resetType, 
-              uCamIII_CMD_NA, uCamIII_CMD_NA,
-              uCamIII_RESET_FORCE);
-  return receiveAckCommand(uCamIII_CMD_RESET);
-}
-
-/*
  * Attempts to sync with the camera once
  * (Returns true if successful, false otherwise)
  */

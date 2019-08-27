@@ -14,7 +14,6 @@ extern "C" {
 
 /* Function prototypes */
 bool syncCamera();
-bool resetCamera(char resetType);
 bool initializeCamera(char format, char rawResolution, char jpgResolution);
 bool setPackageSize(unsigned int packageSize);
 bool setCBE(char contrast, char brightness, char exposure);
