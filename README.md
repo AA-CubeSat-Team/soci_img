@@ -22,7 +22,7 @@ Interface for interacting with the imaging system
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
-This system is built to provide ease of access to the uCamIII camera from an external system.
+This system is built to provide ease of access to the uCamIII camera from an external system.   
 
 Currently, the system is capable of storing a maximum of 5 thumbnail-picture pairs, until the external system is ready to retrieve the thumbnail or picture.  
 Given the memory capacity of our current SD card(16 GB), the maximum can be increased to hundreds if necessary.
@@ -178,7 +178,7 @@ If failed, the response will be in the form of \<Response> \<Error>
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail
 Usage: \<Command> \<Slot>   
-**Requests the data bytes representing the thumbnail stored at \<Slot>**
+**Requests the data bytes representing the thumbnail stored at \<Slot>**   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
 
 
@@ -187,7 +187,7 @@ Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a ha
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture 
 Usage: \<Command> \<Slot>   
-**Requests the data bytes representing the picture stored at \<Slot>**
+**Requests the data bytes representing the picture stored at \<Slot>**   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
 
 
@@ -365,8 +365,7 @@ I've received bytes 0x00 0x01 from the IMG system. What does this mean?
 Here, we analyze different aspects of the system for better usage of the system.
 
 ### Image Size
-JPG images uses data compression for its image storage which is affected   
-by the color tone of the image taken.   
+JPG images uses data compression for its image storage which is affected by the color tone of the image taken.   
 **Therefore, size of a JPG image for a certain resolution is not constant.**   
 If the image is more unicolored, the image size will smaller since the compression will be more complete.   
 If the image is richer in detail, the image will naturally have a larger size.   
@@ -381,13 +380,13 @@ AVG   | 18220.9
 STDEV |  8570.01
 ```
 
-A visual representation of the 20 sample sizes for the 640x480 JPG is below:
+A visual representation of the 20 sample sizes for the 640x480 JPG picture is below:
 <p align="left">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_640x480.png" width="700" title="Sizes for 640x480 JPG">
 </p>
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-For the picture, which is a 160x128 JPG, 20 samples were taken with analysis below:
+For the thumbnail, which is a 160x128 JPG, 20 samples were taken with analysis below:
 ```
 ===============
 MIN   | 1250
@@ -395,7 +394,7 @@ MAX   | 4862
 AVG   | 3514.5
 STDEV | 1225.34
 ```
-A visual representation of the 20 sample sizes for the 160x128 JPG is below:
+A visual representation of the 20 sample sizes for the 160x128 JPG thumbnail is below:
 <p align="left">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_160x128.png" width="700" title="Sizes for 160x128 JPG">
 </p>
