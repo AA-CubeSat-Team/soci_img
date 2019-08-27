@@ -2,7 +2,6 @@
  * This file implements only the necessary functions for the AACT team
  * 
  */
-#include "uCamIII.h"
 
 /* Defined maximum attempts */
 static const unsigned short MAX_SYNC_ATTEMPTS       = 60;

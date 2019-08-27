@@ -18,21 +18,22 @@
 #include "SDReadWrite.h"
 
 /* Pin Assignments */
-static const int rxPin = 2;
-static const int txPin = 3;
+static const int rxPin = 8;
+static const int txPin = 9;
 static const int resetPin = 7;
+static const int ssPin = 10;
 
 /**
  * Setting up software serial
- * (pin 2 of Arduino -> TX of uCamIII)
- * (pin 3 of Arduino -> RX of uCamIII)
+ * (pin 8 of Arduino -> TX of uCamIII)
+ * (pin 9 of Arduino -> RX of uCamIII)
  */
 SoftwareSerial SoftSer(rxPin, txPin);
 
 void setup() {
   Serial.begin(115200, SERIAL_8N1);
   SoftSer.begin(57600);
-  SD.begin();
+  SD.begin(ssPin);
   pinMode(resetPin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
   hardwareReset(resetPin, HARDWARE_RESET_TIME);
@@ -45,11 +46,11 @@ void setup() {
     digitalWrite(LED_BUILTIN, HIGH); /* DEBUG: REMOVE LATER */
   }
   else {
-    while(1) {
+    while(true) {
       digitalWrite(LED_BUILTIN, LOW);  /* DEBUG: REMOVE LATER */
-      delay(500);                      /* DEBUG: REMOVE LATER */
+      delay(1000);                     /* DEBUG: REMOVE LATER */
       digitalWrite(LED_BUILTIN, HIGH); /* DEBUG: REMOVE LATER */
-      delay(500);                      /* DEBUG: REMOVE LATER */
+      delay(1000);                     /* DEBUG: REMOVE LATER */
     }
   }
 }

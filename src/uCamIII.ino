@@ -2,8 +2,6 @@
  * Contains supporting commands for the uCamIII
  * 
  */
-#include "ArduinoCommunication.h"
-#include "uCamIII.h"
 
 /*
  * Attempts to reset the uCamIII

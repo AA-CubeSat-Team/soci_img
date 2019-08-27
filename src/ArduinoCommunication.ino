@@ -2,7 +2,6 @@
  * Functions to send and receive data through arduino serial
  * 
  */
-#include "SDReadWrite.h"
 
 /*
  * Sends a command in the form of described in Page 8 of
