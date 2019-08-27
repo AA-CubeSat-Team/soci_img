@@ -50,28 +50,19 @@ void sendFileSize(int fileSize) {
  * (Returns true if successful, false otherwise)
  */
 bool receiveAckCommand(char commandID) {
-  bool isAckCommand = true;
-  byte incoming     = 0;
+  static const unsigned short ACK_BYTES = 6;
+  static const unsigned short WAIT_TIME = 50;
   // Letting all the bytes come in
-  delay(50);
-  // Checking if first byte is 0xAA
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == uCamIII_STARTBYTE);
-  // Checking if second byte is 0x0E
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == uCamIII_CMD_ACK);
-  // Checking if third byte is 'commandID'
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == commandID);
-  // Throwing away fourth byte (Debugging byte)
-  incoming = SoftSer.read();
-  // Checking if fifth byte is 0x00
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == uCamIII_CMD_NA);
-  // Checking if sixth byte is 0x00
-  incoming = SoftSer.read();
-  isAckCommand = isAckCommand && (incoming == uCamIII_CMD_NA);
-  return isAckCommand;
+  long startTime = millis();
+  while(Serial.available() < ACK_BYTES 
+     && millis() - startTime < WAIT_TIME) {}
+  // Checking the validity of the incoming bytes
+  return (SoftSer.read() == uCamIII_STARTBYTE)
+      && (SoftSer.read() == uCamIII_CMD_ACK)
+      && (SoftSer.read() == commandID)
+      && (SoftSer.read())
+      && (SoftSer.read() == uCamIII_CMD_NA)
+      && (SoftSer.read() == uCamIII_CMD_NA);
 }
 
 /*

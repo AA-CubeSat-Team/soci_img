@@ -48,9 +48,9 @@ void setup() {
   else {
     while(true) {
       digitalWrite(LED_BUILTIN, LOW);  /* DEBUG: REMOVE LATER */
-      delay(1000);                     /* DEBUG: REMOVE LATER */
+      delay(500);                      /* DEBUG: REMOVE LATER */
       digitalWrite(LED_BUILTIN, HIGH); /* DEBUG: REMOVE LATER */
-      delay(1000);                     /* DEBUG: REMOVE LATER */
+      delay(500);                      /* DEBUG: REMOVE LATER */
     }
   }
 }
