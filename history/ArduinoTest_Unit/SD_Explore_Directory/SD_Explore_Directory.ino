@@ -12,12 +12,14 @@ void setup() {
   Serial.println("Initializing SD card...");
   if (!SD.begin(SS_Pin)) {
     Serial.println("Initialization failed!");
-    while (1);
+    while(true) {}
   }
   Serial.println("Initialization done!");
-
+  
+  Serial.println("=========================");
   File root = SD.open("/");
   printDirectory(root, 0);
+  Serial.println("=========================");
   Serial.println("Done!");
 }
 
