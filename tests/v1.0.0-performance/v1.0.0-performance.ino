@@ -4,7 +4,7 @@
  * Intended to be uploaded to an arduino Uno or similar device
  * 
  */
-#include "performance.h"
+#include "v1.0.0-performance.h"
 
 /* Unused port used for the seed of random generation */
 static const unsigned short UNUSED_PORT = A0;
