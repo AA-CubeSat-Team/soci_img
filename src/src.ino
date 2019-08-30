@@ -36,23 +36,19 @@ void setup() {
   SD.begin(ssPin);
   pinMode(resetPin, OUTPUT);
   pinMode(LED_BUILTIN, OUTPUT);
-  hardwareReset(resetPin, HARDWARE_RESET_TIME);
-  
-  if (syncCamera() 
-   && initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128)
-   && setPackageSize(uCamIII_PACKAGE_SIZE)
-   && setSleepTime(DEFAULT_SLEEP_TIME)
-   && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE)) {
-    digitalWrite(LED_BUILTIN, HIGH); /* DEBUG: REMOVE LATER */
+
+  bool initSuccessful = false;
+  long startTime = millis();
+  while(!initSuccessful) {
+    hardwareReset(resetPin, HARDWARE_RESET_TIME);
+    initSuccessful = syncCamera() 
+                  && initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128)
+                  && setPackageSize(uCamIII_PACKAGE_SIZE)
+                  && setSleepTime(DEFAULT_SLEEP_TIME)
+                  && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE);
+  Serial.println("Retrying");
   }
-  else {
-    while(true) {
-      digitalWrite(LED_BUILTIN, LOW);  /* DEBUG: REMOVE LATER */
-      delay(500);                      /* DEBUG: REMOVE LATER */
-      digitalWrite(LED_BUILTIN, HIGH); /* DEBUG: REMOVE LATER */
-      delay(500);                      /* DEBUG: REMOVE LATER */
-    }
-  }
+  Serial.println(millis() - startTime);
 }
 
 void loop() {
