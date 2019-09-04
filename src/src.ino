@@ -18,8 +18,8 @@
 #include "SDReadWrite.h"
 
 /* Pin Assignments */
-static const int rxPin = 8;
-static const int txPin = 9;
+static const int rxPin = 2;
+static const int txPin = 3;
 static const int resetPin = 7;
 static const int ssPin = 10;
 
@@ -31,11 +31,11 @@ static const int ssPin = 10;
 SoftwareSerial SoftSer(rxPin, txPin);
 
 void setup() {
-  Serial.begin(115200, SERIAL_8N1);
+  Serial.begin(57600);
   SoftSer.begin(57600);
-  SD.begin(ssPin);
+  //SD.begin(ssPin);
   pinMode(resetPin, OUTPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
+  //pinMode(LED_BUILTIN, OUTPUT);
 
   bool initSuccessful = false;
   long startTime = millis();

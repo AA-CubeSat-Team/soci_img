@@ -15,7 +15,9 @@ bool sendSyncCommand() {
 }
 
 /*
- * 
+ * Attempts to initialize the uCamIII with 'format' image type of
+ * 'rawResolution' or 'jpgResolution'
+ * (Returns true if successful, false otherwise)
  */
 bool sendInitializeCommand(char format, char rawResolution, char jpgResolution) {
   sendCommand(uCamIII_CMD_INIT, uCamIII_CMD_NA,

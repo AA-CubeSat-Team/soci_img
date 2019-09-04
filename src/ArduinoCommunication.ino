@@ -54,15 +54,21 @@ bool receiveAckCommand(char commandID) {
   static const unsigned short WAIT_TIME = 50;
   // Letting all the bytes come in
   long startTime = millis();
-  while(Serial.available() < ACK_BYTES 
+  while(SoftSer.available() < ACK_BYTES 
      && millis() - startTime < WAIT_TIME) {}
-  // Checking the validity of the incoming bytes
-  return (SoftSer.read() == uCamIII_STARTBYTE)
-      && (SoftSer.read() == uCamIII_CMD_ACK)
-      && (SoftSer.read() == commandID)
-      && (SoftSer.read())
-      && (SoftSer.read() == uCamIII_CMD_NA)
-      && (SoftSer.read() == uCamIII_CMD_NA);
+  // Reading incoming bytes
+  byte incomingByte1 = SoftSer.read();
+  byte incomingByte2 = SoftSer.read();
+  byte incomingByte3 = SoftSer.read();
+  byte incomingByte4 = SoftSer.read();
+  byte incomingByte5 = SoftSer.read();
+  byte incomingByte6 = SoftSer.read();
+  // Checking validity according to uCamIII specification
+  return (incomingByte1 == uCamIII_STARTBYTE)
+      && (incomingByte2 == uCamIII_CMD_ACK)
+      && (incomingByte3 == commandID)
+      && (incomingByte5 == uCamIII_CMD_NA)
+      && (incomingByte6 == uCamIII_CMD_NA);
 }
 
 /*
