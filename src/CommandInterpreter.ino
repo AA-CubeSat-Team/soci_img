@@ -15,13 +15,21 @@ void interpretCommand(byte commandByte, byte parameter2) {
   currentParameter2  = parameter2;
   switch (commandByte) {
     case CHECK_STATUS:
-      if(parameter2 == COMPONENT_ALL || parameter2 == COMPONENT_UCAMIII) {
+      if(parameter2 == COMPONENT_UCAMIII) {
         if(syncCamera()) sendExternalACK();
         else             sendExternalError(uCamIII_CONNECTION);
       }
-      if(parameter2 == COMPONENT_ALL || parameter2 == COMPONENT_SD) {
+      else if(parameter2 == COMPONENT_SD) {
         if(SD_IsFunctional()) sendExternalACK();
         else                  sendExternalError(SD_CONNECTION);
+      }
+      else {
+        bool uCamIII_Healthy = syncCamera();
+        if(!uCamIII_Healthy) sendExternalError(uCamIII_CONNECTION);
+        bool SD_Healthy;
+        if(uCamIII_Healthy) SD_Healthy = SD_IsFunctional();
+        if(!SD_Healthy)     sendExternalError(SD_CONNECTION);
+        if(uCamIII_Healthy && SD_Healthy) sendExternalACK();
       }
       break;
     case TAKE_PICTURE:
