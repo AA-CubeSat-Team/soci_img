@@ -7,9 +7,13 @@
  */
 #include "v1.0.0-unit.h"
 
+static const unsigned short MAX_RESPONSE_BYTES = 5;
+static byte responseBytes[MAX_RESPONSE_BYTES];
+
 /* Only uncomment one at a time */
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(57600);
+  testCheckStatus();
   //testTakePicture();
   //testGetThumbnailSize();
   //testGetPictureSize();
@@ -51,15 +55,18 @@ bool isCBEValid(byte CBEValue) {
  * (Assumes the given 'command' uses a slot)
  */
 void checkInvalidSlot(byte command) {
-  for(byte i = 0x00; i <= 0xFF; i++) {
+  for(int i = 0x00; i <= 0xFF; i++) {
+    i = (byte)i;
     if(!isSlotValid(i)) {
       sendCommand(command, i);
-      while(Serial.available() == 0) {}
-      byte response = Serial.read();
-      while(Serial.available() == 0) {}
-      byte error = Serial.read();
-      if(response != NAK || error != INVALID_SLOT) {
-        Serial.print("FAIL: Did not throw error when slot = "); Serial.println(i);
+      for(int j = 0; j < 3; j++) {
+        while(Serial.available() == 0) {}
+        responseBytes[j] = Serial.read();
+      }
+      if(responseBytes[0] != NAK ||
+         responseBytes[1] != command || 
+         responseBytes[2] != INVALID_SLOT) {
+        Serial.print("\nFAIL: Did not throw error when slot = "); Serial.println(i);
         while(true) {}
       }
     }
@@ -72,19 +79,77 @@ void checkInvalidSlot(byte command) {
  * (Assumes the given 'command' is one of CBE)
  */
 void checkInvalidCBEValue(byte command) {
-  for(byte i = 0x00; i <= 0xFF; i++) {
+  for(byte i = 0x00; i < 0xFF; i++) {
+    i = (byte)i;
     if(!isCBEValid(i)) {
       sendCommand(command, i);
-      while(Serial.available() == 0) {}
-      byte response = Serial.read();
-      while(Serial.available() == 0) {}
-      byte error = Serial.read();
-      if(response != NAK || error != INVALID_INTEGER) {
-        Serial.print("FAIL: Did not throw error when slot = "); Serial.println(i);
+      for(int j = 0; j < 3; j++) {
+        while(Serial.available() == 0) {}
+        responseBytes[j] = Serial.read();
+      }
+      if(responseBytes[0] != NAK ||
+         responseBytes[1] != command || 
+         responseBytes[2] != INVALID_INTEGER) {
+        Serial.print("\nFAIL: Did not throw error when slot = "); Serial.println(i);
         while(true) {}
       }
     }
   }
+}
+
+/**
+ * Tests the CHECK_STATUS command, checks the health of the
+ * system or its components
+ * (Systems need to be reset since test debug with serial)
+ */
+void testCheckStatus() {
+  /* Checking everything */
+  sendCommand(CHECK_STATUS, COMPONENT_ALL);
+  for(int j = 0; j < 3; j++) {
+    while(Serial.available() == 0) {}
+    responseBytes[j] = Serial.read();
+  }
+  if(responseBytes[0] != ACK ||
+     responseBytes[1] != CHECK_STATUS || 
+     responseBytes[2] != COMPONENT_ALL) {
+    Serial.print("ERROR in checking status. Received: ");
+    for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
+      while(true) {}
+  }
+  /* Checking uCamIII */
+  sendCommand(CHECK_STATUS, COMPONENT_UCAMIII);
+  for(int j = 0; j < 3; j++) {
+    while(Serial.available() == 0) {}
+    responseBytes[j] = Serial.read();
+  }
+  if(responseBytes[0] != ACK ||
+     responseBytes[1] != CHECK_STATUS || 
+     responseBytes[2] != COMPONENT_UCAMIII) {
+    Serial.print("ERROR in checking status. Received: ");
+    for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
+      while(true) {}
+  }
+  /* Checking SD Shield */
+  sendCommand(CHECK_STATUS, COMPONENT_SD);
+  for(int j = 0; j < 3; j++) {
+    while(Serial.available() == 0) {}
+    responseBytes[j] = Serial.read();
+  }
+  if(responseBytes[0] != ACK ||
+     responseBytes[1] != CHECK_STATUS || 
+     responseBytes[2] != COMPONENT_SD) {
+    Serial.print("ERROR in checking status. Received: ");
+    for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
+      while(true) {}
+  }
+
+  Serial.println("SUCCESS! All tests in testCheckStatus() has passed!");
 }
 
 /**
@@ -96,19 +161,25 @@ void testTakePicture() {
   /* Checking error detection of INVALID_SLOT */
   checkInvalidSlot(TAKE_PICTURE);
   /* Checking reponse of valid command */
-  for(byte i = 0x00; i < TAKE_PICTURE; i++) {
+  for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     sendCommand(TAKE_PICTURE, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte slot = Serial.read();
-    if(response != ACK || slot != i) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != TAKE_PICTURE || 
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for TAKE_PICTURE!");
+  Serial.println("\nSUCCESS: Passed all tests for TAKE_PICTURE!");
   Serial.println("Requires manual checking: Verify files in SD card");
 }
 
@@ -125,22 +196,26 @@ void testGetThumbnailSize() {
   unsigned int returnedSizes[IMAGES_COUNT];
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     sendCommand(GET_THUMBNAIL_SIZE, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeHighByte = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeLowByte = Serial.read();
-    if(response != ACK) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 5; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != GET_THUMBNAIL_SIZE ||
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
-    returnedSizes[i] = sizeHighByte << 8 | sizeLowByte;
+    returnedSizes[i] = responseBytes[4] << 8 | responseBytes[5];
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for GET_THUMBNAIL_SIZE!");
+  Serial.println("\nSUCCESS: Passed all tests for GET_THUMBNAIL_SIZE!");
   Serial.println("Requires manual checking: Verify the following sizes");
-  for(int i = 0; i < IMAGES_COUNT; i++) {
+  for(byte i = 0; i < IMAGES_COUNT; i++) {
     Serial.print(thumbnailNames[i]); Serial.print(" has a total of ");
     Serial.print(returnedSizes[i]);  Serial.println(" bytes");
   }
@@ -159,20 +234,24 @@ void testGetPictureSize() {
   unsigned int returnedSizes[IMAGES_COUNT];
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     sendCommand(GET_PICTURE_SIZE, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeHighByte = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeLowByte = Serial.read();
-    if(response != ACK) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 5; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != GET_PICTURE_SIZE ||
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
-    returnedSizes[i] = sizeHighByte << 8 | sizeLowByte;
+    returnedSizes[i] = responseBytes[3] << 8 | responseBytes[4];
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for GET_PICTURE_SIZE!");
+  Serial.println("\nSUCCESS: Passed all tests for GET_PICTURE_SIZE!");
   Serial.println("Requires manual checking: Verify the following sizes");
   for(int i = 0; i < IMAGES_COUNT; i++) {
     Serial.print(pictureNames[i]);  Serial.print(" has a total of ");
@@ -195,47 +274,59 @@ void testGetThumbnail() {
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     /* Getting the size of the thumbnail (Assumes correct) */
     sendCommand(GET_THUMBNAIL_SIZE, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeHighByte = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeLowByte = Serial.read();
-    if(response != ACK) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 5; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != GET_THUMBNAIL_SIZE ||
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
-    unsigned int thumbnailSize = sizeHighByte << 8 | sizeLowByte;
-    unsigned int fullPackages = thumbnailSize / EXTERNAL_PACKAGE_SIZE;
+    unsigned int thumbnailSize = responseBytes[3] << 8 | responseBytes[4];
+    unsigned int fullPackages   = thumbnailSize / EXTERNAL_PACKAGE_SIZE;
     unsigned int remainingBytes = thumbnailSize % EXTERNAL_PACKAGE_SIZE;
     /* Checking reponse of valid command */
     sendCommand(GET_THUMBNAIL, i);
-    while(Serial.available() == 0) {}
-    response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte slot = Serial.read();
-    if(response != ACK || slot != i) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != GET_THUMBNAIL || 
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
     /* Begin reading data */
     for(int i = 0; i < fullPackages; i++) {
       Serial.write(ACK);
+      while(Serial.available() == 0) {}
       for(int j = 0; j < EXTERNAL_PACKAGE_SIZE; j++) {
         Serial.read();
       }
     }
-    byte lastByte = 0x00;
+    Serial.write(ACK);
+    byte lastByte;
     for(int i = 0; i < remainingBytes; i++) {
       lastByte = Serial.read();
     }
     if(lastByte != 0xD9) {
-      Serial.print("FAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
+      Serial.print("\nFAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
       while(true) {}  
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for GET_THUMBNAIL!");
+  Serial.println("\nSUCCESS: Passed all tests for GET_THUMBNAIL!");
   Serial.println("WARNING: This test cannot verify the correctness of the returned data");
   Serial.println("         But the number of bytes returned was correct.");
 }
@@ -255,27 +346,36 @@ void testGetPicture() {
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     /* Getting the size of the picture (Assumes correct) */
     sendCommand(GET_PICTURE_SIZE, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeHighByte = Serial.read();
-    while(Serial.available() == 0) {}
-    byte sizeLowByte = Serial.read();
-    if(response != ACK) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 5; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != GET_PICTURE_SIZE ||
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
-    unsigned int pictureSize = sizeHighByte << 8 | sizeLowByte;
-    unsigned int fullPackages = pictureSize / EXTERNAL_PACKAGE_SIZE;
+    unsigned int pictureSize = responseBytes[3] << 8 | responseBytes[4];
+    unsigned int fullPackages   = pictureSize / EXTERNAL_PACKAGE_SIZE;
     unsigned int remainingBytes = pictureSize % EXTERNAL_PACKAGE_SIZE;
     /* Checking reponse of valid command */
     sendCommand(GET_PICTURE, i);
-    while(Serial.available() == 0) {}
-    response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte slot = Serial.read();
-    if(response != ACK || slot != i) {
-      Serial.print("FAIL: Did not give proper response when slot = "); Serial.println(i);
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != GET_PICTURE || 
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when slot = "); Serial.println(i);
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
     /* Begin reading data */
@@ -285,17 +385,18 @@ void testGetPicture() {
         Serial.read();
       }
     }
-    byte lastByte = 0x00;
+    Serial.write(ACK);
+    byte lastByte;
     for(int i = 0; i < remainingBytes; i++) {
       lastByte = Serial.read();
     }
     if(lastByte != 0xD9) {
-      Serial.print("FAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
+      Serial.print("\nFAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
       while(true) {}  
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for GET_PICTURE!");
+  Serial.println("\nSUCCESS: Passed all tests for GET_PICTURE!");
   Serial.println("WARNING: This test cannot verify the correctness of the returned data");
   Serial.println("         But the number of bytes returned was correct.");
 }
@@ -310,17 +411,23 @@ void testSetContrast() {
   /* Checking reponse of valid command */
   for(byte i = 0x00; i <= 0x04; i++) {
     sendCommand(SET_CONTRAST, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte CBEValue = Serial.read();
-    if(response != ACK || CBEValue != i) {
-      Serial.print("FAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != SET_CONTRAST || 
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+      Serial.print("Received: "); 
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for SET_CONTRAST!");
+  Serial.println("\nSUCCESS: Passed all tests for SET_CONTRAST!");
 }
 
 /**
@@ -333,17 +440,23 @@ void testSetBrightness() {
   /* Checking reponse of valid command */
   for(byte i = 0x00; i <= 0x04; i++) {
     sendCommand(SET_BRIGTHNESS, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte CBEValue = Serial.read();
-    if(response != ACK || CBEValue != i) {
-      Serial.print("FAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != SET_BRIGTHNESS || 
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for SET_BRIGTHNESS!");
+  Serial.println("\nSUCCESS: Passed all tests for SET_BRIGTHNESS!");
 }
 
 /**
@@ -356,17 +469,23 @@ void testSetExposure() {
   /* Checking reponse of valid command */
   for(byte i = 0x00; i <= 0x04; i++) {
     sendCommand(SET_EXPOSURE, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte CBEValue = Serial.read();
-    if(response != ACK || CBEValue != i) {
-      Serial.print("FAIL: Did not give proper response when CBE Value = "); Serial.println(i);
-      while(true) {}
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
     }
+    if(responseBytes[0] != ACK ||
+       responseBytes[1] != SET_EXPOSURE ||
+       responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when CBE Value = "); Serial.println(i);
+      Serial.print("Received: ");
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
+      while(true) {}
+    } 
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for SET_EXPOSURE!");
+  Serial.println("\nSUCCESS: Passed all tests for SET_EXPOSURE!");
 }
 
 /**
@@ -376,17 +495,22 @@ void testSetExposure() {
  */
 void testSetSleepTime() {
   /* Trying every possible sleep time */
-  for(byte i = 0x00; i <= 0xFF; i++) {
+  for(int i = 0x00; i <= 0xFF; i++) {
+    i = (byte)i;
     sendCommand(SET_SLEEP_TIME, i);
-    while(Serial.available() == 0) {}
-    byte response = Serial.read();
-    while(Serial.available() == 0) {}
-    byte seconds = Serial.read();
-    if(response != ACK || seconds != i) {
-      Serial.print("FAIL: Did not give proper response when seconds = "); Serial.println(i);
+    for(int j = 0; j < 3; j++) {
+      while(Serial.available() == 0) {}
+      responseBytes[j] = Serial.read();
+    }
+    if(responseBytes[0] != ACK || responseBytes[1] != SET_SLEEP_TIME || responseBytes[2] != i) {
+      Serial.print("\nFAIL: Did not give proper response when seconds = "); Serial.println(i);
+      Serial.print("Received: "); 
+      for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+        Serial.print(responseBytes[j]); Serial.print(" ");
+      }
       while(true) {}
     }
   }
   /* Success */
-  Serial.println("SUCCESS: Passed all tests for SET_SLEEP_TIME!");
+  Serial.println("\nSUCCESS: Passed all tests for SET_SLEEP_TIME!");
 }
