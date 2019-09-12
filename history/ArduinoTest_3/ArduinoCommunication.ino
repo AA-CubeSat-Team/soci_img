@@ -114,7 +114,7 @@ bool receivePackage(unsigned int ID) {
   byte verifyHighByte = SoftSer.read();
   verifySum += incomingIDLow + incomingIDHigh;
   verifySum += incomingDataSizeLow + incomingDataSizeHigh;
-  byte calculatedLowByte = verifyLowByte & 0xFF;
+  byte calculatedLowByte = verifySum & 0xFF;
   if(verifyHighByte != 0x00 || verifyLowByte != calculatedLowByte) {
     isPackageValid = false;
     Serial.println("======== VERIFY FAILED ========");
