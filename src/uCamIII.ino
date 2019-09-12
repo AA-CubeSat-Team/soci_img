@@ -1,5 +1,16 @@
 /**
- * Contains supporting commands for the uCamIII
+ * Contains partial supporting commands for the uCamIII
+ * 
+ * Following methods must be manually implemented to successfully
+ * use this library:
+ * ===============================================================
+ * // Sends the given bytes, from left to right, through TX with
+ * // minimal delay in between
+ * 1. bool sendCommand(byte, byte, byte, byte, byte);
+ * 
+ * // Receives an acknowledgement through RX from the uCamIII
+ * // with the given mactching command ID
+ * 2. bool receiveAckCommand(byte);
  * 
  */
 
@@ -19,7 +30,7 @@ bool sendSyncCommand() {
  * 'rawResolution' or 'jpgResolution'
  * (Returns true if successful, false otherwise)
  */
-bool sendInitializeCommand(char format, char rawResolution, char jpgResolution) {
+bool sendInitializeCommand(byte format, byte rawResolution, byte jpgResolution) {
   sendCommand(uCamIII_CMD_INIT, uCamIII_CMD_NA,
               format, rawResolution, jpgResolution);
   return receiveAckCommand(uCamIII_CMD_INIT);
@@ -40,7 +51,7 @@ bool sendSetPackageSizeCommand(unsigned int packageSize) {
  * Sets the contrast, brightness, and exposure of the uCamIII
  * (Returns true if successful, false otherwise)
  */
-bool sendSetCBECommand(char contrast, char brightness, char exposure) {
+bool sendSetCBECommand(byte contrast, byte brightness, byte exposure) {
   sendCommand(uCamIII_CMD_SET_CBE,
               contrast, brightness, exposure,
               uCamIII_CMD_NA);
@@ -52,7 +63,7 @@ bool sendSetCBECommand(char contrast, char brightness, char exposure) {
  * to 'seconds'
  * (Returns true if successful, false otherwise)
  */
-bool sendSetSleepTimeCommand(char seconds) {
+bool sendSetSleepTimeCommand(byte seconds) {
   sendCommand(uCamIII_CMD_SLEEP, seconds,
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA);
@@ -63,7 +74,7 @@ bool sendSetSleepTimeCommand(char seconds) {
  * Attempts to take a snapshot of type 'snapshotType'
  * (Returns true if successful, false otherwise)
  */
-bool sendTakeSnapshotCommand(char snapshotType) {
+bool sendTakeSnapshotCommand(byte snapshotType) {
   sendCommand(uCamIII_CMD_SNAPSHOT, snapshotType,
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA);
@@ -74,7 +85,7 @@ bool sendTakeSnapshotCommand(char snapshotType) {
  * Attempts to take a icture of type 'pictureType'
  * (Returns true if successful, false otherwise)
  */
-bool sendTakePictureCommand(char pictureType) {
+bool sendTakePictureCommand(byte pictureType) {
   sendCommand(uCamIII_CMD_GET_PICTURE, pictureType,
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA);

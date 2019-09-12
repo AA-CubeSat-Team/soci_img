@@ -1,5 +1,6 @@
 /**
- * Functions to send and receive data through arduino serial
+ * Functions to send and receive data through UART
+ * with the uCamIII
  * 
  */
 
@@ -8,40 +9,13 @@
  * the uCamIII specification
  * (Returns true if successful, false otherwise)
  */
-bool sendCommand(char commandByte,
-                 char parameter1, char parameter2,
-                 char parameter3, char parameter4) {
+bool sendCommand(byte commandByte,
+                 byte parameter1, byte parameter2,
+                 byte parameter3, byte parameter4) {
   byte toSend[] = {uCamIII_STARTBYTE, commandByte,
                    parameter1, parameter2,
                    parameter3, parameter4};
   SoftSer.write(toSend, sizeof(toSend));
-}
-
-/**
- * Send a <NAK> message to an external device with the
- * given 'param2' in the form of <NAK> <param2>
- */
-void sendExternalError(char param2) {
-  byte toSend[] = {NAK, param2};
-  Serial.write(toSend, sizeof(toSend));
-}
-
-/**
- * Send a <ACK> message to an external device with the
- * given 'param2' in the form of <ACK> <param2>
- */
-void sendExternalACK(byte param2) {
-  byte toSend[] = {ACK, param2};
-  Serial.write(toSend, sizeof(toSend));
-}
-
-/**
- * Send a <ACK> message to an external device with the
- * given 'fileSize' in the form of <ACK> <HighByte> <LowByte>
- */
-void sendFileSize(int fileSize) {
-  byte toSend[] = {ACK, (fileSize >> 8) & 0xFF, fileSize & 0xFF};
-  Serial.write(toSend, sizeof(toSend));
 }
 
 /*
@@ -49,36 +23,33 @@ void sendFileSize(int fileSize) {
  * that has the matching 'commandID'
  * (Returns true if successful, false otherwise)
  */
-bool receiveAckCommand(char commandID) {
+bool receiveAckCommand(byte commandID) {
   static const unsigned short ACK_BYTES = 6;
   static const unsigned short WAIT_TIME = 50;
   // Letting all the bytes come in
   long startTime = millis();
-  while(SoftSer.available() < ACK_BYTES 
-     && millis() - startTime < WAIT_TIME) {}
+  while(SoftSer.available() < ACK_BYTES && millis() - startTime < WAIT_TIME) {}
   // Reading incoming bytes
-  byte incomingByte1 = SoftSer.read();
-  byte incomingByte2 = SoftSer.read();
-  byte incomingByte3 = SoftSer.read();
-  byte incomingByte4 = SoftSer.read();
-  byte incomingByte5 = SoftSer.read();
-  byte incomingByte6 = SoftSer.read();
+  byte incomingBytes[ACK_BYTES];
+  for(int i = 0; i < ACK_BYTES; i++) {
+    incomingBytes[i] = SoftSer.read();
+  }
   // Checking validity according to uCamIII specification
-  return (incomingByte1 == uCamIII_STARTBYTE)
-      && (incomingByte2 == uCamIII_CMD_ACK)
-      && (incomingByte3 == commandID)
-      && (incomingByte5 == uCamIII_CMD_NA)
-      && (incomingByte6 == uCamIII_CMD_NA);
+  return (incomingBytes[0] == uCamIII_STARTBYTE)
+      && (incomingBytes[1] == uCamIII_CMD_ACK)
+      && (incomingBytes[2] == commandID)
+      && (incomingBytes[4] == uCamIII_CMD_NA)
+      && (incomingBytes[5] == uCamIII_CMD_NA);
 }
 
 /*
- * Disables 'resetPin' for 'msec' milliseconds
+ * Disables 'uCamIII_ResetPin' for 'msec' milliseconds
  * (Reset is assumed to be active low)
  */
-void hardwareReset(int resetPin, int msec) {
-  digitalWrite(resetPin, LOW);
+void hardwareReset(byte uCamIII_ResetPin, unsigned int msec) {
+  digitalWrite(uCamIII_ResetPin, LOW);
   delay(msec);
-  digitalWrite(resetPin, HIGH);
+  digitalWrite(uCamIII_ResetPin, HIGH);
 }
 
 /*
@@ -99,36 +70,34 @@ void ackPackage(unsigned int ID) {
 bool receivePackage(unsigned int ID, File toWrite) {
   bool isPackageValid    = true;
   unsigned int verifySum = 0;
-  // Grabbing ID
+  // Grabbing package ID
   unsigned int incomingIDLow  = SoftSer.read();
   unsigned int incomingIDHigh = SoftSer.read();
-  unsigned int incomingID = incomingIDLow | (incomingIDHigh << 8);
+  unsigned int incomingID = (incomingIDHigh << 8) | incomingIDLow;
   if(ID != incomingID) {
     isPackageValid = false;
-    Serial.print("ID Mismatch! Expected: "); Serial.println(ID); 
-    Serial.print("             Received: "); Serial.println(incomingID);
   }
   // Grabbing data size in package
   unsigned int incomingDataSizeLow  = SoftSer.read();
   unsigned int incomingDataSizeHigh = SoftSer.read();
-  unsigned int incomingDataSize = incomingDataSizeLow | (incomingDataSizeHigh << 8);
-  // Outputting data to the serial monitor
+  unsigned int incomingDataSize = (incomingDataSizeHigh << 8) | incomingDataSizeLow;
+  // Storing data to SD card
+  static const unsigned short WAIT_TIME = 50;
+  unsigned long startTime = millis();
+  while(SoftSer.available() < incomingDataSize && millis() - startTime < WAIT_TIME) {}
   for(int i = 0; i < incomingDataSize; i++) {
-    delay(5);
     byte incomingData = SoftSer.read();
     verifySum += (unsigned int)incomingData;
-      toWrite.write(incomingData);
+    toWrite.write(incomingData);
   }
-  Serial.println();
   // Checking verify code
   byte verifyLowByte  = SoftSer.read();
   byte verifyHighByte = SoftSer.read();
   verifySum += incomingIDLow + incomingIDHigh;
   verifySum += incomingDataSizeLow + incomingDataSizeHigh;
-  byte calculatedLowByte = verifyLowByte & 0xFF;
+  byte calculatedLowByte = verifySum & 0xFF;
   if(verifyHighByte != 0x00 || verifyLowByte != calculatedLowByte) {
     isPackageValid = false;
-    Serial.println("======== VERIFY FAILED ========");
   }
   return isPackageValid;
 }
@@ -138,20 +107,25 @@ bool receivePackage(unsigned int ID, File toWrite) {
  * (Returns true if successful, false otherwise)
  * (Assumes to be called after the 'takePicture(char)' function)
  */
-bool readData(byte pictureType, unsigned int packageSize, unsigned int slot) {
-  SD.remove(pictureNames[slot]);
-  File toWrite = SD.open(pictureNames[slot], FILE_WRITE);
+bool readData(byte pictureType, unsigned int packageSize, byte slot) {
+  SD.remove(getPictureNameAt(slot));
+  File toWrite = SD.open(getPictureNameAt(slot), FILE_WRITE);
   if(SoftSer.read() != uCamIII_STARTBYTE || SoftSer.read() != uCamIII_CMD_DATA ||
-     SoftSer.read() != pictureType) {return false;}
+     SoftSer.read() != pictureType) {
+      toWrite.close();
+      while(SoftSer.available() > 0) SoftSer.read();
+      return false;
+  }
   unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16;
   int packages = ceil(imageSize * 1.0 / (packageSize - 6));
-  ackPackage(0);
-  delay(5);
-  for(int i = 1; i <= packages; i++) {
-    receivePackage(i, toWrite);
-    ackPackage(i);
-    delay(5);
+  static const unsigned short WAIT_TIME = 50;
+  for(unsigned int id = 0; id < packages; id++) {
+    ackPackage(id);
+    unsigned long startTime = millis();
+    while(SoftSer.available() < uCamIII_PACKAGE_SIZE && millis() - startTime < WAIT_TIME) {}
+    receivePackage(id + 1, toWrite);
   }
+  ackPackage(packages);
   toWrite.close();
   return true;
 }

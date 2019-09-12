@@ -32,7 +32,7 @@ bool syncCamera() {
  * resolution for either RAW or JPG type
  * (Returns true if successful. False otherwise)
  */
-bool initializeCamera(char format, char rawResolution, char jpgResolution) {
+bool initializeCamera(byte format, byte rawResolution, byte jpgResolution) {
   int initializeAttempts = 0;
   bool ackReceived       = false;
   do {
@@ -61,7 +61,7 @@ bool setPackageSize(unsigned int packageSize) {
  * Sets the contrast, brightness, and exposure of the uCamIII
  * (Returns true if successful. False otherwise)
  */
-bool setCBE(char contrast, char brightness, char exposure) {
+bool setCBE(byte contrast, byte brightness, byte exposure) {
   int setCBEAttempts = 0;
   bool ackReceived   = false;
   do {
@@ -77,7 +77,7 @@ bool setCBE(char contrast, char brightness, char exposure) {
  * Camera does not sleep if 'seconds' is set to 0
  * (Returns true if successful. False otherwise)
  */
-bool setSleepTime(char seconds) {
+bool setSleepTime(byte seconds) {
   int setSleepTimeAttempts = 0;
   bool ackReceived         = false;
   do {
@@ -92,7 +92,7 @@ bool setSleepTime(char seconds) {
  * 'Skip Frame'(Parameter 1 and 2) is set to 0x00
  * (Returns true if successful. False otherwise)
  */
-bool takeSnapshot(char snapshotType) {
+bool takeSnapshot(byte snapshotType) {
   int takeSnapshotAttempts = 0;
   bool ackReceived         = false;
   do {
@@ -106,7 +106,7 @@ bool takeSnapshot(char snapshotType) {
  * Takes a picture of type 'pictureType'
  * (Returns true if successful. False otherwise)
  */
-bool takePicture(char pictureType) {
+bool takePicture(byte pictureType) {
   int takePictureAttempts = 0;
   bool ackReceived        = false;
   do {

@@ -8,25 +8,6 @@
 #ifndef _UCAMIII_H_
 #define _UCAMIII_H_
 
-/* Compiler Linkage */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Function prototypes */
-bool sendSyncCommand();
-bool sendInitializeCommand(char format, char rawResolution, char jpgResolution);
-bool sendSetPackageSizeCommand(unsigned int packageSize);
-bool sendSetCBECommand(char contrast, char brightness, char exposure);
-bool sendSetSleepTimeCommand(char seconds);
-bool receiveAckCommand(char commandID);
-bool sendTakeSnapshotCommand(char snapshotType);
-bool sendTakePictureCommand(char pictureType);
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
-
 enum uCamIII_CMD
 { uCamIII_CMD_NA            = 0x00
 , uCamIII_CMD_INIT          = 0x01
