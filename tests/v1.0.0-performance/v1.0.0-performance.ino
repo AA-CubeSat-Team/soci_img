@@ -9,11 +9,12 @@
 /* Unused port used for the seed of random generation */
 static const unsigned short UNUSED_PORT = A0;
 
+static String header;
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(57600);
   randomSeed(analogRead(UNUSED_PORT));
   testCommand(TAKE_PICTURE);
-  printResults(printInfoArray);
+  printResults(true);
 }
 
 /* Tests the 'command' 'TEST_TIMES' number of times and
@@ -27,51 +28,68 @@ void testCommand(byte command) {
     header = "time(ms)\tslotSent|slotReceived";
     fetchImageSizes(command - 0x02);
     for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(IMAGES_COUNT)};
+      byte randomSlot = (byte)random(IMAGES_COUNT);
+      byte toSend[] = {command, randomSlot};
       long startTime = millis();
       Serial.write(toSend, sizeof(toSend));
       while(!Serial.available()) {}
       byte receivedResponse = Serial.read();
       while(!Serial.available()) {}
-      byte slot = Serial.read();
-      if(receivedResponse != ACK) {
+      byte returnedCommand = Serial.read();
+      while(!Serial.available()) {}
+      byte returnedSlot = Serial.read();
+      if(receivedResponse != ACK || 
+          returnedCommand != command || 
+          returnedSlot != randomSlot) {
+        testInfo[i] = randomSlot << 4 | returnedSlot;
         timeStorage[i] = 0;
         continue;
       }
       /* Retrieving data */
-      unsigned int totalSize = storedSize[toSend[1]];
-      unsigned int packages = totalSize / EXTERNAL_PACKAGE_SIZE;
+      unsigned int totalSize = storedSize[randomSlot];
+      unsigned int fullPackages   = totalSize / EXTERNAL_PACKAGE_SIZE;
       unsigned int remainingBytes = totalSize % EXTERNAL_PACKAGE_SIZE;
-      for(int i = 0; i < packages; i++) {
+      for(int i = 0; i < fullPackages; i++) {
         Serial.write(ACK);
-        while(!Serial.available()) {}
+        while(Serial.available() == 0) {}
         for(int j = 0; j < EXTERNAL_PACKAGE_SIZE; j++) {
           Serial.read();
         }
       }
       Serial.write(ACK);
+      byte lastByte;
       for(int i = 0; i < remainingBytes; i++) {
-        Serial.read();
+        lastByte = Serial.read();
       }
+      Serial.write(ACK);
       long endTime = millis();
-      testInfo[i] = toSend[1] << 4 | slot;
+      if(lastByte != 0xD9) {
+        Serial.print("FAIL! Last byte is not 0xD9, but is "); Serial.println(lastByte, HEX);
+        while(true) {}
+      }
+      testInfo[i] = randomSlot << 4 | returnedSlot;
       timeStorage[i] = endTime - startTime;
     }
   }
   else if(command == TAKE_PICTURE) {
     header = "time(ms)\tslotSent|slotReceived";
     for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(IMAGES_COUNT)};
-      long startTime = millis();
+      byte randomSlot = (byte)random(IMAGES_COUNT);
+      byte toSend[] = {command, randomSlot};
+      unsigned long startTime = millis();
       Serial.write(toSend, sizeof(toSend));
       while(!Serial.available()) {}
       byte receivedResponse = Serial.read();
       while(!Serial.available()) {}
-      byte slot = Serial.read();
-      long endTime = millis();
-      testInfo[i] = toSend[1] << 4 | slot;
+      byte returnedCommand = Serial.read();
+      while(!Serial.available()) {}
+      byte returnedSlot = Serial.read();
+      unsigned long endTime = millis();
+      testInfo[i] = randomSlot << 4 | returnedSlot;
       timeStorage[i] = 0;
-      if(receivedResponse == ACK) {
+      if(receivedResponse == ACK &&
+         returnedCommand == command &&
+         returnedSlot == randomSlot) {
         timeStorage[i] = endTime - startTime;
       }
     }
@@ -85,32 +103,29 @@ void testCommand(byte command) {
 void fetchImageSizes(byte command) {
   if((command != GET_THUMBNAIL_SIZE) && (command != GET_PICTURE_SIZE)) {
     Serial.print("ERROR! 'command' = "); Serial.println(command, HEX);
-    while(1) {}
+    while(true) {}
   }
-  const unsigned short REPEAT_TIMES = 5;
-  unsigned int tempSizeStorage[REPEAT_TIMES];
   for(int i = 0; i < IMAGES_COUNT; i++) {
-    for(int j = 0; j < REPEAT_TIMES; j++) {
-      byte toSend[] = {command, (byte)i};
-      Serial.write(toSend, sizeof(toSend));
-      while(!Serial.available()) {}
-      delay(5);
-      if(Serial.read() != ACK) {
-        Serial.println("FAILED on ACK");
-        while(1) {}
-      }
-      tempSizeStorage[j] = (Serial.read() << 8) | Serial.read();
+    byte toSend[] = {command, (byte)i};
+    Serial.write(toSend, sizeof(toSend));
+    while(Serial.available() == 0) {}
+    byte response = Serial.read();
+    while(Serial.available() == 0) {}
+    byte returnedCommand = Serial.read();
+    while(Serial.available() == 0) {}
+    byte returnedSlot = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeHighByte = Serial.read();
+    while(Serial.available() == 0) {}
+    byte sizeLowByte = Serial.read();
+    if(response != ACK ||
+       returnedCommand != command || 
+       returnedSlot != toSend[1]) {
+      Serial.println("FAILED on ACK in fetchImageSizes(byte)");
+      while(true) {}
     }
-    // Checking if the result is consistent
-    unsigned int firstSize = tempSizeStorage[0];
-    for(int j = 1; j < REPEAT_TIMES; j++) {
-      if(tempSizeStorage[j] != firstSize) {
-        Serial.println("ERROR: Sizes mismatch");
-        while(1) {}
-      }
-    }
-    storedSize[i] = firstSize;
-  }
+    storedSize[i] = sizeHighByte << 8 | sizeLowByte;
+  }  
 }
 
 /* Print out all stored time in 'timeStorage' and 'testInfo', one test per line */

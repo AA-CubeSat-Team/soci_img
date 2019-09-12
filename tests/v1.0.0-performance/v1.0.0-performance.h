@@ -6,11 +6,6 @@
 #ifndef __PERFORMANCE_TESTS_H__
 #define __PERFORMANCE_TESTS_H__
 
-/* Compiler Linkage */
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /* Times to run the test for.
  * Must not be more than 500 due to memory restrictions
  */
@@ -28,32 +23,23 @@ static unsigned int timeStorage[TEST_TIMES];
 /* Stores additional information for each test */
 static byte testInfo[TEST_TIMES];
 
-/* Whether to print the testInfo array */
-static bool printInfoArray = true;
-
-/* Header for printing the result */
-static String header = "";
-
 /* Bytes per package */
 static const unsigned int EXTERNAL_PACKAGE_SIZE = 32;
 
-/* Commands that can be tested */
-static const byte TAKE_PICTURE       = 0x00;
-static const byte GET_THUMBNAIL_SIZE = 0x01;
-static const byte GET_PICTURE_SIZE   = 0x02;
-static const byte GET_THUMBNAIL      = 0x03;
-static const byte GET_PICTURE        = 0x04;
-static const byte SET_CONTRAST       = 0x05;
-static const byte SET_BRIGTHNESS     = 0x06;
-static const byte SET_EXPOSURE       = 0x07;
-static const byte SET_SLEEP_TIME     = 0x08;
+/* Recognized <Command>s */
+static const byte CHECK_STATUS       = 0x00;
+static const byte TAKE_PICTURE       = 0x01;
+static const byte GET_THUMBNAIL_SIZE = 0x02;
+static const byte GET_PICTURE_SIZE   = 0x03;
+static const byte GET_THUMBNAIL      = 0x04;
+static const byte GET_PICTURE        = 0x05;
+static const byte SET_CONTRAST       = 0x06;
+static const byte SET_BRIGTHNESS     = 0x07;
+static const byte SET_EXPOSURE       = 0x08;
+static const byte SET_SLEEP_TIME     = 0x09;
 
 /* Possible responses */
 static const byte NAK = 0x00;
 static const byte ACK = 0x01;
-
-#ifdef __cplusplus
-} // extern "C"
-#endif
 
 #endif /* __PERFORMANCE_TESTS_H__ */
