@@ -19,6 +19,7 @@ Interface for interacting with the imaging system
 - [Possibly Asked Questions(PAQ)](#possibly-asked-questionspaq)
 - [Analysis](#analysis)
   * [Image Size](#image-size)
+  * [Timing](#timing)
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
@@ -398,6 +399,14 @@ A visual representation of the 20 sample sizes for the 160x128 JPG thumbnail is 
 <p align="left">
   <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/IMG_Sizes_160x128.png" width="700" title="Sizes for 160x128 JPG">
 </p>
+
+### Timing
+
+#### Initialization
+Under normal operation conditions, the process takes on average 1.4 seconds, but may take up to 3 seconds in low-power conditions.   
+**This is the time it takes to initialize the uCamIII, and does NOT include the time needed to boot up the hardware**   
+
+
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
