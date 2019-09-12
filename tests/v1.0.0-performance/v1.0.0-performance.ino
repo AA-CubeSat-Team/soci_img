@@ -76,61 +76,6 @@ void testCommand(byte command) {
       }
     }
   }
-  else if(command == GET_THUMBNAIL_SIZE || command == GET_PICTURE_SIZE) {
-    header = "time(ms)\tslotSent";
-    fetchImageSizes(command);
-    for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(IMAGES_COUNT)};
-      long startTime = millis();
-      Serial.write(toSend, sizeof(toSend));
-      while(!Serial.available()) {}
-      byte receivedResponse = Serial.read();
-      unsigned int receivedSize = (Serial.read() << 8) | Serial.read();
-      long endTime = millis();
-      testInfo[i] = toSend[1];
-      timeStorage[i] = 0;
-      if(receivedResponse == ACK && receivedSize == storedSize[toSend[1]]) {
-        timeStorage[i] = endTime - startTime;
-      }
-    }
-  }
-  else if(command == SET_CONTRAST || command == SET_BRIGTHNESS
-       || command == SET_EXPOSURE) {
-    header = "time(ms)\tCBE sent| CBE received";
-    for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(5)};
-      long startTime = millis();
-      Serial.write(toSend, sizeof(toSend));
-      while(!Serial.available()) {}
-      byte receivedResponse = Serial.read();
-      while(!Serial.available()) {}
-      byte receivedCBE = Serial.read();
-      long endTime = millis();
-      testInfo[i] = toSend[1] << 4 | receivedCBE;
-      timeStorage[i] = 0;
-      if(receivedResponse == ACK) {
-        timeStorage[i] = endTime - startTime;
-      }
-    }
-  }
-  else if(command == SET_SLEEP_TIME) {
-    header = "time(ms)\tsleep time(seconds) sent";
-    for(int i = 0; i < TEST_TIMES; i++) {
-      byte toSend[] = {command, (byte)random(256)};
-      long startTime = millis();
-      Serial.write(toSend, sizeof(toSend));
-      while(!Serial.available()) {}
-      byte receivedResponse = Serial.read();
-      while(!Serial.available()) {}
-      byte receivedSeconds = Serial.read();
-      long endTime = millis();
-      testInfo[i] = toSend[1];
-      timeStorage[i] = 0;
-      if(receivedResponse == ACK && receivedSeconds == toSend[1]) {
-        timeStorage[i] = endTime - startTime;
-      }
-    }
-  }
 }
 
 /* Fills the 'storedSize' with sizes based on 'command'
