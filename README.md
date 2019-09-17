@@ -276,7 +276,7 @@ The data stream should be handled as shown below:
                                       that you received the last package */
 ```
 The number of packages to expect can be calculated from the size of the thumbnail and the data size of each package.   
-The size of the thumbnail can be obtained from the "Get Thumbnail Size" command.   
+The size of the thumbnail can be obtained from the [Get Thumbnail Size](#get-thumbnail-size) command.   
 The size of each full package is currently set to 32 bytes, but this can be changed if necessary.   
 **Remember that each package contains 31 bytes of data and 1 verification byte**  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -286,7 +286,7 @@ Usage: \<Command> \<Slot>
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
 If successful, the response will be in the form of \<Response> \<Command> \<Slot>.   
-Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as explained above in the "Get Thumbnail" command.   
+Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as explained above in the [Get Thumbnail](#get-thumbnail) command.   
 If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>, and will NOT be followed by a data stream.  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Contrast  
@@ -323,7 +323,7 @@ If failed, the response will be in the form of \<Response> \<Command> \<Integer>
 /* Acknowledged. You sent 0x06 0x04. Contrast is now 0x04 or Max */
 0x01 0x06 0x04
 
-/* Not Acknowledged. The given <Integer> was out of bounds */
+/* Not Acknowledged. You sent 0x06 0x05. The given <Integer> was out of bounds */
 0x00 0x06 0x05 0x05
 
 /* For other responses, see the Possibly Asked Questions(PAQ) section below */
