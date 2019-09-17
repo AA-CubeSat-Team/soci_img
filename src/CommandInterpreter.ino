@@ -33,17 +33,17 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case TAKE_PICTURE:
-      if (ensureSlotValid(parameter2)) {
+      if(ensureSlotValid(parameter2)) {
         /* Take small resolution picture */
         takeSnapshot(uCamIII_SNAP_JPEG);
         takePicture(uCamIII_TYPE_SNAPSHOT);
-        readData(uCamIII_TYPE_SNAPSHOT, uCamIII_PACKAGE_SIZE, parameter2);
+        readData(STORE_THUMBNAIL, parameter2);
         /* Change settings to high resolution */
         initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480);
         /* Take high resolution picture */
         takeSnapshot(uCamIII_SNAP_JPEG);
         takePicture(uCamIII_TYPE_SNAPSHOT);
-        readData(uCamIII_TYPE_SNAPSHOT, uCamIII_PACKAGE_SIZE, parameter2);
+        readData(STORE_PICTURE, parameter2);
         /* Change settings to low resolution for next time */
         initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128);
       }
@@ -62,7 +62,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       if(ensureSlotValid(parameter2)) {
         String thumbnailName = getThumbnailNameAt(parameter2);
         File thumbnailFile = ensureFileExists(thumbnailName);
-        if (thumbnailFile) {
+        if(thumbnailFile) {
           sendExternalACK();
           sdReadAndTransmit(thumbnailFile);
         }
@@ -72,7 +72,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
         File pictureFile = ensureFileExists(pictureName);
-        if (pictureFile) {
+        if(pictureFile) {
           sendExternalACK();
           sdReadAndTransmit(pictureFile);
         }
@@ -116,7 +116,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
  */
 bool ensureSlotValid(byte slot) {
   bool isValid = (slot >= 0x00) && (slot < (byte)MAX_PICTURES);
-  if (!isValid) sendExternalError(INVALID_SLOT);
+  if(!isValid) sendExternalError(INVALID_SLOT);
   return isValid;
 }
 
@@ -127,7 +127,7 @@ bool ensureSlotValid(byte slot) {
  */
 bool ensureIntegerValid(byte integerParam) {
   bool isValid = (integerParam >= uCamIII_MIN) && (integerParam <= uCamIII_MAX);
-  if (!isValid) sendExternalError(INVALID_INTEGER);
+  if(!isValid) sendExternalError(INVALID_INTEGER);
   return isValid;
 }
 
@@ -138,6 +138,6 @@ bool ensureIntegerValid(byte integerParam) {
  */
 File ensureFileExists(String fileName) {
   File file = SD.open(fileName, FILE_READ);
-  if (!file) sendExternalError(FILE_NOT_EXIST);
+  if(!file) sendExternalError(FILE_NOT_EXIST);
   return file;
 }

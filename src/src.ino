@@ -46,25 +46,25 @@ void setup() {
                           && setSleepTime(DEFAULT_SLEEP_TIME)
                           && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE);
   }
-  if (!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
+  if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
   /* Check whether the SD shield is functional */
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 }
 
 void loop() {
-  if (Serial.available() > 0) {
+  if(Serial.available() > 0) {
     byte commandByte = Serial.read();
     unsigned long startTime = millis();
     bool timedOut = true;
     while (millis() - startTime < COMMAND_WAIT_TIME) {
-      if (Serial.available() > 0) {
+      if(Serial.available() > 0) {
         interpretCommand(commandByte, Serial.read());
         timedOut = false;
         break;
       }
     }
-    if (timedOut) {
+    if(timedOut) {
       currentCommandByte = commandByte;
       currentParameter2  = Serial.read();
       sendExternalError(INCOMPLETE_COMMAND);
