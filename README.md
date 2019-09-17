@@ -7,6 +7,7 @@ Interface for interacting with the imaging system
   * [Internal Setup](#internal-setup)
   * [External Setup](#external-setup)
 - [Usage of Commands](#usage-of-commands)
+  * [Check Status](#check-status)
   * [Take Picture](#take-picture)
   * [Get Thumbnail Size](#get-thumbnail-size)
   * [Get Picture Size](#get-picture-size)
@@ -26,85 +27,159 @@ Interface for interacting with the imaging system
 This system is built to provide ease of access to the uCamIII camera from an external system.   
 
 Currently, the system is capable of storing a maximum of 5 thumbnail-picture pairs, until the external system is ready to retrieve the thumbnail or picture.  
-Given the memory capacity of our current SD card(16 GB), the maximum can be increased to hundreds if necessary.
+Given the memory capacity of our current SD card(16 GB), the maximum can be increased to 256 if necessary.
 
-The system uses **UART** at baud rate of **115200** to transmit data, which can be lowered if current rate causes unstability in the external system.  
-(Note: It is known that a baud rate of 115200 does not work for software serial)
+The system uses **UART** at baud rate of **57600** to transmit data, which can be lowered if current rate causes unstability in the external system.  
+(Note: It is known that a baud rate of 115200 does not work well for software serial)
 
 ## Hardware Setup
 The IMG system consists of the following components
 * [uCamIII from 4D Systems](https://4dsystems.com.au/ucam-iii)
 * Arduino Pro Mini 328 - 3.3V/8MHz
 * [MicroSD card breakout board+ from Adafruit](https://www.adafruit.com/product/254)
-* MicroSD card with at least 300 kB memory
+* MicroSD card with at least 60 kB memory for each image
 
 ### Internal Setup
-> Undetermined
+For the SD shield, the following stable connections must be made:
+```
+(SD) CS  <-> (Pro-Mini) Pin 10
+(SD) DI  <-> (Pro-Mini) Pin 11
+(SD) DO  <-> (Pro-Mini) Pin 12
+(SD) CLK <-> (Pro-Mini) Pin 13
+```
+For the uCamIII, the following stable connections must be made:
+```
+(uCamIII) RES <-> (Pro-Mini) Pin 7
+(uCamIII) TX  <-> (Pro-Mini) Pin 8
+(uCamIII) RX  <-> (Pro-Mini) Pin 9
+```
 
 ### External Setup
-> Undetermined
+For power, the following stable connections must be made:
+```
+(SD) 5V  <-> (Power Source) 5V
+(SD) GND <-> (Power Source) GND
+
+(uCamIII) 5V  <-> (Power Source) 5V
+(uCamIII) GND <-> (Power Source) GND
+
+(Pro-Mini) VCC <-> (Power Source) 3.3V
+(Pro-Mini) GND <-> (Power Source) GND
+```
+For communication, the following stable connections must be made:
+```
+(Pro-Mini) RXI <-> (External Device) TX
+(Pro-Mini) TXO <-> (External Device) RX
+```
 
 ## Usage of Commands
-Below are tables demonstrating communication bytes which will be later mentioned in this section.
+All commands sent to the IMG system should be two bytes.   
 
-\<Command> Description | \<Command> Byte
----------------------- | ---------------
-Take Picture           | 0x00
-Get Thumbnail Size     | 0x01
-Get Picture Size       | 0x02
-Get Thumbnail          | 0x03
-Get Picture            | 0x04
-Set Contrast           | 0x05
-Set Brightness         | 0x06
-Set Exposure           | 0x07
-Set Sleep Time         | 0x08
+All responses received from the IMG system will be at most 5 bytes, depending on the command sent.   
+**For consistency purposes, all responses have been padded to 5 bytes.**   
 
-\<Response> Description | \<Response> Byte
------------------------ | ----------------
-Not Acknowledged        | 0x00
-Acknowledged            | 0x01
+Below are tables demonstrating communication bytes which will be later mentioned in this section.   
 
-\<Error> Description | \<Error> Byte
----------------------| -------------
-Incomplete Command   | 0x00
-Invalid Command      | 0x01
-Invalid Slot         | 0x02
-Invalid Integer      | 0x03
+\<Command> Name    | \<Command> Byte | \<Command> Description
+-------------------| --------------- | ----------------------
+Check Status       | 0x00            | Checks the health of a component
+Take Picture       | 0x01            | Takes an image and stores it internally
+Get Thumbnail Size | 0x02            | Retrieves the size of a thumbnail, in bytes
+Get Picture Size   | 0x03            | Retrieves the size of a picture, in bytes
+Get Thumbnail      | 0x04            | Retrieves the data of a thumbnail
+Get Picture        | 0x05            | Retrieves the data of a picture
+Set Contrast       | 0x06            | Sets the contrast for future images
+Set Brightness     | 0x07            | Sets the brightness for future images
+Set Exposure       | 0x08            | Sets the exposure for future images
+Set Sleep Time     | 0x09            | Sets time in seconds before the camera enters low-power mode
+
+\<Response> Name | \<Response> Byte | \<Response> Description
+---------------- | ---------------- | -----------------------
+Not Acknowledged | 0x00             | Previous command failed
+Acknowledged     | 0x01             | Previous command was successful
+
+\<Device> Name    | \<Device> Byte | \<Device> Description
+------------------| -------------- | ---------------------
+Component-All     | 0x00           | All components of the IMG system
+Component-uCamIII | 0x01           | uCamIII of the IMG system
+Component-SD      | 0x02           | SD Shield of the IMG system
+
+\<Error> Name      | \<Error> Byte | \<Response> Description
+-------------------| ------------- | -----------------------
+uCamIII Connection | 0x00          | uCamIII is not responding
+SD Connection      | 0x01          | SD Shield is not responding
+Incomplete Command | 0x02          | Command sent was not complete
+Invalid Command    | 0x03          | Command sent was not recognized
+Invalid Slot       | 0x04          | Slot sent was not in range
+Invalid Integer    | 0x05          | Integer setting was not in range
+File Not Exist     | 0x06          | Attempted to open a non-existent file
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Check Status
+Usage: \<Command> \<Device>
+**Checks the health of component(s) of the IMG system**
+\<Device> is expected to be 0x00, 0x01, or 0x02, but will still operate as 0x00 if out of range.   
+
+If successful, the response will be in the form of \<Response> \<Command> \<Device>   
+If failed, the response will be in the form of \<Response> \<Command> \<Device> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
+
+#### Example of Usage:   
+```
+/* Checks the health of all components (Will succeed) */
+0x00 0x00
+
+/* Checks the health of the uCamIII (Will succeed) */
+0x00 0x01
+
+/* Checks the health of the SD shield (Will succeed) */
+0x00 0x02
+```
+
+#### Possible responses are:   
+```
+/* Acknowledged. You sent 0x00 0x01. Requested test passed */
+0x01 0x00 0x01
+
+/* Not Acknowledged. You sent 0x00 0x01. uCamIII is not responding */
+0x00 0x00 0x01 0x00
+
+/* Not Acknowledged. You sent 0x00 0x00. SD Shield is not responding */
+0x00 0x00 0x00 0x01
+
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
+```
+
 ### Take Picture
 Usage: \<Command> \<Slot>   
 **Signals the IMG system to take a picture and generate a thumbnail to store at \<Slot>**   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
-If successful, the response will be in the form of \<Response> \<Slot>   
-If failed, the response will be in the form of \<Response> \<Error>   
+If successful, the response will be in the form of \<Response> \<Command> \<Slot>   
+If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
 
 #### Example of Usage:   
 ```
 /* Signals the IMG system to take a picture at slot 0x01 (Will succeed) */
-0x00 0x01 
+0x01 0x01 
 
 /* Signals the IMG system to take a picture at slot 0x03 (Will succeed) */
-0x00 0x03 
+0x01 0x03 
 
 /* Signals the IMG system to take a picture at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
-0x00 0x05 
+0x01 0x05 
 ```
 
 #### Possible responses are:
 ```
-/* Acknowledged. Image has been successfully stored at slot 0x04 */
-0x01 0x04
+/* Acknowledged. You sent 0x01 0x02. Image has been successfully stored at slot 0x02 */
+0x01 0x01 0x02
 
-/* Not Acknowledged. The given <Slot> was out of bounds */
-0x00 0x02
+/* Not Acknowledged. You sent 0x01 0x05. The given <Slot> was out of bounds */
+0x00 0x01 0x05 0x04
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail Size
@@ -112,51 +187,17 @@ Usage: \<Command> \<Slot>
 **Requests the size of the thumbnail stored at \<Slot>**   
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
-If successful, the response will be in the form of \<Response> \<Size High Byte> \<Size Low Byte>   
-If failed, the response will be in the form of \<Response> \<Error>   
+If successful, the response will be in the form of \<Response> \<Command> \<Slot> \<Size High Byte> \<Size Low Byte>   
+If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
 
 #### Example of Usage:  
 ```
 /* Requests the size of thumbnail at slot 0x02 (Will succeed) */
-0x01 0x02 
+0x02 0x02 
 
 /* Requests the size of thumbnail at slot 0x04 (Will succeed) */
-0x01 0x04 
-
-/* Requests the size of thumbnail at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
-0x01 0x05 
-```
-
-#### Possible responses are:
-```
-/* Acknowledged. Thumbnail size is 0x037F */
-0x01 0x03 0x7F
-
-/* Not Acknowledged. The given <Slot> was out of bounds */
-0x00 0x02
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
-```
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-### Get Picture Size 
-Usage: \<Command> \<Slot>   
-**Requests the size of the full-sized picture stored at \<Slot>**   
-Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
-
-If successful, the response will be in the form of \<Response> \<Size High Byte> \<Size Low Byte>   
-If failed, the response will be in the form of \<Response> \<Error>   
-
-#### Example of Usage:  
-```
-/* Requests the size of thumbnail at slot 0x03 (Will succeed) */
-0x02 0x03 
-
-/* Requests the size of thumbnail at slot 0x00 (Will succeed) */
-0x02 0x00 
+0x02 0x04 
 
 /* Requests the size of thumbnail at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
 0x02 0x05 
@@ -164,17 +205,45 @@ If failed, the response will be in the form of \<Response> \<Error>
 
 #### Possible responses are:
 ```
-/* Acknowledged. Thumbnail size is 0x2A8D */
-0x01 0x2A 0x8D
+/* Acknowledged. You sent 0x02 0x02. Thumbnail size is 0x037F */
+0x01 0x02 0x02 0x03 0x7F
 
-/* Not Acknowledged. The given <Slot> was out of bounds */
-0x00 0x02
+/* Not Acknowledged. You sent 0x02 0x05. The given <Slot> was out of bounds */
+0x00 0x02 0x05 0x04
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
+```
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Get Picture Size 
+Usage: \<Command> \<Slot>   
+**Requests the size of the full-sized picture stored at \<Slot>**   
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
+If successful, the response will be in the form of \<Response> \<Command> \<Slot> \<Size High Byte> \<Size Low Byte>   
+If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
+
+#### Example of Usage:  
+```
+/* Requests the size of thumbnail at slot 0x03 (Will succeed) */
+0x03 0x03 
+
+/* Requests the size of thumbnail at slot 0x00 (Will succeed) */
+0x03 0x00 
+
+/* Requests the size of thumbnail at slot 0x05 (Will fail: Slot at 0x05 is invalid) */
+0x03 0x05 
+```
+
+#### Possible responses are:
+```
+/* Acknowledged. You sent 0x03 0x01. Thumbnail size is 0x2A8D */
+0x01 0x03 0x01 0x2A 0x8D
+
+/* Not Acknowledged. You sent 0x03 0x05. The given <Slot> was out of bounds */
+0x00 0x03 0x05 0x04
+
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Thumbnail
@@ -208,34 +277,31 @@ Usage: \<Command> \<Integer>
  High            | 0x03
  Max             | 0x04
 
-If successful, the response will be in the form of \<Response> \<Integer>   
-If failed, the response will be in the form of \<Response> \<Error>   
+If successful, the response will be in the form of \<Response> \<Command> \<Integer>  
+If failed, the response will be in the form of \<Response> \<Command> \<Integer> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
 
 #### Example of Usage:  
 ```
 /* Sets the contrast to 0x01 or Low (Will succeed) */
-0x05 0x01
+0x06 0x01
 
 /* Sets the contrast to 0x03 or High (Will succeed) */
-0x05 0x03 
+0x06 0x03 
 
 /* Sets the contrast to 0x05 (Will fail: 0x05 is not a valid contrast <Integer>) */
-0x05 0x05 
+0x06 0x05 
 ```
 
 #### Possible responses are:
 ```
-/* Acknowledged. Contrast is now 0x04 or Max */
-0x01 0x04
+/* Acknowledged. You sent 0x06 0x04. Contrast is now 0x04 or Max */
+0x01 0x06 0x04
 
 /* Not Acknowledged. The given <Integer> was out of bounds */
-0x00 0x03
+0x00 0x06 0x05 0x05
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Brightness  
@@ -251,34 +317,31 @@ Usage: \<Command> \<Integer>
  High            | 0x03
  Max             | 0x04
 
-If successful, the response will be in the form of \<Response> \<Integer>   
-If failed, the response will be in the form of \<Response> \<Error>   
+If successful, the response will be in the form of \<Response> \<Command> \<Integer>   
+If failed, the response will be in the form of \<Response> \<Command> \<Integer> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
 
 #### Example of Usage:  
 ```
 /* Sets the brightness to 0x02 or Normal (Will succeed) */
-0x06 0x02
+0x07 0x02
 
 /* Sets the brightness to 0x03 or High (Will succeed) */
-0x06 0x03 
+0x07 0x03 
 
 /* Sets the brightness to 0x05 (Will fail: 0x05 is not a valid brightness <Integer>) */
-0x06 0x05 
+0x07 0x05 
 ```
 
 #### Possible responses are:
 ```
-/* Acknowledged. Brightness is now 0x01 or Low */
-0x01 0x01
+/* Acknowledged. You sent 0x07 0x01. Brightness is now 0x01 or Low */
+0x01 0x07 0x01
 
-/* Not Acknowledged. The given <Integer> was out of bounds */
-0x00 0x03
+/* Not Acknowledged. You sent 0x07 0x05. The given <Integer> was out of bounds */
+0x00 0x07 0x05 0x05
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Exposure   
@@ -294,73 +357,68 @@ Usage: \<Command> \<Integer>
  +1          | 0x03
  +2          | 0x04
 
-If successful, the response will be in the form of \<Response> \<Integer>   
-If failed, the response will be in the form of \<Response> \<Error>   
+If successful, the response will be in the form of \<Response> \<Command> \<Integer>   
+If failed, the response will be in the form of \<Response> \<Command> \<Integer> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
 
 #### Example of Usage:  
 ```
 /* Sets the exposure to 0x04 or +2 (Will succeed) */
-0x07 0x04
+0x08 0x04
 
 /* Sets the exposure to 0x01 or -1 (Will succeed) */
-0x07 0x01 
+0x08 0x01 
 
 /* Sets the exposure to 0x05 (Will fail: 0x05 is not a valid exposure <Integer>) */
-0x07 0x05 
+0x08 0x05 
 ```
 
 #### Possible responses are:
 ```
-/* Acknowledged. Exposure is now 0x04 or +2 */
-0x01 0x04
+/* Acknowledged. You sent 0x08 0x04. Exposure is now 0x04 or +2 */
+0x01 0x08 0x04
 
-/* Not Acknowledged. The given <Integer> was out of bounds */
-0x00 0x03
+/* Not Acknowledged. You sent 0x08 0x05. The given <Integer> was out of bounds */
+0x00 0x08 0x05 0x05
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Sleep Time 
 Usage: \<Command> \<Seconds>   
-**Sets the time in seconds the system needs to idle before entering low power mode**   
+**Sets the time in seconds the system needs to idle before entering low-power mode**   
 When \<Seconds> is set to 0x00, the system will not sleep.
 
-If successful, the response will be in the form of \<Response> \<Seconds>   
-If failed, the response will be in the form of \<Response> \<Error>   
+If successful, the response will be in the form of \<Response> \<Command> \<Seconds>   
+If failed, the response will be in the form of \<Response> \<Command> \<Seconds> \<Error>   
+**Remember to read 5 bytes, since all responses are padded to 5 bytes**   
 
 #### Example of Usage:  
 ```
 /* Sets sleep time to 0x00 or infinite (Never sleeps) */
-0x08 0x00
+0x09 0x00
 
 /* Sets sleep time to 0xFF or 255 seconds */
-0x08 0xFF 
+0x09 0xFF 
 ```
 
 #### Possible responses are:
 ```
-/* Acknowledged. Sleep time is now set to 0x14 or 20 seconds */
-0x01 0x14
+/* Acknowledged. You sent 0x09 0x14. Sleep time is now set to 0x14 or 20 seconds */
+0x01 0x09 0x14
 
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x00
-
-/* Not Acknowledged. See the Possibly Asked Questions(PAQ) section below */
-0x00 0x01
+/* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
 
 ## Possibly Asked Questions(PAQ)
-I've received bytes 0x00 0x00 from the IMG system. What does this mean?
-> "Not Acknowledged. Incomplete Command Error was thrown."   
-> This can happen if there was too much delay between the bytes sent to the IMG system.
+I keep receiving 'Incomplete Command' Error from the IMG system. Why is this?
+> The IMG system expects all commands to be two bytes, and will throw an error if only one received.
+> This can also happen if there was too much delay between the bytes sent to the IMG system.
+> If your system limitations prohibits you from sending the bytes faster, talk to the IMG team.   
 
-I've received bytes 0x00 0x01 from the IMG system. What does this mean?
-> "Not Acknowledged. Invalid Command."   
-> \<Command> much be between 0x00 and 0x08 inclusive.
+I received "Invalid Command" error from the IMG system. Why is this?
+> You sent a <Command> bytes that was not in range of 0x00 and 0x09, inclusive
+> Remember, <Command> byte is the first byte that you send to the IMG system
 
 ## Analysis
 Here, we analyze different aspects of the system for better usage of the system.
@@ -407,7 +465,6 @@ Under normal operation conditions, the process takes on average 1.4 seconds, but
 **This is the time it takes to initialize the uCamIII, and does NOT include the time needed to boot up the hardware**   
 
 
-
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
 Then, the system will attempt to initialize the type and resolution of the image to be taken.   
@@ -415,21 +472,3 @@ Then, the system will attempt to set the package size for later data retrieval f
 Finally, the system will attempt set the default contrast, brightness, and exposure of the camera.   
 If any of the four processes fails more than the preset limit shown below, the system will be reset and camera re-synced.
 
-Below, a visual representation of the initialization process in the form of a flowchart is provided.   
-In the initialization flowchart shown below, references are made to the following MAX_X_ATTEMPTS constants.   
-These constants are fairly arbitrary, but it is known that syncing and initialization usually take a bit more attempts.
-```
-MAX_SYNC_ATTEMPTS       = 60 <==> MSA(60)
-MAX_INITIALIZE_ATTEMPTS = 60 <==> MIA(60)
-MAX_SET_SIZE_ATTEMPTS   = 40 <==> MSSA(40)
-MAX_SET_CBE_ATTEMPTS    = 40 <==> MSCA(40)
-```
-<p align="left">
-  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/Initialization_Flowchart.png" width="600" title="Initialization Flowchart">
-</p>
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-After initialization, the system waits for command bytes from an external device, and executes the commands if valid, as shown below.
-<p align="left">
-  <img src="https://github.com/AA-CubeSat-Team/soci_img/blob/master/misc/Runtime_Flowchart.png" width="650" title="Operation Mode Flowchart">
-</p>
