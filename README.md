@@ -117,7 +117,7 @@ File Not Exist     | 0x06          | Attempted to open a non-existent file
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Check Status
 Usage: \<Command> \<Device>
-**Checks the health of component(s) of the IMG system**
+**Checks the health of component(s) of the IMG system**   
 \<Device> is expected to be 0x00, 0x01, or 0x02, but will still operate as 0x00 if out of range.   
 
 If successful, the response will be in the form of \<Response> \<Command> \<Device>   
@@ -149,7 +149,7 @@ If failed, the response will be in the form of \<Response> \<Command> \<Device> 
 
 /* For other responses, see the Possibly Asked Questions(PAQ) section below */
 ```
-
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Take Picture
 Usage: \<Command> \<Slot>   
 **Signals the IMG system to take a picture and generate a thumbnail to store at \<Slot>**   
@@ -464,6 +464,7 @@ A visual representation of the 20 sample sizes for the 160x128 JPG thumbnail is 
 Under normal operation conditions, the process takes on average 1.4 seconds, but may take up to 3 seconds in low-power conditions.   
 **This is the time it takes to initialize the uCamIII, and does NOT include the time needed to boot up the hardware**   
 
+#### Commands
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
