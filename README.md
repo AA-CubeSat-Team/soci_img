@@ -21,6 +21,7 @@ Interface for interacting with the imaging system
 - [Analysis](#analysis)
   * [Image Size](#image-size)
   * [Timing](#timing)
+  * [Verification](#verification)
 - [Internal States and Diagrams](#internal-states-and-diagrams)
 
 ## System Overview
@@ -249,20 +250,44 @@ If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<
 ### Get Thumbnail
 Usage: \<Command> \<Slot>   
 **Requests the data bytes representing the thumbnail stored at \<Slot>**   
-Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
+If successful, the response will be in the form of \<Response> \<Command> \<Slot>.   
+Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as will be explain in a moment.   
+**Note that a data stream can only be stopped by obtaining all packages or via a system reset**
+If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>, and will NOT be followed by a data stream.   
 
-> Undetermined
-
+The data stream should be handled as shown below:    
+```
+<ACK> --->                         /* ACK starts the stream */
+            <--- (First Package)
+<ACK> --->                         /* Every ACK will get you a new package */
+            <--- (Second Package)
+<NAK> --->                         /* NAK tells the IMG system to resend that package */
+            <--- (Second Package)
+<NAK> ---> 
+            <--- (Second Package)
+<ACK> --->
+			<--- (Third Package)
+	    ......
+<ACK> --->   
+            <--- (Last Package)
+<ACK> --->                         /* The last ACK is important, telling the IMG system
+                                      that you received the last package */
+```
+The number of packages to expect can be calculated from the size of the thumbnail and the size of each package.   
+The size of the thumbnail can be obtained from the "Get Thumbnail Size" command.   
+The size of each package is currently set to 32 bytes, but this can be changed if necessary.   
+**Remember that each package contains 31 bytes of data and 1 verification byte**  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture 
 Usage: \<Command> \<Slot>   
 **Requests the data bytes representing the picture stored at \<Slot>**   
-Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above. 
+Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
-
-> Undetermined
-
+If successful, the response will be in the form of \<Response> \<Command> \<Slot>.   
+Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as explained above in the "Get Thumbnail" command.   
+If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>, and will NOT be followed by a data stream.  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Contrast  
 Usage: \<Command> \<Integer>   
@@ -412,13 +437,13 @@ If failed, the response will be in the form of \<Response> \<Command> \<Seconds>
 
 ## Possibly Asked Questions(PAQ)
 I keep receiving 'Incomplete Command' Error from the IMG system. Why is this?
-> The IMG system expects all commands to be two bytes, and will throw an error if only one received.
-> This can also happen if there was too much delay between the bytes sent to the IMG system.
+> The IMG system expects all commands to be two bytes, and will throw an error if only one received.   
+> This can also happen if there was too much delay between the bytes sent to the IMG system.   
 > If your system limitations prohibits you from sending the bytes faster, talk to the IMG team.   
 
 I received "Invalid Command" error from the IMG system. Why is this?
-> You sent a <Command> bytes that was not in range of 0x00 and 0x09, inclusive
-> Remember, <Command> byte is the first byte that you send to the IMG system
+> You sent a <Command> bytes that was not in range of 0x00 and 0x09, inclusive   
+> Remember, <Command> byte is the first byte that you send to the IMG system   
 
 ## Analysis
 Here, we analyze different aspects of the system for better usage of the system.
@@ -465,6 +490,10 @@ Under normal operation conditions, the process takes on average 1.4 seconds, but
 **This is the time it takes to initialize the uCamIII, and does NOT include the time needed to boot up the hardware**   
 
 #### Commands
+
+### Verification
+For each package sent by the IMG system, the last byte will be a verification byte generated using the data in that package.   
+> Not yet implemented
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
