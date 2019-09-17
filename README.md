@@ -254,7 +254,7 @@ Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a ha
 
 If successful, the response will be in the form of \<Response> \<Command> \<Slot>.   
 Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as will be explain in a moment.   
-**Note that a data stream can only be stopped by obtaining all packages or via a system reset**
+**Note that a data stream can only be stopped by obtaining all packages or via a system reset**   
 If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>, and will NOT be followed by a data stream.   
 
 The data stream should be handled as shown below:    
@@ -268,16 +268,16 @@ The data stream should be handled as shown below:
 <NAK> ---> 
             <--- (Second Package)
 <ACK> --->
-			<--- (Third Package)
+            <--- (Third Package)
 	    ......
 <ACK> --->   
             <--- (Last Package)
 <ACK> --->                         /* The last ACK is important, telling the IMG system
                                       that you received the last package */
 ```
-The number of packages to expect can be calculated from the size of the thumbnail and the size of each package.   
+The number of packages to expect can be calculated from the size of the thumbnail and the data size of each package.   
 The size of the thumbnail can be obtained from the "Get Thumbnail Size" command.   
-The size of each package is currently set to 32 bytes, but this can be changed if necessary.   
+The size of each full package is currently set to 32 bytes, but this can be changed if necessary.   
 **Remember that each package contains 31 bytes of data and 1 verification byte**  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture 
