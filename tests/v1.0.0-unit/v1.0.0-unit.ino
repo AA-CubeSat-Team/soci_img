@@ -13,8 +13,8 @@ static byte responseBytes[MAX_RESPONSE_BYTES];
 /* Only uncomment one at a time */
 void setup() {
   Serial.begin(57600);
-  testCheckStatus();
-  //testTakePicture();
+  //testCheckStatus();
+  testTakePicture();
   //testGetThumbnailSize();
   //testGetPictureSize();
   //testGetThumbnail();
@@ -59,14 +59,19 @@ void checkInvalidSlot(byte command) {
     i = (byte)i;
     if(!isSlotValid(i)) {
       sendCommand(command, i);
-      for(int j = 0; j < 3; j++) {
+      for(int j = 0; j < 4; j++) {
         while(Serial.available() == 0) {}
         responseBytes[j] = Serial.read();
       }
       if(responseBytes[0] != NAK ||
          responseBytes[1] != command || 
-         responseBytes[2] != INVALID_SLOT) {
+         responseBytes[2] != i ||
+         responseBytes[3] != INVALID_SLOT) {
         Serial.print("\nFAIL: Did not throw error when slot = "); Serial.println(i);
+        Serial.print("responseBytes = ");
+        for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+          Serial.print(responseBytes[j]); Serial.print(" ");
+        }
         while(true) {}
       }
     }
@@ -83,14 +88,19 @@ void checkInvalidCBEValue(byte command) {
     i = (byte)i;
     if(!isCBEValid(i)) {
       sendCommand(command, i);
-      for(int j = 0; j < 3; j++) {
+      for(int j = 0; j < 4; j++) {
         while(Serial.available() == 0) {}
         responseBytes[j] = Serial.read();
       }
       if(responseBytes[0] != NAK ||
          responseBytes[1] != command || 
-         responseBytes[2] != INVALID_INTEGER) {
+         responseBytes[2] != i ||
+         responseBytes[3] != INVALID_INTEGER) {
         Serial.print("\nFAIL: Did not throw error when slot = "); Serial.println(i);
+        Serial.print("responseBytes = ");
+        for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+          Serial.print(responseBytes[j]); Serial.print(" ");
+        }
         while(true) {}
       }
     }
@@ -115,8 +125,8 @@ void testCheckStatus() {
     Serial.print("ERROR in checking status. Received: ");
     for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
         Serial.print(responseBytes[j]); Serial.print(" ");
-      }
-      while(true) {}
+    }
+    while(true) {}
   }
   /* Checking uCamIII */
   sendCommand(CHECK_STATUS, COMPONENT_UCAMIII);
@@ -166,6 +176,7 @@ void testTakePicture() {
     for(int j = 0; j < 3; j++) {
       while(Serial.available() == 0) {}
       responseBytes[j] = Serial.read();
+      Serial.println("\n\n\n\n\n\n\n\nTEST"); while(true) {}
     }
     if(responseBytes[0] != ACK ||
        responseBytes[1] != TAKE_PICTURE || 
