@@ -17,13 +17,15 @@ void sdReadAndTransmit(File file) {
   /* Sending all full packages - Resend if necessary */
   for(int package = 0; package < packages; package++) {
     for(int i = 0; i < EXTERNAL_PACKAGE_SIZE - 1; i++) {
-      toSend[i] = file.read();
+      toSend[i] = (byte)file.read();
     }
     toSend[EXTERNAL_PACKAGE_SIZE - 1] = generateVerifyByte(toSend);
+    /* Wait for ACK to send package */
     while(Serial.available() == 0 || Serial.read() != ACK) {}
     for(int i = 0; i < EXTERNAL_PACKAGE_SIZE; i++) {
       Serial.write(toSend[i]);
     }
+    /* Check if the client wants a resend */
     while(true) {
       if(Serial.available() > 0) {
         if(Serial.peek() == NAK) {

@@ -47,7 +47,7 @@ void setup() {
                           && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE);
   }
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
-
+  
   /* Check whether the SD shield is functional */
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 }

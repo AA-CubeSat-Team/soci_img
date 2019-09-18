@@ -108,6 +108,7 @@ bool receivePackage(unsigned int ID, File toWrite) {
  * (Assumes to be called after the 'takePicture(char)' function)
  */
 bool readData(byte pictureType, byte slot) {
+  static const unsigned short WAIT_TIME = 50;
   String fileName = (pictureType == STORE_PICTURE)? getPictureNameAt(slot): getThumbnailNameAt(slot);
   SD.remove(fileName);
   File toWrite = SD.open(fileName, FILE_WRITE);
@@ -117,12 +118,13 @@ bool readData(byte pictureType, byte slot) {
       while(SoftSer.available() > 0) SoftSer.read();
       return false;
   }
+  unsigned long startTime = millis();
+  while(SoftSer.available() == 0 && millis() - startTime < WAIT_TIME) {}
   unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16;
   int packages = ceil(imageSize * 1.0 / (uCamIII_PACKAGE_SIZE - 6));
-  static const unsigned short WAIT_TIME = 50;
   for(unsigned int id = 0; id < packages; id++) {
     ackPackage(id);
-    unsigned long startTime = millis();
+    startTime = millis();
     while(SoftSer.available() < uCamIII_PACKAGE_SIZE && millis() - startTime < WAIT_TIME) {}
     receivePackage(id + 1, toWrite);
   }
