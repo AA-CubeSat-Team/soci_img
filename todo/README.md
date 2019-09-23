@@ -12,13 +12,28 @@ Given a data package of (EXTERNAL_PACKAGE_SIZE - 1) bytes generate a consistent 
  */
 byte generateVerifyByte(byte* data);
 
-Ellory made an implementation of this that works independently, but has not been tested with the IMG system
+Ellory made an implementation of this that works independently, but has not been tested
+with the IMG system
+
+- Status: Not being worked on
+```
+
+## uCamIII-Pro_Mini Instability
+```diff
+Currently, the TAKE_PICTURE command seems to only work half of the time, and it seems to fail
+randomly due to the uCamIII not responding.
+
+This is not a critical issue, since the system could be reset, which also resets both the
+uCamIII and the SD shield.
+By resetting the system, the TAKE_PICTURE command will work successfully.
+
+However, it would be ideal to not rely on this.
 
 - Status: Not being worked on
 ```
 
 ## Speed up system(potentially)
-```
+```diff
 Currently, the buad rate of the SW and HW serial is set relatively low.
 It may be possible to speed this up.
 Note that the uCamIII can only accept certain pre-set baud rates. (See uCAM-III_datasheet_R_1_0.PDF for specifics)
