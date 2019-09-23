@@ -25,7 +25,7 @@ void sdReadAndTransmit(File file) {
     for(int i = 0; i < EXTERNAL_PACKAGE_SIZE; i++) {
       Serial.write(toSend[i]);
     }
-    /* Check if the client wants a resend */
+    /* Check if the client wants a resend the package or to move on to the next one */
     while(true) {
       if(Serial.available() > 0) {
         if(Serial.peek() == NAK) {
@@ -46,7 +46,7 @@ void sdReadAndTransmit(File file) {
  * (The implementation is trivial, so long as it is consistent)
  */
 String getThumbnailNameAt(byte index) {
-  return "T" + index;
+  return "T" + (String)index;
 }
 
 /**
@@ -54,7 +54,7 @@ String getThumbnailNameAt(byte index) {
  * (The implementation is trivial, so long as it is consistent)
  */
 String getPictureNameAt(byte index) {
-  return "P" + index;
+  return "P" + (String)index;
 }
 
 /** 

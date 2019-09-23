@@ -31,10 +31,10 @@ SoftwareSerial SoftSer(uCamIII_RxPin, uCamIII_TxPin);
 void setup() {
   /* System Setup */
   Serial.begin(HW_BAUD_RATE);
-  SoftSer.begin(SW_BAUD_RATE);
+  SoftSer.begin(SW_INIT_BAUD_RATE);
   SD.begin(SD_SlaveSelectPin);
   pinMode(uCamIII_ResetPin, OUTPUT);
-  
+
   /* Initialize the uCamIII */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
@@ -44,12 +44,39 @@ void setup() {
                           && initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128)
                           && setPackageSize(uCamIII_PACKAGE_SIZE)
                           && setSleepTime(DEFAULT_SLEEP_TIME)
-                          && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE);
+                          && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE)
+                          && setBaudRate(); /* 19200 */
   }
+  SoftSer.end();
+  SoftSer.begin(SW_FINAL_BAUD_RATE);
+  uCamIII_InitSuccessful &= syncCamera();
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
-  
+
   /* Check whether the SD shield is functional */
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
+
+/*** DEBUG CODE ***/
+
+//  Serial.println(F("Done"));
+//  for(int i = 0; i < 5; i++) {
+//  currentParameter2 = (byte)i;
+//    if(runTakePictureProcess()) Serial.println(F("OK"));
+//    else                        Serial.println(F("FAIL"));
+//  }
+
+
+//for(int i = 0; i < 5; i++) {
+//  String fileName = getPictureNameAt(i);
+//  if(SD.exists(fileName)) {
+//    File pictureFile = SD.open(fileName, FILE_READ);
+//    Serial.print(fileName); Serial.print(" ");
+//        unsigned int pictureSize = pictureFile.size();
+//        pictureFile.close();
+//        Serial.println(pictureSize);
+//  }
+//  else Serial.println(0);
+//}
+  
 }
 
 void loop() {

@@ -9,9 +9,10 @@
  * If the response does not take up all of 5 bytes, use 'PADDING_BYTE'
  * to pad the rest of the bytes
  * (All responses going to the external device is expected to use this method)
- * Will work if 'toSend' is not of length 5, but weird behaviours may occur
  */
-void sendExternalResponse(byte* toSend) {
+void sendExternalResponse(byte parameter1, byte parameter2, byte parameter3,
+                          byte parameter4, byte parameter5) {
+  byte toSend[] = {parameter1, parameter2, parameter3, parameter4, parameter5};
   Serial.write(toSend, sizeof(toSend));
 }
 
@@ -20,9 +21,8 @@ void sendExternalResponse(byte* toSend) {
  * <NAK> <currentCommandByte> <currentParameter2> <errorByte>
  */
 void sendExternalError(byte errorByte) {
-  byte toSend[] = {NAK, currentCommandByte, currentParameter2, errorByte,
-                   PADDING_BYTE};
-  sendExternalResponse(toSend);
+  sendExternalResponse(NAK, currentCommandByte, currentParameter2, errorByte,
+                       PADDING_BYTE);
 }
 
 /**
@@ -31,9 +31,8 @@ void sendExternalError(byte errorByte) {
  * <ACK> <currentCommandByte> <currentParameter2>
  */
 void sendExternalACK() {
-  byte toSend[] = {ACK, currentCommandByte, currentParameter2,
-                   PADDING_BYTE, PADDING_BYTE};
-  sendExternalResponse(toSend);
+  sendExternalResponse(ACK, currentCommandByte, currentParameter2,
+                       PADDING_BYTE, PADDING_BYTE);
 }
 
 /**
@@ -43,6 +42,5 @@ void sendExternalACK() {
 void sendFileSize(unsigned int fileSize) {
   byte sizeHighByte = fileSize >> 8 & 0xFF;
   byte sizelowByte  = fileSize & 0xFF;
-  byte toSend[] = {ACK, currentCommandByte, currentParameter2, sizeHighByte, sizelowByte};
-  sendExternalResponse(toSend);
+  sendExternalResponse(ACK, currentCommandByte, currentParameter2, sizeHighByte, sizelowByte);
 }

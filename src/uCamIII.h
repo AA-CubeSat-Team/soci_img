@@ -15,12 +15,10 @@ enum uCamIII_CMD
 , uCamIII_CMD_SNAPSHOT      = 0x05
 , uCamIII_CMD_SET_PACKSIZE  = 0x06
 , uCamIII_CMD_SET_BAUDRATE  = 0x07
-, uCamIII_CMD_RESET         = 0x08
 , uCamIII_CMD_DATA          = 0x0A
 , uCamIII_CMD_SYNC          = 0x0D
 , uCamIII_CMD_ACK           = 0x0E
 , uCamIII_CMD_NAK           = 0x0F
-, uCamIII_CMD_SET_FREQ      = 0x13
 , uCamIII_CMD_SET_CBE       = 0x14
 , uCamIII_CMD_SLEEP         = 0x15
 , uCamIII_STARTBYTE         = 0xAA
@@ -28,29 +26,20 @@ enum uCamIII_CMD
 };
 
 enum uCamIII_IMAGE_FORMAT 
-{ uCamIII_RAW_8BIT          = 0x03
-, uCamIII_RAW_16BIT_RGB565  = 0x06
-, uCamIII_COMP_JPEG         = 0x07
-, uCamIII_RAW_16BIT_CRYCBY  = 0x08
+{ uCamIII_COMP_JPEG         = 0x07
 };
 
 enum uCamIII_RES
-{ uCamIII_80x60             = 0x01
-, uCamIII_160x120           = 0x03
-, uCamIII_160x128           = 0x03
-, uCamIII_320x240           = 0x05
+{ uCamIII_160x128           = 0x03
 , uCamIII_640x480           = 0x07
-, uCamIII_128x96            = 0x08
-, uCamIII_128x128           = 0x09
 };
 
 enum uCamIII_PIC_TYPE
 { uCamIII_TYPE_SNAPSHOT     = 0x01
-, uCamIII_TYPE_RAW          = 0x02
 , uCamIII_TYPE_JPEG         = 0x05
 };
 
-enum uCamIII_SNAP_TYPE 
+enum uCamIII_SNAP_TYPE
 { uCamIII_SNAP_JPEG         = 0x00
 , uCamIII_SNAP_RAW          = 0x01
 };

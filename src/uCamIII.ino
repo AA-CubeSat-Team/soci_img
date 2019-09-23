@@ -41,7 +41,7 @@ bool sendInitializeCommand(byte format, byte rawResolution, byte jpgResolution) 
  * (Returns true if successful, false otherwise)
  */
 bool sendSetPackageSizeCommand(unsigned int packageSize) {
-  sendCommand(uCamIII_CMD_SET_PACKSIZE, 0x08, // 0x08 is predefined for the command
+  sendCommand(uCamIII_CMD_SET_PACKSIZE, 0x08, /* 0x08 is predefined for the command */
               packageSize & 0xFF, packageSize >> 8,
               uCamIII_CMD_NA);
   return receiveAckCommand(uCamIII_CMD_SET_PACKSIZE);
@@ -68,6 +68,17 @@ bool sendSetSleepTimeCommand(byte seconds) {
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA);
   return receiveAckCommand(uCamIII_CMD_SLEEP);
+}
+
+/**
+ * Attempts to set the baud rate to a new value
+ * (Returns true if successful, false otherwise)
+ */
+bool sendSetBaudRateCommand() {
+  sendCommand(uCamIII_CMD_SET_BAUDRATE,
+              0x1F, 0x05, /* 19200 */
+              uCamIII_CMD_NA, uCamIII_CMD_NA);
+  return receiveAckCommand(uCamIII_CMD_SET_BAUDRATE);
 }
 
 /*

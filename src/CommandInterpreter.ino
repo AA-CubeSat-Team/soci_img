@@ -34,35 +34,41 @@ void interpretCommand(byte commandByte, byte parameter2) {
       break;
     case TAKE_PICTURE:
       if(ensureSlotValid(parameter2)) {
-        /* Take small resolution picture */
-        takeSnapshot(uCamIII_SNAP_JPEG);
-        takePicture(uCamIII_TYPE_SNAPSHOT);
-        readData(STORE_THUMBNAIL, parameter2);
-        /* Change settings to high resolution */
-        initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480);
-        /* Take high resolution picture */
-        takeSnapshot(uCamIII_SNAP_JPEG);
-        takePicture(uCamIII_TYPE_SNAPSHOT);
-        readData(STORE_PICTURE, parameter2);
-        /* Change settings to low resolution for next time */
-        initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128);
+        if(runTakePictureProcess()) sendExternalACK();
+        else {
+          SD.remove(getThumbnailNameAt(parameter2));
+          SD.remove(getPictureNameAt(parameter2));
+          sendExternalError(uCamIII_CONNECTION);
+        }
       }
       break;
     case GET_THUMBNAIL_SIZE:
       if(ensureSlotValid(parameter2)) {
-        sendFileSize(SD.open(getThumbnailNameAt(parameter2), FILE_READ).size());
+        String thumbnailName = getThumbnailNameAt(parameter2);
+        if(ensureFileExists(thumbnailName)) {
+          File thumbnailFile = SD.open(thumbnailName, FILE_READ);
+          unsigned int thumbnailSize = thumbnailFile.size();
+          thumbnailFile.close();
+          sendFileSize(thumbnailSize);
+        }
       }
       break;
     case GET_PICTURE_SIZE:
       if(ensureSlotValid(parameter2)) {
-        sendFileSize(SD.open(getPictureNameAt(parameter2), FILE_READ).size());
+        String pictureName = getPictureNameAt(parameter2);
+        if(ensureFileExists(pictureName)) {
+          File pictureFile = SD.open(pictureName, FILE_READ);
+          unsigned int pictureSize = pictureFile.size();
+          pictureFile.close();
+          sendFileSize(pictureSize);
+        }
       }
       break;
     case GET_THUMBNAIL:
       if(ensureSlotValid(parameter2)) {
         String thumbnailName = getThumbnailNameAt(parameter2);
-        File thumbnailFile = ensureFileExists(thumbnailName);
-        if(thumbnailFile) {
+        if(ensureFileExists(thumbnailName)) {
+          File thumbnailFile = SD.open(thumbnailName, FILE_READ);
           sendExternalACK();
           sdReadAndTransmit(thumbnailFile);
         }
@@ -71,8 +77,8 @@ void interpretCommand(byte commandByte, byte parameter2) {
     case GET_PICTURE:
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
-        File pictureFile = ensureFileExists(pictureName);
-        if(pictureFile) {
+        if(ensureFileExists(pictureName)) {
+          File pictureFile = SD.open(pictureName, FILE_READ);
           sendExternalACK();
           sdReadAndTransmit(pictureFile);
         }
@@ -110,6 +116,27 @@ void interpretCommand(byte commandByte, byte parameter2) {
 }
 
 /**
+ * Function implemented for readability
+ * (Returns true if successful. False otherwise)
+ */
+bool runTakePictureProcess() {
+  bool successful = true;
+  /* Take small resolution picture */
+  successful = successful && takeSnapshot(uCamIII_SNAP_JPEG);
+  successful = successful && takePicture(uCamIII_TYPE_SNAPSHOT);
+  successful = successful && readData(STORE_THUMBNAIL, currentParameter2);
+  /* Change settings to high resolution */
+  successful = successful && initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480);
+  /* Take high resolution picture */
+  successful = successful && takeSnapshot(uCamIII_SNAP_JPEG);
+  successful = successful && takePicture(uCamIII_TYPE_SNAPSHOT);
+  successful = successful && readData(STORE_PICTURE, currentParameter2);
+  /* Change settings to low resolution for next time */
+  successful = successful && initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128); 
+  return successful;
+}
+
+/**
  * Ensures given 'slot' is in range of 0x00 inclusive and MAX_PICTURES exclusive 
  * Sends <NAK> <INVALID_SLOT> to external device if not valid(I.e. "In range")
  * Returns whether the 'slot' is valid
@@ -134,10 +161,10 @@ bool ensureIntegerValid(byte integerParam) {
 /**
  * Ensures file with 'fileName' exists in the SD card
  * Sends <NAK> <FILE_NOT_EXIST> to external device if not
- * Returns the file opened in read mode
+ * (Returns whether the file exists)
  */
-File ensureFileExists(String fileName) {
-  File file = SD.open(fileName, FILE_READ);
-  if(!file) sendExternalError(FILE_NOT_EXIST);
-  return file;
+bool ensureFileExists(String fileName) {
+  bool fileExist = SD.exists(fileName);
+  if(!fileExist) sendExternalError(FILE_NOT_EXIST);
+  return fileExist;
 }

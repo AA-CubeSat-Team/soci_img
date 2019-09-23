@@ -5,12 +5,13 @@
 
 /* Defined maximum attempts */
 static const unsigned short MAX_SYNC_ATTEMPTS       = 60;
-static const unsigned short MAX_INITIALIZE_ATTEMPTS = 15;
-static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 15;
+static const unsigned short MAX_INITIALIZE_ATTEMPTS = 30;
+static const unsigned short MAX_SET_SIZE_ATTEMPTS   = 10;
+static const unsigned short MAX_SET_BAUD_ATTEMPTS   = 10;
 static const unsigned short MAX_SET_CBE_ATTEMPTS    = 10;
 static const unsigned short MAX_SET_SLEEP_ATTEMPTS  = 10;
-static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 15;
-static const unsigned short MAX_GET_PIC_ATTEMPTS    = 15;
+static const unsigned short MAX_SNAPSHOT_ATTEMPTS   = 20;
+static const unsigned short MAX_GET_PIC_ATTEMPTS    = 20;
 
 /*
  * Attempts to sync with the uCamIII with a maximum of
@@ -37,7 +38,7 @@ bool initializeCamera(byte format, byte rawResolution, byte jpgResolution) {
   bool ackReceived       = false;
   do {
     ackReceived = sendInitializeCommand(format, rawResolution, jpgResolution);
-    delay(5 + initializeAttempts++);
+    delay(15 + initializeAttempts++);
   } while((initializeAttempts < MAX_INITIALIZE_ATTEMPTS) && !ackReceived);
   return initializeAttempts < MAX_INITIALIZE_ATTEMPTS;
 }
@@ -87,6 +88,20 @@ bool setSleepTime(byte seconds) {
   return setSleepTimeAttempts < MAX_SET_SLEEP_ATTEMPTS;
 }
 
+/**
+ * Sets the baud rate of the uCamIII to a new value
+ * (Returns true if successful. False otherwise)
+ */
+bool setBaudRate() {
+  int setBaudRateAttempts = 0;
+  bool ackReceived        = false;
+  do {
+    ackReceived = sendSetBaudRateCommand();
+    delay(1 + setBaudRateAttempts++);
+  } while((setBaudRateAttempts < MAX_SET_BAUD_ATTEMPTS) && !ackReceived);
+  return setBaudRateAttempts < MAX_SET_BAUD_ATTEMPTS;
+}
+
 /*
  * Takes a snapshot of type 'snapshotType'
  * 'Skip Frame'(Parameter 1 and 2) is set to 0x00
@@ -97,7 +112,7 @@ bool takeSnapshot(byte snapshotType) {
   bool ackReceived         = false;
   do {
     ackReceived = sendTakeSnapshotCommand(snapshotType);
-    delay(1 + takeSnapshotAttempts++);
+    delay(10 + takeSnapshotAttempts++);
   } while((takeSnapshotAttempts < MAX_SNAPSHOT_ATTEMPTS) && !ackReceived);
   return takeSnapshotAttempts < MAX_SNAPSHOT_ATTEMPTS;
 }
@@ -111,7 +126,7 @@ bool takePicture(byte pictureType) {
   bool ackReceived        = false;
   do {
     ackReceived = sendTakePictureCommand(pictureType);
-    delay(1 + takePictureAttempts++);
+    delay(10 + takePictureAttempts++);
   } while((takePictureAttempts < MAX_GET_PIC_ATTEMPTS) && !ackReceived);
   return takePictureAttempts < MAX_GET_PIC_ATTEMPTS;
 }

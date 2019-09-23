@@ -49,12 +49,13 @@ static const byte COMPONENT_SD      = 0x02;
 /* Modificable Constants */
 static const unsigned short uCamIII_MAX_INIT = 10;
 static const unsigned short      SD_MAX_TEST = 10;
-static const unsigned short MAX_PICTURES     = 5;
-static const byte           PADDING_BYTE     = 0xAA;
+static const byte MAX_PICTURES = 5;
+static const byte PADDING_BYTE = 0xAA;
 
 /* Baud Rates */
 static const unsigned int HW_BAUD_RATE = 57600;
-static const unsigned int SW_BAUD_RATE = 57600;
+static const unsigned int SW_INIT_BAUD_RATE  = 57600;
+static const unsigned int SW_FINAL_BAUD_RATE = 19200;
 
 /* Types of files stored in the SD card */
 static const byte STORE_PICTURE   = 0x00;
