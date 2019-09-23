@@ -525,4 +525,5 @@ Then, the system will attempt to initialize the type and resolution of the image
 Then, the system will attempt to set the package size for later data retrieval from the uCamIII.   
 Finally, the system will attempt set the default contrast, brightness, and exposure of the camera.   
 If any of the four processes fails more than the preset limit shown below, the system will be reset and camera re-synced.
+> Flowcharts of this needs to be updated
 
