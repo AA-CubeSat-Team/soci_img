@@ -484,12 +484,21 @@ A visual representation of the 20 sample sizes for the 160x128 JPG thumbnail is 
 </p>
 
 ### Timing
+Below are estimates of how long core processes take, in milliseconds
 
 #### Initialization
-Under normal operation conditions, the process takes on average 1.4 seconds, but may take up to 3 seconds in low-power conditions.   
-**This is the time it takes to initialize the uCamIII, and does NOT include the time needed to boot up the hardware**   
+Under normal operation conditions, the process takes on average 1.6 seconds, but may take up to 4.8 seconds in low-power conditions.   
+**This is the time it takes to initialize the uCamIII and SD, and does NOT include the time needed to boot up the hardware**   
 
 #### Commands
+checkStatus   93ms 
+
+
+
+setContrast   14-16ms
+setBrightness 14-16ms
+setExposure   14-16ms
+setSleepTime   8-10ms
 
 ### Verification
 For each package sent by the IMG system, the last byte will be a verification byte generated using the data in that package.   
