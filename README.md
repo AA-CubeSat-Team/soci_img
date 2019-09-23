@@ -117,7 +117,7 @@ File Not Exist     | 0x06          | Attempted to open a non-existent file
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Check Status
-Usage: \<Command> \<Device>
+Usage: \<Command> \<Device>   
 **Checks the health of component(s) of the IMG system**   
 \<Device> is expected to be 0x00, 0x01, or 0x02, but will still operate as 0x00 if out of range.   
 
@@ -278,7 +278,7 @@ The data stream should be handled as shown below:
 The number of packages to expect can be calculated from the size of the thumbnail and the data size of each package.   
 The size of the thumbnail can be obtained from the [Get Thumbnail Size](#get-thumbnail-size) command.   
 The size of each full package is currently set to 32 bytes, but this can be changed if necessary.   
-**Remember that each package contains 31 bytes of data and 1 verification byte**  
+**Remember that each package contains 31 bytes of data and 1 [verification](#verification) byte**  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Get Picture 
 Usage: \<Command> \<Slot>   
@@ -286,7 +286,7 @@ Usage: \<Command> \<Slot>
 Currently, \<Slot> must be between 0x00 and 0x04 inclusive, but this is not a hard limit as explained above.   
 
 If successful, the response will be in the form of \<Response> \<Command> \<Slot>.   
-Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as explained above in the [Get Thumbnail](#get-thumbnail) command.   
+Afterwards, a stream of data will be sent for every \<ACK> sent to the IMG system, as already explained above in the [Get Thumbnail](#get-thumbnail) command.   
 If failed, the response will be in the form of \<Response> \<Command> \<Slot> \<Error>, and will NOT be followed by a data stream.  
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ### Set Contrast  
