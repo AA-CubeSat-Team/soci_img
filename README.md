@@ -3,6 +3,7 @@ Interface for interacting with the imaging system
 
 ## Table of Contents
 - [System Overview](#system-overview)
+- [Software Setup](#software-setup)
 - [Hardware Setup](#hardware-setup)
   * [Internal Setup](#internal-setup)
   * [External Setup](#external-setup)
@@ -32,6 +33,8 @@ Given the memory capacity of our current SD card(16 GB), the maximum can be incr
 
 The system uses **UART** at baud rate of **57600** to transmit data, which can be lowered if current rate causes unstability in the external system.  
 (Note: It is known that a baud rate of 115200 does not work well for software serial)
+
+## Software Setup
 
 ## Hardware Setup
 The IMG system consists of the following components
@@ -491,18 +494,18 @@ Under normal operation conditions, the process takes on average 1.6 seconds, but
 **This is the time it takes to initialize the uCamIII and SD, and does NOT include the time needed to boot up the hardware**   
 
 #### Commands
+```
 checkStatus   93ms 
-
-
 
 setContrast   14-16ms
 setBrightness 14-16ms
 setExposure   14-16ms
 setSleepTime   8-10ms
+```
 
 ### Verification
 For each package sent by the IMG system, the last byte will be a verification byte generated using the data in that package.   
-> Not yet implemented
+> Not yet implemented - See the 'todo' folder
 
 ## Internal States and Diagrams
 Upon power on, the system will toggle the hardware reset and attempt to establish a common baud rate with the uCamIII via the syncCamera() command.   
