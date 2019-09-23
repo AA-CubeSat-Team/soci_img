@@ -27,7 +27,7 @@ less likely since the same code works fine on an Arduino Uno
 
 This is not a critical issue, since the system could be reset, which also resets both the
 uCamIII and the SD shield.
-By resetting the system, the TAKE_PICTURE command will work successfully.
+By resetting the system, the TAKE_PICTURE command will almost certainly work successfully.
 
 However, it would be ideal to not rely on this.
 
