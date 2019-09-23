@@ -22,6 +22,8 @@ with the IMG system
 ```diff
 Currently, the TAKE_PICTURE command seems to only work half of the time, and it seems to fail
 randomly due to the uCamIII not responding.
+James mentioned that this could be due to wires interfering with one another, but this seems
+less likely since the same code works fine on an Arduino Uno
 
 This is not a critical issue, since the system could be reset, which also resets both the
 uCamIII and the SD shield.
@@ -32,11 +34,24 @@ However, it would be ideal to not rely on this.
 - Status: Not being worked on
 ```
 
+## Run Performance Tests
+```diff
+Currently, there is an issue with the TAKE_PICTURE command, as explained in 'uCamIII-Pro_Mini Instability'
+
+However, this does not prevent us from running a performance test for when the command does execute successfully
+
+The commands that still need to be evaluated are: 
+TAKE_PICTURE, GET_THUMBNAIL_SIZE, GET_PICTURE_SIZE, GET_THUMBNAIL, GET_PICTURE
+
+- Status: Not being worked on
+```
+
 ## Speed up system(potentially)
 ```diff
 Currently, the buad rate of the SW and HW serial is set relatively low.
 It may be possible to speed this up.
-Note that the uCamIII can only accept certain pre-set baud rates. (See uCAM-III_datasheet_R_1_0.PDF for specifics)
+Note that the uCamIII can only accept certain pre-set baud rates.
+(See uCAM-III_datasheet_R_1_0.PDF for specifics)
 
 Additionally, the code itself has not yet been optimized.
 Do beware to not break any code while optimizing.
