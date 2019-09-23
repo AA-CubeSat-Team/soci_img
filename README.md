@@ -35,6 +35,9 @@ The system uses **UART** at baud rate of **57600** to transmit data, which can b
 (Note: It is known that a baud rate of 115200 does not work well for software serial)
 
 ## Software Setup
+Press on 'releases' at the top of the page, and grab a version that suits your goal.   
+**Warning: Code contained in the 'src' folder may be under active modification**   
+**Thus, it is not advised to directly use the code in the 'src' folder**   
 
 ## Hardware Setup
 The IMG system consists of the following components
