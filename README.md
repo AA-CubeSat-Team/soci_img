@@ -75,6 +75,10 @@ For communication, the following stable connections must be made:
 (Pro-Mini) RXI <-> (External Device) TX
 (Pro-Mini) TXO <-> (External Device) RX
 ```
+To reset the Pro-Mini, this optional pin pulled to ground:
+```
+(Pro-Mini) RST <-> (External Device) Digital Pin
+```
 
 ## Usage of Commands
 All commands sent to the IMG system should be two bytes.   
@@ -439,14 +443,18 @@ If failed, the response will be in the form of \<Response> \<Command> \<Seconds>
 ```
 
 ## Possibly Asked Questions(PAQ)
-I keep receiving 'Incomplete Command' Error from the IMG system. Why is this?
+I keep receiving 'Incomplete Command' Error from the IMG system. Why is this?   
 > The IMG system expects all commands to be two bytes, and will throw an error if only one received.   
 > This can also happen if there was too much delay between the bytes sent to the IMG system.   
 > If your system limitations prohibits you from sending the bytes faster, talk to the IMG team.   
 
-I received "Invalid Command" error from the IMG system. Why is this?
+I received "Invalid Command" error from the IMG system. Why is this?   
 > You sent a <Command> bytes that was not in range of 0x00 and 0x09, inclusive   
 > Remember, <Command> byte is the first byte that you send to the IMG system   
+
+I received "File Not Found" error from the IMG system. Why is this?   
+> You tried to get the data or the size of the data from a <Slot> that does not yet hold data   
+> Remember to use the 'Take Picture' at that slot first.   
 
 ## Analysis
 Here, we analyze different aspects of the system for better usage of the system.
@@ -494,13 +502,14 @@ Under normal operation conditions, the process takes on average 1.6 seconds, but
 **This is the time it takes to initialize the uCamIII and SD, and does NOT include the time needed to boot up the hardware**   
 
 #### Commands
+Functions below take up negligible amount of time, so only basic analysis was performed
 ```
-checkStatus   93ms 
+checkStatus     AVG 90~100 ms 
 
-setContrast   14-16ms
-setBrightness 14-16ms
-setExposure   14-16ms
-setSleepTime   8-10ms
+setContrast     AVG 14~16 ms
+setBrightness   AVG 14~16 ms
+setExposure     AVG 14~16 ms
+setSleepTime    AVG  8~10 ms
 ```
 
 ### Verification
