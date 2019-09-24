@@ -1,4 +1,4 @@
-# soci_img Documentation(v1.0.0)
+# soci_img Documentation(v1.0.0-with_thumbnail)
 Interface for interacting with the imaging system
 
 ## Table of Contents
