@@ -86,28 +86,34 @@ void interpretCommand(byte commandByte, byte parameter2) {
       break;
     case SET_CONTRAST:
       if(ensureIntegerValid(parameter2)) {
-        setCBE(parameter2, prevBrightness, prevExposure);
-        prevContrast = parameter2;
-        sendExternalACK();
+        if(setCBE(parameter2, prevBrightness, prevExposure)) {
+          prevContrast = parameter2;
+          sendExternalACK();
+        }
+        else sendExternalError(uCamIII_CONNECTION);
       }
       break;
     case SET_BRIGTHNESS:
       if(ensureIntegerValid(parameter2)) {
-        setCBE(prevContrast, parameter2, prevExposure);
-        prevBrightness = parameter2;
-        sendExternalACK();
+        if(setCBE(prevContrast, parameter2, prevExposure)) {
+          prevBrightness = parameter2;
+          sendExternalACK();
+        }
+        else sendExternalError(uCamIII_CONNECTION);
       }
       break;
     case SET_EXPOSURE:
       if(ensureIntegerValid(parameter2)) {
-        setCBE(prevContrast, prevBrightness, parameter2);
-        prevExposure = parameter2;
-        sendExternalACK();
+        if(setCBE(prevContrast, prevBrightness, parameter2)) {
+          prevExposure = parameter2;
+          sendExternalACK();
+        }
+        else sendExternalError(uCamIII_CONNECTION);
       }
       break;
     case SET_SLEEP_TIME:
-      setSleepTime(parameter2);
-      sendExternalACK();
+      if(setSleepTime(parameter2)) sendExternalACK();
+      else                         sendExternalError(uCamIII_CONNECTION);
       break;
     default:
       sendExternalError(INVALID_COMMAND);
