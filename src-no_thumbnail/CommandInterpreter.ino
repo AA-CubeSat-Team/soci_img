@@ -121,8 +121,8 @@ void interpretCommand(byte commandByte, byte parameter2) {
  */
 bool runTakePictureProcess() {
   bool successful = true;
-  successful = successful && takeSnapshot(uCamIII_SNAP_JPEG);
-  successful = successful && takePicture(uCamIII_TYPE_SNAPSHOT);
+  successful = successful && takeSnapshot(uCamIII_SNAP_JPEG); delay(100); /* Stability delay */
+  successful = successful && takePicture(uCamIII_TYPE_SNAPSHOT); 
   successful = successful && readData(STORE_THUMBNAIL, currentParameter2);
   return successful;
 }

@@ -33,6 +33,7 @@ bool sendSyncCommand() {
 bool sendInitializeCommand(byte format, byte rawResolution, byte jpgResolution) {
   sendCommand(uCamIII_CMD_INIT, uCamIII_CMD_NA,
               format, rawResolution, jpgResolution);
+  delay(1);
   return receiveAckCommand(uCamIII_CMD_INIT);
 }
 
@@ -89,6 +90,7 @@ bool sendTakeSnapshotCommand(byte snapshotType) {
   sendCommand(uCamIII_CMD_SNAPSHOT, snapshotType,
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA);
+              delay(1);
   return receiveAckCommand(uCamIII_CMD_SNAPSHOT);
 }
 
@@ -100,5 +102,6 @@ bool sendTakePictureCommand(byte pictureType) {
   sendCommand(uCamIII_CMD_GET_PICTURE, pictureType,
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA);
+              delay(1);
   return receiveAckCommand(uCamIII_CMD_GET_PICTURE);
 }

@@ -57,15 +57,17 @@ void setup() {
 
 /*** DEBUG CODE ***/
 
-//  Serial.println(F("Done"));
-//  for(int i = 0; i < 5; i++) {
-//  currentParameter2 = (byte)i;
-//    if(runTakePictureProcess()) Serial.println(F("OK"));
-//    else                        Serial.println(F("FAIL"));
-//  }
+  Serial.println(F("Done"));
+  unsigned long startTime;
+  for(int i = 0; i < 20; i++) {
+    startTime = millis();
+    currentParameter2 = (byte)i;
+    if(runTakePictureProcess()) {Serial.print(F("OK ")); Serial.println(millis() - startTime);}
+    else                        Serial.println(F("FAIL"));
+  }
 
 
-//for(int i = 0; i < 5; i++) {
+//for(int i = 0; i < 20; i++) {
 //  String fileName = getPictureNameAt(i);
 //  if(SD.exists(fileName)) {
 //    File pictureFile = SD.open(fileName, FILE_READ);
