@@ -31,6 +31,10 @@ By resetting the system, the TAKE_PICTURE command will almost certainly work suc
 
 However, it would be ideal to not rely on this.
 
+James proposed another potential solution, where we reset the uCamIII everytime we re-initialize
+the uCamIII.
+This might work because the system works properly when the uCamIII is only initialized once at startup.
+
 - Status: Not being worked on
 ```
 
