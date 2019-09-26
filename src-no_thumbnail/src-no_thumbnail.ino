@@ -57,14 +57,14 @@ void setup() {
 
 /*** DEBUG CODE ***/
 
-  Serial.println(F("Done"));
-  unsigned long startTime;
-  for(int i = 0; i < 20; i++) {
-    startTime = millis();
-    currentParameter2 = (byte)i;
-    if(runTakePictureProcess()) {Serial.print(F("OK ")); Serial.println(millis() - startTime);}
-    else                        Serial.println(F("FAIL"));
-  }
+//  Serial.println(F("Done"));
+//  unsigned long startTime;
+//  for(int i = 0; i < 20; i++) {
+//    startTime = millis();
+//    currentParameter2 = (byte)i;
+//    if(runTakePictureProcess()) {Serial.print(F("OK ")); Serial.println(millis() - startTime);}
+//    else                        Serial.println(F("FAIL"));
+//  }
 
 
 //for(int i = 0; i < 20; i++) {
