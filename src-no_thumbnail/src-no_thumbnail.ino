@@ -62,6 +62,7 @@ void setup() {
 //  for(int i = 0; i < 20; i++) {
 //    startTime = millis();
 //    currentParameter2 = (byte)i;
+//    Serial.print(i, DEC); Serial.print(" "); 
 //    if(runTakePictureProcess()) {Serial.print(F("OK ")); Serial.println(millis() - startTime);}
 //    else                        Serial.println(F("FAIL"));
 //  }
