@@ -12,9 +12,9 @@
  * .
  * ?) Repeat steps 6-7 until all exposure levels have a picture
  *  Hint: a loop might be helpful
-
+*/
 // remember- ask me if you have questions! 
 // Use the arduino forums or stackOverflow. The internet is a great resource
- void testSetExposure(){
-  
- }
+void testSetExposure(){
+  Serial.println(F("Not implemented yet"); //Use Serial.print to help you debug!
+}
