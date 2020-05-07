@@ -84,7 +84,8 @@ void loop() {
     byte commandByte = Serial.read();
     unsigned long startTime = millis();
     bool timedOut = true;
-    while (millis() - startTime < COMMAND_WAIT_TIME) {
+    Serial.write(commandByte);
+   /* while (millis() - startTime < COMMAND_WAIT_TIME) {
       if(Serial.available() > 0) {
         interpretCommand(commandByte, Serial.read());
         timedOut = false;
@@ -95,6 +96,6 @@ void loop() {
       currentCommandByte = commandByte;
       currentParameter2  = Serial.read();
       sendExternalError(INCOMPLETE_COMMAND);
-    }
+    }*/
   }
 }

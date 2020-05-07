@@ -11,7 +11,7 @@ static const unsigned int HARDWARE_RESET_TIME = 5; /* In milliseconds */
 static const unsigned int COMMAND_WAIT_TIME   = 5; /* In milliseconds */
 static const unsigned int uCamIII_PACKAGE_SIZE  = 32; /* In bytes */
 static const unsigned int EXTERNAL_PACKAGE_SIZE = 32; /* In bytes */
-static const byte DEFAULT_SLEEP_TIME = 0x00;
+static const byte DEFAULT_SLEEP_TIME = 0x00; // 0 = disable sleep
 static const byte DEFAULT_CONTRAST   = uCamIII_DEFAULT;
 static const byte DEFAULT_BRIGHTNESS = uCamIII_DEFAULT;
 static const byte DEFAULT_EXPOSURE   = uCamIII_DEFAULT;

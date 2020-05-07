@@ -7,4 +7,6 @@ java -jar Convert.jar <file name>
 
 For example:
 java -jar Convert.jar test_picture.txt
+
+The first bytes of the data should be FFD8 and the last/second to last should be FFD9
 ```

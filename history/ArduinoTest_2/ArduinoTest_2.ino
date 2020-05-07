@@ -10,7 +10,7 @@ extern "C" {
  * (Designed for Arduino Uno or similar hardware)
  * NOTE: It is highly recommended that the Reset pin
  *       is connected, although it is optional
- * 
+ * Use the Byte_Array_to_Image folder to convert the output to a .jpg picture
  */
 // Pin Declaration
 static const int Reset = 7;
@@ -19,7 +19,7 @@ static const int Reset = 7;
 SoftwareSerial SoftSer(2,3);
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(57600);
   SoftSer.begin(57600);
   pinMode(Reset, OUTPUT);
   digitalWrite(Reset, LOW);

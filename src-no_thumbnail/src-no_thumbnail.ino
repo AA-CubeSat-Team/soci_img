@@ -12,10 +12,10 @@
 #include "SystemConstants.h"
 
 /* Pin Assignments */
-static const byte uCamIII_ResetPin  = 7;
-static const byte uCamIII_RxPin     = 8;
-static const byte uCamIII_TxPin     = 9;
-static const byte SD_SlaveSelectPin = 10;
+static const byte UCAMIII_RESET_PIN  = 7;
+static const byte UCAMIII_RX_PIN     = 8;
+static const byte UCAMIII_TX_PIN     = 9;
+static const byte SD_SLAVE_SELECT_PIN = 10;
 
 /* Global variables for ease of access - Security concern ignored */
 static byte currentCommandByte;
@@ -23,23 +23,23 @@ static byte currentParameter2;
 
 /**
  * Setting up software serial
- * (uCamIII_RxPin of Arduino -> TX of uCamIII)
- * (uCamIII_TxPin of Arduino -> RX of uCamIII)
+ * (UCAMIII_RX_PIN of Arduino -> TX of uCamIII)
+ * (UCAMIII_TX_PIN of Arduino -> RX of uCamIII)
  */
-SoftwareSerial SoftSer(uCamIII_RxPin, uCamIII_TxPin);
+SoftwareSerial SoftSer(UCAMIII_RX_PIN, UCAMIII_TX_PIN);
 
 void setup() {
   /* System Setup */
-  Serial.begin(HW_BAUD_RATE);
-  SoftSer.begin(SW_INIT_BAUD_RATE);
-  SD.begin(SD_SlaveSelectPin);
-  pinMode(uCamIII_ResetPin, OUTPUT);
+  Serial.begin(HW_BAUD_RATE); //57600
+  SoftSer.begin(SW_INIT_BAUD_RATE); //57600
+  SD.begin(SD_SLAVE_SELECT_PIN);
+  pinMode(UCAMIII_RESET_PIN, OUTPUT);
 
   /* Initialize the uCamIII */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
   while (!uCamIII_InitSuccessful && uCamIII_InitAttempts++ < uCamIII_MAX_INIT) {
-    hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
+    hardwareReset(UCAMIII_RESET_PIN, HARDWARE_RESET_TIME);
     uCamIII_InitSuccessful = syncCamera() 
                           && initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480)
                           && setPackageSize(uCamIII_PACKAGE_SIZE)
@@ -48,7 +48,7 @@ void setup() {
                           && setBaudRate(); /* 19200 */
   }
   SoftSer.end();
-  SoftSer.begin(SW_FINAL_BAUD_RATE);
+  SoftSer.begin(SW_FINAL_BAUD_RATE); //19200
   uCamIII_InitSuccessful &= syncCamera();
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
@@ -57,7 +57,6 @@ void setup() {
 
 /*** DEBUG CODE ***/
 
-//  Serial.println(F("Done"));
 //  unsigned long startTime;
 //  for(int i = 0; i < 20; i++) {
 //    startTime = millis();
@@ -79,11 +78,21 @@ void setup() {
 //  }
 //  else Serial.println(0);
 //}
-  
+
+/*
+ * //This code was used to test if upload is working correctly
+  interpretCommand(0x00, 0x00);   //check health of all
+  delay(1000);
+  interpretCommand(0x01, 0x01);   //take picture
+  interpretCommand(0x01, 0x02);   //take picture
+  interpretCommand(0x01, 0x03);
+  interpretCommand(0x01, 0x04);
+//  interpretCommand(0x04, 0x01);  //get picture
+*/
 }
 
 void loop() {
-  if(Serial.available() > 0) {
+ if(Serial.available() > 0) {
     byte commandByte = Serial.read();
     unsigned long startTime = millis();
     bool timedOut = true;

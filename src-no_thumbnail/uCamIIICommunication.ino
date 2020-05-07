@@ -43,13 +43,13 @@ bool receiveAckCommand(byte commandID) {
 }
 
 /*
- * Disables 'uCamIII_ResetPin' for 'msec' milliseconds
+ * Disables 'UCAMIII_RESET_PIN' for 'msec' milliseconds
  * (Reset is assumed to be active low)
  */
-void hardwareReset(byte uCamIII_ResetPin, unsigned int msec) {
-  digitalWrite(uCamIII_ResetPin, LOW);
+void hardwareReset(byte UCAMIII_RESET_PIN, unsigned int msec) {
+  digitalWrite(UCAMIII_RESET_PIN, LOW);
   delay(msec);
-  digitalWrite(uCamIII_ResetPin, HIGH);
+  digitalWrite(UCAMIII_RESET_PIN, HIGH);
 }
 
 /*

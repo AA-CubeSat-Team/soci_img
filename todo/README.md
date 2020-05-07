@@ -50,15 +50,8 @@ TAKE_PICTURE, GET_THUMBNAIL_SIZE, GET_PICTURE_SIZE, GET_THUMBNAIL, GET_PICTURE
 - Status: Not being worked on
 ```
 
-## Speed up system(potentially)
+## Create a Functional Test(potentially)
 ```diff
-Currently, the buad rate of the SW and HW serial is set relatively low.
-It may be possible to speed this up.
-Note that the uCamIII can only accept certain pre-set baud rates.
-(See uCAM-III_datasheet_R_1_0.PDF for specifics)
+Create a series of tests we can run the img system through to ensure everything works as planned. This should check health of all components, test taking a picture, save that picture to the SD card, retrieve that picture from the SD card, reset the camera, and finally take a lower resolution image as a thumbnail.
 
-Additionally, the code itself has not yet been optimized.
-Do beware to not break any code while optimizing.
-
-- Status: Not being worked on
 ```
