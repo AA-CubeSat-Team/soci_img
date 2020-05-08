@@ -28,10 +28,10 @@ testSetContrast()
 ! Not yet tested
 
 testSetBrightness() 
-! Not yet tested
+Alex working
 
 testSetExposure()
-! Not yet tested
+Saharsh working
 
 testSetSleepTime()
 ! Not yet tested
