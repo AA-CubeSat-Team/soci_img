@@ -18,5 +18,5 @@
 // remember- ask me if you have questions! 
 // Use the arduino forums or stackOverflow. The internet is a great resource
  void testSetBrightness(){
-    Serial.println(F("Not implemented yet"); //Use Serial.print to help you debug!
+    Serial.println(F("Not implemented yet")); //Use Serial.print to help you debug!
  }

@@ -14,7 +14,7 @@ void interpretCommand(char commandChar, char parameterChar) {
 //  Serial.print("\n parameterChar interpreted as: ");
 //  Serial.println(parameterChar);
   switch(commandChar){
-    case '0': testCheckStatus();      break;
+    case '0': testCheckStatus(parameterChar);      break;
     case '1': testTakePicture();      break;
     case '2': testGetThumbnailSize(); break;
     case '3': testGetPictureSize();   break;

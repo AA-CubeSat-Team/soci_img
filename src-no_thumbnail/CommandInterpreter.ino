@@ -32,6 +32,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
         if(uCamIII_Healthy && SD_Healthy) sendExternalACK();
       }
       break;
+      
     case TAKE_PICTURE:
       if(ensureSlotValid(parameter2)) {
         if(runTakePictureProcess()) sendExternalACK();
@@ -42,6 +43,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
         }
       }
       break;
+      
 //    case GET_THUMBNAIL_SIZE:
 //      if(ensureSlotValid(parameter2)) {
 //        String thumbnailName = getThumbnailNameAt(parameter2);
@@ -53,6 +55,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
 //        }
 //      }
 //      break;
+
     case GET_PICTURE_SIZE:
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
@@ -64,6 +67,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
         }
       }
       break;
+      
 //    case GET_THUMBNAIL:
 //      if(ensureSlotValid(parameter2)) {
 //        String thumbnailName = getThumbnailNameAt(parameter2);
@@ -74,6 +78,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
 //        }
 //      }
 //      break;
+
     case GET_PICTURE:
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
@@ -84,6 +89,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
         }
       }
       break;
+      
     case SET_CONTRAST:
       if(ensureIntegerValid(parameter2)) {
         setCBE(parameter2, prevBrightness, prevExposure);
@@ -91,6 +97,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
         sendExternalACK();
       }
       break;
+      
     case SET_BRIGTHNESS:
       if(ensureIntegerValid(parameter2)) {
         setCBE(prevContrast, parameter2, prevExposure);
@@ -98,6 +105,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
         sendExternalACK();
       }
       break;
+      
     case SET_EXPOSURE:
       if(ensureIntegerValid(parameter2)) {
         setCBE(prevContrast, prevBrightness, parameter2);
@@ -105,10 +113,12 @@ void interpretCommand(byte commandByte, byte parameter2) {
         sendExternalACK();
       }
       break;
+      
     case SET_SLEEP_TIME:
       setSleepTime(parameter2);
       sendExternalACK();
       break;
+      
     default:
       sendExternalError(INVALID_COMMAND);
       break;

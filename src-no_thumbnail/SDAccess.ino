@@ -46,7 +46,7 @@ void sdReadAndTransmit(File file) {
  * (The implementation is trivial, so long as it is consistent)
  */
 //String getThumbnailNameAt(byte index) {
-//  return "T" + (String)index;
+//  return "T" + (String)index + ".jpg";
 //}
 
 /**

@@ -70,7 +70,7 @@ For power, the following stable connections must be made:
 (uCamIII) 5V  <-> (Power Source) 5V
 (uCamIII) GND <-> (Power Source) GND
 
-(Pro-Mini) VCC <-> (Power Source) 3.3V
+(Pro-Mini) VCC <-> (Power Source) 5V
 (Pro-Mini) GND <-> (Power Source) GND
 ```
 For communication, the following stable connections must be made:
