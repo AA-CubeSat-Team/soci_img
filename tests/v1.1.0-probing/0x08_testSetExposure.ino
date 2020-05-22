@@ -31,9 +31,7 @@ void testSetExposure(){
 void changeExposure(byte value) {
   sendCommand(SET_EXPOSURE, value);
   for(int i = 0; i < MAX_RESPONSE_BYTES; i++) {    
-    if(Serial.available() == 0) {
-      Serial.println("No response, breaking (setExposure)");
-      break;      
+    while(Serial.available() == 0) { 
     }
     responseBytes[i] = Serial.read();
     }

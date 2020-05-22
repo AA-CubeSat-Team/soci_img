@@ -11,7 +11,7 @@ void testTakePicture() {
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
     sendCommand(TAKE_PICTURE, i);
     for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
-      while(mySerial.available() == 0) { }
+      while(mySerial.available() == 0) {}
       responseBytes[j] = mySerial.read();
     }
     if(responseBytes[0] != ACK ||
