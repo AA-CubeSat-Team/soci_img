@@ -38,3 +38,6 @@ testSetSleepTime()
 ```
 
 ## v1.0.0-performance
+
+## uCamIIIDemo 
+Created by the camera manufacturer 4DSystems to ensure camera works correctly.
