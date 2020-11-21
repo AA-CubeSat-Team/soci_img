@@ -19,12 +19,14 @@ static const unsigned short MAX_GET_PIC_ATTEMPTS    = 20;
  * (Returns true if successful. False otherwise)
  */
 bool syncCamera() {
+  Serial.println("In sync Camera"); //debug code
   int syncAttempts = 0;
   bool ackReceived = false;
   do {
     ackReceived = sendSyncCommand();
     delay(5 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
+  Serial.println(syncAttempts < MAX_SYNC_ATTEMPTS);//debugging
   return syncAttempts < MAX_SYNC_ATTEMPTS;
 }
 

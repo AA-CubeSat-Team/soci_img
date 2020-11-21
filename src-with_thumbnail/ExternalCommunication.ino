@@ -21,6 +21,7 @@ void sendExternalResponse(byte parameter1, byte parameter2, byte parameter3,
  * <NAK> <currentCommandByte> <currentParameter2> <errorByte>
  */
 void sendExternalError(byte errorByte) {
+  Serial.println("error " + errorByte);
   sendExternalResponse(NAK, currentCommandByte, currentParameter2, errorByte,
                        PADDING_BYTE);
 }
