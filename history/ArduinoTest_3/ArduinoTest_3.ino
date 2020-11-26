@@ -34,11 +34,12 @@ static byte IMAGE_TYPE = uCamIII_COMP_JPEG;
 static byte IMAGE_RES  = uCamIII_640x480;
 static byte  SNAP_TYPE = uCamIII_SNAP_JPEG;
 
-void setup() {
+void setup() {  
   Serial.begin(57600);
   SoftSer.begin(57600);
   pinMode(Reset, OUTPUT);
   hardwareReset(Reset, RESET_TIME);
+  Serial.println("Begin initialization! \n==============================");
   if(syncCamera()) Serial.println("Sync Successful");
   if(initializeCamera(IMAGE_TYPE, IMAGE_RES, IMAGE_RES)) Serial.println("Init Successful");
   if(setPackageSize(PACKAGE_SIZE)) Serial.println("Set Size Successful");

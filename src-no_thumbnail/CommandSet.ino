@@ -19,13 +19,14 @@ static const unsigned short MAX_GET_PIC_ATTEMPTS    = 20;
  * (Returns true if successful. False otherwise)
  */
 bool syncCamera() {
+  print("Begin syncCamera");
   int syncAttempts = 0;
   bool ackReceived = false;
   do {
     ackReceived = sendSyncCommand();
     delay(5 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
-  return syncAttempts < MAX_SYNC_ATTEMPTS;
+    return syncAttempts < MAX_SYNC_ATTEMPTS;
 }
 
 /*

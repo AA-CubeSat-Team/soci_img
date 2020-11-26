@@ -121,7 +121,7 @@ bool readData(byte pictureType, byte slot) {
   }
   unsigned long startTime = millis();
   while(SoftSer.available() == 0 && millis() - startTime < WAIT_TIME) {}
-  unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16;
+  unsigned int imageSize = SoftSer.read() | SoftSer.read() << 8 | SoftSer.read() << 16; //from original code, causes a warning
   int packages = ceil(imageSize * 1.0 / (uCamIII_PACKAGE_SIZE - 6));
   for(unsigned int id = 0; id < packages; id++) {
     ackPackage(id);

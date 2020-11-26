@@ -25,6 +25,9 @@ bool sendCommand(char commandByte,
                                    parameter1, parameter2,
                                    parameter3, parameter4};
   SoftSer.write(toSend, sizeof(toSend));
+  Serial.println("sending: ");
+  Serial.print(commandByte, HEX); Serial.print(parameter1, HEX); Serial.print(parameter2, HEX);
+  Serial.print(parameter3, HEX); Serial.print(parameter4, HEX); Serial.println();
 }
 
 /*
@@ -33,26 +36,33 @@ bool sendCommand(char commandByte,
  * (Returns true if successful, false otherwise)
  */
 bool receiveAckCommand(char commandID) {
+  Serial.println("recieveAckCommand: ");
   bool isAckCommand = true;
   byte incoming     = 0;
   // Letting all the bytes come in
-  delay(50);
+  delay(100);      //wait for incoming bytes
   // Checking if first byte is 0xAA
   incoming = SoftSer.read();
+  Serial.print(incoming, HEX);
   isAckCommand = isAckCommand && (incoming == uCamIII_STARTBYTE);
   // Checking if second byte is 0x0E
   incoming = SoftSer.read();
+  Serial.print(incoming, HEX);
   isAckCommand = isAckCommand && (incoming == uCamIII_CMD_ACK);
   // Checking if third byte is 'commandID'
   incoming = SoftSer.read();
+  Serial.print(incoming, HEX);
   isAckCommand = isAckCommand && (incoming == commandID);
   // Throwing away fourth byte (Debugging byte)
   incoming = SoftSer.read();
+  Serial.print(incoming, HEX);
   // Checking if fifth byte is 0x00
   incoming = SoftSer.read();
+  Serial.print(incoming, HEX);
   isAckCommand = isAckCommand && (incoming == uCamIII_CMD_NA);
   // Checking if sixth byte is 0x00
   incoming = SoftSer.read();
+  Serial.println(incoming, HEX);
   isAckCommand = isAckCommand && (incoming == uCamIII_CMD_NA);
   return isAckCommand;
 }

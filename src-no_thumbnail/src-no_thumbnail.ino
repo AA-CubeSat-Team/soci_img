@@ -34,25 +34,41 @@ void setup() {
   SoftSer.begin(SW_INIT_BAUD_RATE); //57600
   SD.begin(SD_SLAVE_SELECT_PIN);
   pinMode(UCAMIII_RESET_PIN, OUTPUT);
-
-  /* Initialize the uCamIII */
+  hardwareReset(UCAMIII_RESET_PIN, HARDWARE_RESET_TIME);
+  /* Initialize the uCamIII 
+   *  
+   *  In the code below:
+   *    (Repeat MAX_INIT times)
+   *    1. Reset camera via reset pin
+   *    2. Sync camera (p14 datasheet)
+   *    3. Picture = 640x480 JPEG
+   *    4. Package size for picture data = 32 bytes
+   *    5. Set camera to never sleep
+   *    6. Default contrast, bright, expos
+   *    7. Lock baud rate at 19200
+   */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
+  
   while (!uCamIII_InitSuccessful && uCamIII_InitAttempts++ < uCamIII_MAX_INIT) {
-    hardwareReset(UCAMIII_RESET_PIN, HARDWARE_RESET_TIME);
+    //try delay to give camera time to turn on
+    hardwareReset(UCAMIII_RESET_PIN, HARDWARE_RESET_TIME); delay(5);
     uCamIII_InitSuccessful = syncCamera() 
                           && initializeCamera(uCamIII_COMP_JPEG, uCamIII_640x480, uCamIII_640x480)
                           && setPackageSize(uCamIII_PACKAGE_SIZE)
                           && setSleepTime(DEFAULT_SLEEP_TIME)
                           && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE)
                           && setBaudRate(); /* 19200 */
+    if(uCamIII_InitSuccessful) Serial.println("uCamIII init successful");
   }
   SoftSer.end();
   SoftSer.begin(SW_FINAL_BAUD_RATE); //19200
   uCamIII_InitSuccessful &= syncCamera();
+
+  //Throw a fatal error with five bytes as described by ICD "Error handling"
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
-  /* Check whether the SD shield is functional */
+  //Throw a fatal error with five bytes as described by ICD "Error handling"
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/
@@ -87,11 +103,12 @@ void setup() {
   interpretCommand(0x01, 0x02);   //take picture
   interpretCommand(0x01, 0x03);
   interpretCommand(0x01, 0x04);
-//  interpretCommand(0x04, 0x01);  //get picture
+  interpretCommand(0x04, 0x01);  //get picture
 */
 }
 
 void loop() {
+  /*
  if(Serial.available() > 0) {
     byte commandByte = Serial.read();
     unsigned long startTime = millis();
@@ -108,5 +125,5 @@ void loop() {
       currentParameter2  = Serial.read();
       sendExternalError(INCOMPLETE_COMMAND);
     }
-  }
+  }*/
 }

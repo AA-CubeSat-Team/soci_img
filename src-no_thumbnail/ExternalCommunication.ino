@@ -5,7 +5,7 @@
  */
 
 /**
- * Sents a consistent 5 bytes of response, as requested by the CDH team
+ * Sents a consistent 5 bytes of response, to the CDH (flight computer)
  * If the response does not take up all of 5 bytes, use 'PADDING_BYTE'
  * to pad the rest of the bytes
  * (All responses going to the external device is expected to use this method)
