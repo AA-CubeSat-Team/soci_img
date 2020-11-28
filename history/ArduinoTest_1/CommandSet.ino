@@ -5,8 +5,8 @@ extern "C" {
 }
 
 /*
- * Holds auxiliary commands necessary for testing
- * the uCAM-III device
+ * Holds commands necessary for the uCAM-III
+ * 
  * (Designed for Arduino Uno or similar hardware)
  * 
  */
