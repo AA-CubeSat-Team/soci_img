@@ -1,6 +1,6 @@
 # soci_img Documentation(v1.0.0-with_thumbnail)
 Interface for interacting with the imaging system
-test scotty
+
 ## Table of Contents
 - [System Overview](#system-overview)
 - [Software Setup](#software-setup)
