@@ -527,3 +527,6 @@ Finally, the system will attempt set the default contrast, brightness, and expos
 If any of the four processes fails more than the preset limit shown below, the system will be reset and camera re-synced.
 > Flowcharts of this needs to be updated
 
+> akash testing if he can push to gituhb
+
+
