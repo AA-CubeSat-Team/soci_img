@@ -36,7 +36,7 @@ bool syncCamera() {
   bool ackReceived = false;
   do {
     ackReceived = sendSyncCommand();
-    delay(5 + syncAttempts++);
+    delay(500 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
   return syncAttempts < MAX_SYNC_ATTEMPTS;
 }

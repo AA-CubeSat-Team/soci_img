@@ -28,8 +28,9 @@ bool initializeCamera() {
   do {
     sendSyncCommand();
     ackReceived = receiveAckCommand(0x0D);
-    delay(5 + syncAttempts++);
+    delay(50 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
+  Serial.print(syncAttempts);
   return syncAttempts < MAX_SYNC_ATTEMPTS;
 }
 
