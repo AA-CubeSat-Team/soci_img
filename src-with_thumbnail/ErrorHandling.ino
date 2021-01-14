@@ -18,6 +18,6 @@ void haltThread(byte errorByte) {
       currentParameter2 = Serial.read();
       sendExternalError(errorByte);
     }
-    Serial.println("crossed if"); //debugging
+    //Serial.println("crossed if"); //debugging
   }
 }

@@ -1,4 +1,4 @@
-s/**
+/**
  * Stable implementation for commands of 
  * uCamIII for the AACT-IMG team
  * 
@@ -13,8 +13,8 @@ s/**
 
 /* Pin Assignments */
 static const byte uCamIII_ResetPin  = 7;
-static const byte uCamIII_RxPin     = 8;
-static const byte uCamIII_TxPin     = 9;
+static const byte uCamIII_RxPin     = 11;
+static const byte uCamIII_TxPin     = 12;
 static const byte SD_SlaveSelectPin = 10;
 
 /* Global variables for ease of access - Security concern ignored */
@@ -38,10 +38,10 @@ void setup() {
   /* Initialize the uCamIII */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
+  hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
   Serial.println("Initializing camera"); //debug code
   while (!uCamIII_InitSuccessful && uCamIII_InitAttempts++ < uCamIII_MAX_INIT) {
     hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
-    Serial.println("syncing while initalizing"); //debugging
     uCamIII_InitSuccessful = syncCamera() 
                           && initializeCamera(uCamIII_COMP_JPEG, uCamIII_160x128, uCamIII_160x128)
                           && setPackageSize(uCamIII_PACKAGE_SIZE)
@@ -49,10 +49,10 @@ void setup() {
                           && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE)
                           && setBaudRate(); /* 19200 */
   }
+  Serial.println(uCamIII_InitSuccessful); //debugging
   SoftSer.end();
   SoftSer.begin(SW_FINAL_BAUD_RATE);
   uCamIII_InitSuccessful &= syncCamera();
-  Serial.println("if initialization and sync fail");  //debugging
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
   /* Check whether the SD shield is functional */

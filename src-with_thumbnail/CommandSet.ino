@@ -26,7 +26,6 @@ bool syncCamera() {
     ackReceived = sendSyncCommand();
     delay(5 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
-  Serial.println(syncAttempts < MAX_SYNC_ATTEMPTS);//debugging
   return syncAttempts < MAX_SYNC_ATTEMPTS;
 }
 
