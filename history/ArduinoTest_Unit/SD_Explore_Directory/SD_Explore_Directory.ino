@@ -4,7 +4,7 @@
 #include <SPI.h>
 #include <SD.h>
 
-const static int SS_Pin = 10;
+const static int SS_Pin = 10; //should be 10 for pro-mini
 
 void setup() {
   Serial.begin(9600);
