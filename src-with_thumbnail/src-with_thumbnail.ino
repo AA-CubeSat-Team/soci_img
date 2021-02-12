@@ -11,11 +11,13 @@
 #include "uCamIII.h"
 #include "SystemConstants.h"
 
-/* Pin Assignments */
+/* Pin Assignments for mega - needs to be changed for mini */
 static const byte uCamIII_ResetPin  = 7;
 static const byte uCamIII_RxPin     = 11;
-static const byte uCamIII_TxPin     = 12;
-static const byte SD_SlaveSelectPin = 10;
+static const byte uCamIII_TxPin     = 12; 
+static const byte SD_SlaveSelectPin = 53; // 10 on mini
+
+/* DataOuput -> 51 , DataInput -> 50, SCK -> 52 */
 
 /* Global variables for ease of access - Security concern ignored */
 static byte currentCommandByte;
@@ -38,8 +40,9 @@ void setup() {
   /* Initialize the uCamIII */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
+   Serial.println("abt to check");
+
   hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
-  Serial.println("Initializing camera"); //debug code
   while (!uCamIII_InitSuccessful && uCamIII_InitAttempts++ < uCamIII_MAX_INIT) {
     hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
     uCamIII_InitSuccessful = syncCamera() 
@@ -49,13 +52,17 @@ void setup() {
                           && setCBE(DEFAULT_CONTRAST, DEFAULT_BRIGHTNESS, DEFAULT_EXPOSURE)
                           && setBaudRate(); /* 19200 */
   }
-  Serial.println(uCamIII_InitSuccessful); //debugging
+  //Serial.println("if the number under this is one then we r chilling");
+  //Serial.println(uCamIII_InitSuccessful); //debugging
   SoftSer.end();
   SoftSer.begin(SW_FINAL_BAUD_RATE);
   uCamIII_InitSuccessful &= syncCamera();
+   Serial.println("abt to check camera");
+
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
   /* Check whether the SD shield is functional */
+  Serial.println("abt to check sd");
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/

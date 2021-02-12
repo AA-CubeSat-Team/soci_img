@@ -36,7 +36,9 @@ bool syncCamera() {
   bool ackReceived = false;
   do {
     ackReceived = sendSyncCommand();
-    delay(500 + syncAttempts++);
+     Serial.println("\n post send sync");
+
+    delay(5 + syncAttempts++);
   } while((syncAttempts < MAX_SYNC_ATTEMPTS) && !ackReceived);
   return syncAttempts < MAX_SYNC_ATTEMPTS;
 }

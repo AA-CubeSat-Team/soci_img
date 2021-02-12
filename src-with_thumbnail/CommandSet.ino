@@ -19,7 +19,7 @@ static const unsigned short MAX_GET_PIC_ATTEMPTS    = 20;
  * (Returns true if successful. False otherwise)
  */
 bool syncCamera() {
-  Serial.println("In sync Camera"); //debug code
+  //Serial.println("In sync Camera"); //debug code
   int syncAttempts = 0;
   bool ackReceived = false;
   do {

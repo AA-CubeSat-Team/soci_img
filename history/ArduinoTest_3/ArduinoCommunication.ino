@@ -26,13 +26,8 @@ bool sendCommand(char commandByte,
                                    parameter3, parameter4};
   SoftSer.write(toSend, sizeof(toSend));
   Serial.println("sending: ");
-  for(int i = 0; i < uCamIII_CMD_SIZE; i++)
-  {
-    Serial.print(toSend[i], HEX);
-  }
-  Serial.println();
-  //Serial.print(commandByte, HEX); Serial.print(parameter1, HEX); Serial.print(parameter2, HEX);
-  //Serial.print(parameter3, HEX); Serial.print(parameter4, HEX); Serial.println();
+  Serial.print(commandByte, HEX); Serial.print(parameter1, HEX); Serial.print(parameter2, HEX);
+  Serial.print(parameter3, HEX); Serial.print(parameter4, HEX); Serial.println();
 }
 
 /*

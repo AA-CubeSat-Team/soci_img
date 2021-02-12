@@ -25,18 +25,18 @@ bool sendCommand(byte commandByte,
  */
 bool receiveAckCommand(byte commandID) {
   static const unsigned short ACK_BYTES = 6;
-  static const unsigned short WAIT_TIME = 80;
+  static const unsigned short WAIT_TIME = 100;
   // Letting all the bytes come in
   long startTime = millis();
   while(SoftSer.available() < ACK_BYTES && millis() - startTime < WAIT_TIME) {}
   // Reading incoming bytes
   byte incomingBytes[ACK_BYTES];
-  Serial.println("Printing incoming bytes");
+  //Serial.println("Printing incoming bytes");
   for(int i = 0; i < ACK_BYTES; i++) {
     incomingBytes[i] = SoftSer.read();
-    Serial.print(incomingBytes[i], HEX);
+    //Serial.print(incomingBytes[i], HEX);
   }
-  Serial.println();
+  //Serial.println();
   // Checking validity according to uCamIII specification
   return (incomingBytes[0] == uCamIII_STARTBYTE)
       && (incomingBytes[1] == uCamIII_CMD_ACK)

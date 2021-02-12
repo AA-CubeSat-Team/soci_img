@@ -16,7 +16,7 @@ extern "C" {
 static const int Reset = 7;
 // Software Serial
 // (pin 2 of Arduino -> TX of uCAM, pin 3 of Arduino -> RX of uCAM)
-SoftwareSerial SoftSer(11,9);
+SoftwareSerial SoftSer(2,3);
 
 void setup() {
   Serial.begin(57600);

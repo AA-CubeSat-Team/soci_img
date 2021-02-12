@@ -70,7 +70,7 @@ byte generateVerifyByte(byte* data) {
  * (Returns true if it is; False otherwise)
  */
 bool SD_IsFunctional() {
-  Serial.println("SD is functional?"); //debug code
+  //Serial.println("SD is functional?"); //debug code
   static const String TEST_FILE = "TEST";
   static const byte   TEST_BYTE = 0xAA;
   bool  SD_TestSuccessful = false;
@@ -89,5 +89,6 @@ bool SD_IsFunctional() {
       SD.remove(TEST_FILE);
     }
   }
+  Serial.println(SD_TestSuccessful);
   return SD_TestSuccessful;
 }

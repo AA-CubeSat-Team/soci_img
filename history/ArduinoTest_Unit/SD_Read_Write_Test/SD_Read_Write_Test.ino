@@ -6,11 +6,12 @@
 #include <SD.h>
 
 static const String testFileName = "1234_678.txt"; /* MAX 8 characters */
-static const int SS_Pin = 10;
+static const int SS_Pin = 53;
 static const unsigned int bytesToTest = 30000;
 
 void setup() {
   Serial.begin(9600);
+  pinMode(53, OUTPUT);
   while (!Serial) {}
   Serial.print("Initializing SD card...");
   if (!SD.begin(SS_Pin)) {
