@@ -40,7 +40,7 @@ void setup() {
   /* Initialize the uCamIII */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
-   Serial.println("abt to check");
+   Serial.println("Checking if Camera and SD are initialized");
 
   hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
   while (!uCamIII_InitSuccessful && uCamIII_InitAttempts++ < uCamIII_MAX_INIT) {
@@ -57,47 +57,76 @@ void setup() {
   SoftSer.end();
   SoftSer.begin(SW_FINAL_BAUD_RATE);
   uCamIII_InitSuccessful &= syncCamera();
-   Serial.println("abt to check camera");
+   Serial.println("Checking camera");
 
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
   /* Check whether the SD shield is functional */
-  Serial.println("abt to check sd");
+  Serial.println("Camera init successful");
+  Serial.println("Checking SD card");
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/
 
-//  Serial.println(F("Done"));
-//  for(int i = 0; i < 5; i++) {
-//  currentParameter2 = (byte)i;
-//    if(runTakePictureProcess()) Serial.println(F("OK"));
-//    else                        Serial.println(F("FAIL"));
-//  }
+  Serial.println(F("SD card init successful"));
+  for(int i = 0; i < 2; i++) {
+  currentParameter2 = (byte)i;
+    if(runTakePictureProcess()) Serial.println(F("OK"));
+    else                        Serial.println(F("FAIL"));
+  }
 
 
+// clear the files inside the SD card
 //for(int i = 0; i < 5; i++) {
 //  String fileName = getPictureNameAt(i);
 //  if(SD.exists(fileName)) {
-//    File pictureFile = SD.open(fileName, FILE_READ);
-//    Serial.print(fileName); Serial.print(" ");
-//        unsigned int pictureSize = pictureFile.size();
-//        pictureFile.close();
-//        Serial.println(pictureSize);
+//    SD.remove(fileName);
 //  }
-//  else Serial.println(0);
 //}
+//
+//for(int i = 0; i < 5; i++) {
+//  String fileName = getPictureNameAt(i);
+//  if (SD.exists(fileName)) {
+//    Serial.println("picture exists.");
+//  } else {
+//    Serial.println("picture doesn't exist.");
+//  }
+//}
+//Serial.println("Done deleting SD Card pics, 0 - 1000");
+
+// read SD card data and print bytes to serial monitor
+for(int i = 0; i < 2; i++) {
+  String fileName = getPictureNameAt(i);
+  if(SD.exists(fileName)) {
+    File pictureFile = SD.open(fileName, FILE_READ);
+    Serial.print(fileName); Serial.print(" ");
+        unsigned int pictureSize = pictureFile.size();
+        // read from the file until there's nothing else in it:
+        while (pictureFile.available()) {
+          Serial.write(pictureFile.read());
+        }
+        pictureFile.close();
+        Serial.println(pictureSize);
+  }
+  else Serial.println(0);
+}
+Serial.println("Done reading data, this is some bs");
   
 }
 
 void loop() {
   if(Serial.available() > 0) {
-    byte commandByte = Serial.read();
+    // to test commands hardcode command into commandByte variable
+    // i.e. take picture -> 0x01
+    //    byte commandByte = Serial.read();
+    byte commandByte = TAKE_PICTURE;
     unsigned long startTime = millis();
     bool timedOut = true;
     Serial.write(commandByte);
     while (millis() - startTime < COMMAND_WAIT_TIME) {
       if(Serial.available() > 0) {
-        interpretCommand(commandByte, Serial.read());
+//        interpretCommand(commandByte, Serial.read());
+        interpretCommand(commandByte, 0xFF);
         timedOut = false;
         break;
       }
