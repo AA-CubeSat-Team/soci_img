@@ -67,22 +67,23 @@ void setup() {
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/
-
-  Serial.println(F("SD card init successful"));
-  for(int i = 0; i < 2; i++) {
-  currentParameter2 = (byte)i;
-    if(runTakePictureProcess()) Serial.println(F("OK"));
-    else                        Serial.println(F("FAIL"));
-  }
+//
+//  Serial.println(F("SD card init successful"));
+//  for(int i = 0; i < 2; i++) {
+//  currentParameter2 = (byte)i;
+//    if(runTakePictureProcess()) Serial.println(F("OK"));
+//    else                        Serial.println(F("FAIL"));
+//  }
 
 
 // clear the files inside the SD card
-//for(int i = 0; i < 5; i++) {
+//for(int i = 0; i < 6; i++) {
 //  String fileName = getPictureNameAt(i);
 //  if(SD.exists(fileName)) {
 //    SD.remove(fileName);
 //  }
 //}
+//Serial.println("SD clear");
 //
 //for(int i = 0; i < 5; i++) {
 //  String fileName = getPictureNameAt(i);
@@ -95,22 +96,22 @@ void setup() {
 //Serial.println("Done deleting SD Card pics, 0 - 1000");
 
 // read SD card data and print bytes to serial monitor
-for(int i = 0; i < 2; i++) {
-  String fileName = getPictureNameAt(i);
-  if(SD.exists(fileName)) {
-    File pictureFile = SD.open(fileName, FILE_READ);
-    Serial.print(fileName); Serial.print(" ");
-        unsigned int pictureSize = pictureFile.size();
-        // read from the file until there's nothing else in it:
-        while (pictureFile.available()) {
-          Serial.write(pictureFile.read());
-        }
-        pictureFile.close();
-        Serial.println(pictureSize);
-  }
-  else Serial.println(0);
-}
-Serial.println("Done reading data, this is some bs");
+//for(int i = 0; i < 2; i++) {
+//  String fileName = getPictureNameAt(i);
+//  if(SD.exists(fileName)) {
+//    File pictureFile = SD.open(fileName, FILE_READ);
+//    Serial.print(fileName); Serial.print(" ");
+//        unsigned int pictureSize = pictureFile.size();
+//        // read from the file until there's nothing else in it:
+//        while (pictureFile.available()) {
+//          Serial.write(pictureFile.read());
+//        }
+//        pictureFile.close();
+//        Serial.println(pictureSize);
+//  }
+//  else Serial.println(0);
+//}
+//Serial.println("Done reading data, this is some bs");
   
 }
 
