@@ -70,7 +70,7 @@ void setup() {
 /*** DEBUG CODE ***/
   Serial.println(F("SD card init successful"));
 
-//  testTakePicture(2);
+  //testTakePicture(2);
 //  testReadPicture(2);
   
 }
@@ -126,12 +126,14 @@ void testReadPicture(int numOfPics) {
 }
 
 void loop() {
+     Serial.println(Serial.read(), BIN);
+
   if(Serial.available() > 0) {
     // to test commands hardcode command into commandByte variable
     // i.e. take picture -> 0x01
     //    byte commandByte = TAKE_PICTURE;
     byte commandByte = Serial.read();
-    Serial.println(commandByte);
+    Serial.println(commandByte, BIN);
     unsigned long startTime = millis();
     bool timedOut = true;
     Serial.write(commandByte);

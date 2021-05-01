@@ -84,9 +84,10 @@ void loop() {
 //    clearSerialBuffer();
 //    readString = "";
 //  }
-  byte test = 0x23;
+  byte test = 0b00000101;
+  //Serial.println(test,BIN);
   mySerial.write(test);
-  delay(100);
+  //delay(100);
 }
 
 /**
@@ -96,9 +97,9 @@ void sendCommand(byte command, byte param2) {
   byte toSend[] = {command, param2};
   Serial.print(F("Sending to IMG system(HEX): "));
   Serial.print("0x"); Serial.print(command, HEX); Serial.print(" "); Serial.print("0x"); Serial.println(param2, HEX); 
-//  mySerial.write(toSend, sizeof(toSend));
+  mySerial.write(toSend, sizeof(toSend));
   byte test = 5;
-    mySerial.write(test);
+    //mySerial.write(test);
   delay(100);
 }
 
