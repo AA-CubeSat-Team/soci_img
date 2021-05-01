@@ -56,6 +56,7 @@ void setup() {
   //Serial.println(uCamIII_InitSuccessful); //debugging
   SoftSer.end();
   SoftSer.begin(SW_FINAL_BAUD_RATE);
+  Serial.begin(57600);
   uCamIII_InitSuccessful &= syncCamera();
    Serial.println("Checking camera");
 
@@ -67,67 +68,77 @@ void setup() {
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/
-//
-//  Serial.println(F("SD card init successful"));
-//  for(int i = 0; i < 2; i++) {
-//  currentParameter2 = (byte)i;
-//    if(runTakePictureProcess()) Serial.println(F("OK"));
-//    else                        Serial.println(F("FAIL"));
-//  }
+  Serial.println(F("SD card init successful"));
 
-
-// clear the files inside the SD card
-//for(int i = 0; i < 6; i++) {
-//  String fileName = getPictureNameAt(i);
-//  if(SD.exists(fileName)) {
-//    SD.remove(fileName);
-//  }
-//}
-//Serial.println("SD clear");
-//
-//for(int i = 0; i < 5; i++) {
-//  String fileName = getPictureNameAt(i);
-//  if (SD.exists(fileName)) {
-//    Serial.println("picture exists.");
-//  } else {
-//    Serial.println("picture doesn't exist.");
-//  }
-//}
-//Serial.println("Done deleting SD Card pics, 0 - 1000");
-
-// read SD card data and print bytes to serial monitor
-//for(int i = 0; i < 2; i++) {
-//  String fileName = getPictureNameAt(i);
-//  if(SD.exists(fileName)) {
-//    File pictureFile = SD.open(fileName, FILE_READ);
-//    Serial.print(fileName); Serial.print(" ");
-//        unsigned int pictureSize = pictureFile.size();
-//        // read from the file until there's nothing else in it:
-//        while (pictureFile.available()) {
-//          Serial.write(pictureFile.read());
-//        }
-//        pictureFile.close();
-//        Serial.println(pictureSize);
-//  }
-//  else Serial.println(0);
-//}
-//Serial.println("Done reading data, this is some bs");
+//  testTakePicture(2);
+//  testReadPicture(2);
   
+}
+
+void testTakePicture(int numOfPics) {
+  for(int i = 0; i < numOfPics; i++) {
+    currentParameter2 = (byte)i;
+    if(runTakePictureProcess()) Serial.println(F("OK"));
+    else                        Serial.println(F("FAIL"));
+  }
+}
+
+
+// some defined functions
+void clearSDCard() {
+   // clear the files inside the SD card
+  for(int i = 0; i < 6; i++) {
+    String fileName = getPictureNameAt(i);
+    if(SD.exists(fileName)) {
+      SD.remove(fileName);
+    }
+  }
+  Serial.println("SD clear");
+
+  for(int i = 0; i < 5; i++) {
+    String fileName = getPictureNameAt(i);
+    if (SD.exists(fileName)) {
+      Serial.println("picture exists.");
+    } else {
+      Serial.println("picture doesn't exist.");
+    }
+  }
+}
+
+void testReadPicture(int numOfPics) {
+  // read SD card data and print bytes to serial monitor
+  for(int i = 0; i < numOfPics; i++) {
+    String fileName = getPictureNameAt(i);
+    if(SD.exists(fileName)) {
+      File pictureFile = SD.open(fileName, FILE_READ);
+      Serial.print(fileName); Serial.print(" ");
+          unsigned int pictureSize = pictureFile.size();
+          // read from the file until there's nothing else in it:
+          while (pictureFile.available()) {
+            Serial.write(pictureFile.read());
+          }
+          pictureFile.close();
+          Serial.println(pictureSize);
+    }
+    else Serial.println(0);
+  }
+  Serial.println("Done reading data, this is some bs");
 }
 
 void loop() {
   if(Serial.available() > 0) {
     // to test commands hardcode command into commandByte variable
     // i.e. take picture -> 0x01
-    //    byte commandByte = Serial.read();
-    byte commandByte = TAKE_PICTURE;
+    //    byte commandByte = TAKE_PICTURE;
+    byte commandByte = Serial.read();
+    Serial.println(commandByte);
     unsigned long startTime = millis();
     bool timedOut = true;
     Serial.write(commandByte);
     while (millis() - startTime < COMMAND_WAIT_TIME) {
       if(Serial.available() > 0) {
-//        interpretCommand(commandByte, Serial.read());
-        interpretCommand(commandByte, 0xFF);
+        interpretCommand(commandByte, Serial.read());
+//        interpretCommand(commandByte, 0xFF);
         timedOut = false;
         break;
       }

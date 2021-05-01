@@ -58,32 +58,35 @@ void setup() {
 }
 
 void loop() {
-  while(Serial.available() > 0) {
-    delay(10);
-    readString += (char)Serial.read();
-  }
-    
-// 5 chars should come through: 
-// 'c' + command(2 char) + parameter(2 char)
-// [c] + [_] + [command] + [_] +[parameter]
-  if(readString.charAt(0) == 'c' && 
-      readString.length() == 6) { //unsure why this needs to be 6, should be 5. Perhaps due to null character "\0"
-    Serial.print(F("\nReceived from user: "));
-    Serial.print(readString);
-    char commandChar = readString.charAt(2);
-    char parameterChar = readString.charAt(4);
-    interpretCommand(commandChar, parameterChar);
-    delay(1000);
-    Serial.println(F("**Completed Command**"));
-    Serial.println(F("\nSend another command of the format: c + [command] + [parameter]"));
-    Serial.println(F("c0000 or c0001 or c0200 for example"));
-    readString = "";
-    clearSerialBuffer();
-  } else if(readString.length() >= 6){
-    Serial.println(F("Not able to recognize command. Try again"));
-    clearSerialBuffer();
-    readString = "";
-  }
+//  while(Serial.available() > 0) {
+//    delay(10);
+//    readString += (char)Serial.read();
+//  }
+//    
+//// 5 chars should come through: 
+//// 'c' + command(2 char) + parameter(2 char)
+//// [c] + [_] + [command] + [_] +[parameter]
+//  if(readString.charAt(0) == 'c' && 
+//      readString.length() == 6) { //unsure why this needs to be 6, should be 5. Perhaps due to null character "\0"
+//    Serial.print(F("\nReceived from user: "));
+//    Serial.print(readString);
+//    char commandChar = readString.charAt(2);
+//    char parameterChar = readString.charAt(4);
+//    interpretCommand(commandChar, parameterChar);
+//    delay(1000);
+//    Serial.println(F("**Completed Command**"));
+//    Serial.println(F("\nSend another command of the format: c + [command] + [parameter]"));
+//    Serial.println(F("c0000 or c0001 or c0200 for example"));
+//    readString = "";
+//    clearSerialBuffer();
+//  } else if(readString.length() >= 6){
+//    Serial.println(F("Not able to recognize command. Try again"));
+//    clearSerialBuffer();
+//    readString = "";
+//  }
+  byte test = 0x23;
+  mySerial.write(test);
+  delay(100);
 }
 
 /**
@@ -93,7 +96,9 @@ void sendCommand(byte command, byte param2) {
   byte toSend[] = {command, param2};
   Serial.print(F("Sending to IMG system(HEX): "));
   Serial.print("0x"); Serial.print(command, HEX); Serial.print(" "); Serial.print("0x"); Serial.println(param2, HEX); 
-  mySerial.write(toSend, sizeof(toSend));
+//  mySerial.write(toSend, sizeof(toSend));
+  byte test = 5;
+    mySerial.write(test);
   delay(100);
 }
 
