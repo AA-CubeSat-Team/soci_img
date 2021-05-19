@@ -11,6 +11,8 @@
 #include "uCamIII.h"
 #include "SystemConstants.h"
 
+#define HW_BAUD_RATE 57600
+
 /* Pin Assignments for mega - needs to be changed for mini */
 static const byte uCamIII_ResetPin  = 7;
 static const byte uCamIII_RxPin     = 11;
@@ -28,9 +30,20 @@ static byte currentParameter2;
  * (uCamIII_RxPin of Arduino -> TX of uCamIII)
  * (uCamIII_TxPin of Arduino -> RX of uCamIII)
  */
+
+uint8_t rx_buffer[5];
+void print_rx_buffer() {
+  Serial.print("rx_buffer = ");
+  for (int i = 0; i < 5; i++) {
+     Serial.print((char)rx_buffer[i]); 
+  }
+  Serial.println("\n");  
+}
+ 
 SoftwareSerial SoftSer(uCamIII_RxPin, uCamIII_TxPin);
 
 void setup() {
+  Serial.begin(57600);
   /* System Setup */
   Serial.begin(HW_BAUD_RATE);
   SoftSer.begin(SW_INIT_BAUD_RATE);
@@ -56,7 +69,7 @@ void setup() {
   //Serial.println(uCamIII_InitSuccessful); //debugging
   SoftSer.end();
   SoftSer.begin(SW_FINAL_BAUD_RATE);
-  Serial.begin(57600);
+  
   uCamIII_InitSuccessful &= syncCamera();
    Serial.println("Checking camera");
 
@@ -70,7 +83,7 @@ void setup() {
 /*** DEBUG CODE ***/
   Serial.println(F("SD card init successful"));
 
-  //testTakePicture(2);
+// testTakePicture(2);
 //  testReadPicture(2);
   
 }
@@ -125,22 +138,61 @@ void testReadPicture(int numOfPics) {
   Serial.println("Done reading data, this is some bs");
 }
 
-void loop() {
-     Serial.println(Serial.read(), BIN);
+int counter = 0;
+byte cmd = 0xFF, parameter = 0xFF;
 
-  if(Serial.available() > 0) {
+void loop() {
+  
+  cmd = 0xFF;
+  parameter = 0xFF;
+  
+  while (Serial.available() > 0) {
+    //Serial.println("top");
     // to test commands hardcode command into commandByte variable
     // i.e. take picture -> 0x01
-    //    byte commandByte = TAKE_PICTURE;
-    byte commandByte = Serial.read();
-    Serial.println(commandByte, BIN);
-    unsigned long startTime = millis();
-    bool timedOut = true;
-    Serial.write(commandByte);
-    while (millis() - startTime < COMMAND_WAIT_TIME) {
+    /*Serial.print("ct = ");
+    Serial.println(counter);*/
+    if (counter == 0) {
+        cmd = Serial.read();
+//        Serial.print("cmd byte = ");
+//        Serial.println((char)cmd);
+        counter++;
+    } else if (counter == 1){
+        parameter = Serial.read();
+//        Serial.print("parameter = ");
+//        Serial.println((char)parameter);
+        counter = 0; 
+    } 
+    Serial.println(Serial.available());
+  }
+
+  Serial.print("cmd byte = ");
+  Serial.println(cmd);
+  // check if cmd/parameter is initialized
+  if (cmd != 0xFF && parameter != 0xFF) {
+      
+      interpretCommand(cmd, parameter);
+  }
+  
+  
+  
+
+    // waste newline char 
+    //while(Serial.available() > 0) Serial.read();
+
+    //interpretCommand(commandByte, parameter);
+    
+    //unsigned long startTime = millis();
+    ///bool timedOut = true;
+    // Serial.write((char)commandByte);
+    /*while (millis() - startTime < COMMAND_WAIT_TIME) {
       if(Serial.available() > 0) {
-        interpretCommand(commandByte, Serial.read());
-//        interpretCommand(commandByte, 0xFF);
+        byte parameter = Serial.read();
+        Serial.print("parameter = ");
+        Serial.println((char)parameter);
+        interpretCommand(commandByte, parameter);
+        //interpretCommand(commandByte, 0x01);
+        Serial.println("haha");
         timedOut = false;
         break;
       }
@@ -149,6 +201,5 @@ void loop() {
       currentCommandByte = commandByte;
       currentParameter2  = Serial.read();
       sendExternalError(INCOMPLETE_COMMAND);
-    }
-  }
+    }*/
 }

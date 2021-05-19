@@ -9,8 +9,8 @@
  * 
  * Uses software serial to communicate with IMG system (RX = 10/TX = 11) 
  * 
- * Connect pin 10 to IMG TX
- * Connect pin 11 to IMG RX
+ * Connect pin 10 to IMG RX
+ * Connect pin 11 to IMG TX
  * 
  * -------------------------TODO---------------------------
  *   - make "parmeterString" do something for each test
@@ -40,12 +40,24 @@
 #include "v1.1.0-probing.h"
 #include <SoftwareSerial.h>
 
-SoftwareSerial mySerial = SoftwareSerial(10,11);
+#define RX_PIN 10
+#define TX_PIN 11
+
+SoftwareSerial mySerial = SoftwareSerial(RX_PIN, TX_PIN);
 
 static const unsigned short MAX_RESPONSE_BYTES = 5;
 static byte responseBytes[MAX_RESPONSE_BYTES];
 
 String readString;
+
+uint8_t command[5];
+void print_command() {
+  Serial.print("command = ");
+  for (int i = 0; i < 5; i++) {
+     Serial.print((char)command[i]); 
+  }
+  Serial.println("\n");  
+}
 
 void setup() {
   mySerial.begin(57600);
@@ -58,36 +70,46 @@ void setup() {
 }
 
 void loop() {
-//  while(Serial.available() > 0) {
-//    delay(10);
-//    readString += (char)Serial.read();
-//  }
-//    
-//// 5 chars should come through: 
-//// 'c' + command(2 char) + parameter(2 char)
-//// [c] + [_] + [command] + [_] +[parameter]
-//  if(readString.charAt(0) == 'c' && 
-//      readString.length() == 6) { //unsure why this needs to be 6, should be 5. Perhaps due to null character "\0"
-//    Serial.print(F("\nReceived from user: "));
-//    Serial.print(readString);
-//    char commandChar = readString.charAt(2);
-//    char parameterChar = readString.charAt(4);
-//    interpretCommand(commandChar, parameterChar);
-//    delay(1000);
-//    Serial.println(F("**Completed Command**"));
-//    Serial.println(F("\nSend another command of the format: c + [command] + [parameter]"));
-//    Serial.println(F("c0000 or c0001 or c0200 for example"));
-//    readString = "";
-//    clearSerialBuffer();
-//  } else if(readString.length() >= 6){
-//    Serial.println(F("Not able to recognize command. Try again"));
-//    clearSerialBuffer();
-//    readString = "";
-//  }
-  byte test = 0b00000101;
+    while(Serial.available() > 0) {
+      delay(10);
+      readString += (char)Serial.read();
+    }
+    
+    // 5 chars should come through: 
+    // 'c' + command(2 char) + parameter(2 char)
+    // [c] + [_] + [command] + [_] +[parameter]
+    if(readString.charAt(0) == 'c' && 
+        readString.length() == 6) { //unsure why this needs to be 6, should be 5. Perhaps due to null character "\0"
+      Serial.print(F("\nReceived from user: "));
+      Serial.print(readString);
+      char commandChar = readString.charAt(2);
+      char parameterChar = readString.charAt(4);
+      interpretCommand(commandChar, parameterChar);
+      delay(1000);
+      Serial.println(F("**Completed Command**"));
+      Serial.println(F("\nSend another command of the format: c + [command] + [parameter]"));
+      Serial.println(F("c0000 or c0001 or c0200 for example"));
+      readString = "";
+      clearSerialBuffer();
+    } else if(readString.length() >= 6){
+      Serial.println(F("Not able to recognize command. Try again"));
+      clearSerialBuffer();
+      readString = "";
+    }
+
+  // read five bytes at a time
+  // Serial.print(Serial.available());
+  if (Serial.available() > 5) {
+      for (int i = 0; i < 5; i++) command[i] = Serial.read();
+      // exhauste buffer
+      while (Serial.available()) Serial.read();
+      print_command();
+      mySerial.write(command, 5);
+  }
   //Serial.println(test,BIN);
-  mySerial.write(test);
-  //delay(100);
+  // mySerial.write(test);
+  // Serial.println(test);
+  delay(1000);
 }
 
 /**

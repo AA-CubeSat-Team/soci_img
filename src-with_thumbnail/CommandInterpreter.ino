@@ -13,7 +13,11 @@ void interpretCommand(byte commandByte, byte parameter2) {
   static byte prevExposure   = uCamIII_DEFAULT;
   currentCommandByte = commandByte;
   currentParameter2  = parameter2;
-  //Serial.println("In interpret command"); //debugging
+  Serial.println("In interpret command"); //debugging
+  Serial.print("commandByte = ");
+  Serial.println((char)commandByte);
+  Serial.print("parameter = ");
+  Serial.println((char)parameter2);
   switch (commandByte) {
     case CHECK_STATUS:
       if(parameter2 == COMPONENT_UCAMIII) {
