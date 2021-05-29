@@ -89,6 +89,6 @@ bool SD_IsFunctional() {
       SD.remove(TEST_FILE);
     }
   }
-  Serial.println(SD_TestSuccessful);
+  // Serial.println(SD_TestSuccessful);
   return SD_TestSuccessful;
 }

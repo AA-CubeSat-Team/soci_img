@@ -9,11 +9,16 @@ void testCheckStatus(char parameter) {
   Serial.println(F("--Begin testCheckStatus--"));
   if(parameter == '0'){
     /* Checking everything */
+    while(mySerial.available()){mySerial.read();}; // clear buffer
     sendCommand(CHECK_STATUS, COMPONENT_ALL);
-    for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
+    /*for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
       while(mySerial.available() == 0) {}
       responseBytes[j] = mySerial.read();
-    }
+    }*/
+    
+    while(mySerial.available() == 0) {Serial.println("waiting");}; // wait for response
+    mySerial.readBytes(responseBytes, MAX_RESPONSE_BYTES);
+    Serial.println();
     if(responseBytes[0] != ACK ||
        responseBytes[1] != CHECK_STATUS || 
        responseBytes[2] != COMPONENT_ALL) {
@@ -23,6 +28,7 @@ void testCheckStatus(char parameter) {
       }
       while(true) {}
     }
+    return;
   }
 
   if(parameter == '1'){

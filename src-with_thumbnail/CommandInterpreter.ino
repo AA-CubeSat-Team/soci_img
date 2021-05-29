@@ -13,31 +13,41 @@ void interpretCommand(byte commandByte, byte parameter2) {
   static byte prevExposure   = uCamIII_DEFAULT;
   currentCommandByte = commandByte;
   currentParameter2  = parameter2;
+  /*Serial.println("---------------------------");
   Serial.println("In interpret command"); //debugging
   Serial.print("commandByte = ");
-  Serial.println((char)commandByte);
-  Serial.print("parameter = ");
-  Serial.println((char)parameter2);
+  Serial.print(commandByte, HEX);
+  Serial.print(", parameter2 = ");
+  Serial.println(parameter2, HEX);*/
   switch (commandByte) {
     case CHECK_STATUS:
+      //Serial.println("Checking status");
       if(parameter2 == COMPONENT_UCAMIII) {
+        //Serial.println("Checking COMPONENT_UCAMIII");
         if(syncCamera()) sendExternalACK();
         else             sendExternalError(uCamIII_CONNECTION);
       }
       else if(parameter2 == COMPONENT_SD) {
+        //Serial.println("Checking COMPONENT_SD");
         if(SD_IsFunctional()) sendExternalACK();
         else                  sendExternalError(SD_CONNECTION);
       }
-      else {
+      else if (parameter2 == COMPONENT_ALL){
+        //Serial.println("Checking COMPONENT_ALL");
         bool uCamIII_Healthy = syncCamera();
+        //Serial.print("uCamIII_Healthy = ");
+        //Serial.println(uCamIII_Healthy);
         if(!uCamIII_Healthy) sendExternalError(uCamIII_CONNECTION);
         bool SD_Healthy;
         if(uCamIII_Healthy) SD_Healthy = SD_IsFunctional();
+        //Serial.print("SD_Healthy = ");
+        //Serial.println(SD_Healthy);
         if(!SD_Healthy)     sendExternalError(SD_CONNECTION);
         if(uCamIII_Healthy && SD_Healthy) sendExternalACK();
       }
       break;
     case TAKE_PICTURE:
+      Serial.println("Taking picture");
       if(ensureSlotValid(parameter2)) {
         if(runTakePictureProcess()) sendExternalACK();
         else {
@@ -48,6 +58,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_THUMBNAIL_SIZE:
+      Serial.println("Getting thumbnail size");
       if(ensureSlotValid(parameter2)) {
         String thumbnailName = getThumbnailNameAt(parameter2);
         if(ensureFileExists(thumbnailName)) {
@@ -59,6 +70,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_PICTURE_SIZE:
+      Serial.println("Getting picture size");
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
         if(ensureFileExists(pictureName)) {
@@ -70,6 +82,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_THUMBNAIL:
+      Serial.println("Getting thumbnial");
       if(ensureSlotValid(parameter2)) {
         String thumbnailName = getThumbnailNameAt(parameter2);
         if(ensureFileExists(thumbnailName)) {
@@ -80,6 +93,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_PICTURE:
+      Serial.println("Getting picture");
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
         if(ensureFileExists(pictureName)) {
@@ -90,6 +104,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_CONTRAST:
+      Serial.println("Setting contrast");
       if(ensureIntegerValid(parameter2)) {
         if(setCBE(parameter2, prevBrightness, prevExposure)) {
           prevContrast = parameter2;
@@ -99,6 +114,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_BRIGTHNESS:
+      Serial.println("Setting brightness");
       if(ensureIntegerValid(parameter2)) {
         if(setCBE(prevContrast, parameter2, prevExposure)) {
           prevBrightness = parameter2;
@@ -108,6 +124,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_EXPOSURE:
+      Serial.println("Setting exposure");
       if(ensureIntegerValid(parameter2)) {
         if(setCBE(prevContrast, prevBrightness, parameter2)) {
           prevExposure = parameter2;
@@ -117,10 +134,12 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_SLEEP_TIME:
+      Serial.println("Setting sleep time");
       if(setSleepTime(parameter2)) sendExternalACK();
       else                         sendExternalError(uCamIII_CONNECTION);
       break;
     default:
+      Serial.println("invalid command");
       sendExternalError(INVALID_COMMAND);
       break;
   }

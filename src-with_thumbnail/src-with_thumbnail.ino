@@ -11,8 +11,6 @@
 #include "uCamIII.h"
 #include "SystemConstants.h"
 
-#define HW_BAUD_RATE 57600
-
 /* Pin Assignments for mega - needs to be changed for mini */
 static const byte uCamIII_ResetPin  = 7;
 static const byte uCamIII_RxPin     = 11;
@@ -138,68 +136,38 @@ void testReadPicture(int numOfPics) {
   Serial.println("Done reading data, this is some bs");
 }
 
-int counter = 0;
+// convert ascii number to actual value 
+byte numToValue(byte input) {
+    return input - 48;
+}
+
+int counter = 0; // serial read indexing
 byte cmd = 0xFF, parameter = 0xFF;
 
 void loop() {
-  
-  cmd = 0xFF;
-  parameter = 0xFF;
-  
   while (Serial.available() > 0) {
     //Serial.println("top");
     // to test commands hardcode command into commandByte variable
     // i.e. take picture -> 0x01
-    /*Serial.print("ct = ");
-    Serial.println(counter);*/
     if (counter == 0) {
         cmd = Serial.read();
-//        Serial.print("cmd byte = ");
-//        Serial.println((char)cmd);
+        /*Serial.print("cmd byte = ");
+        Serial.print(cmd);*/
+        
         counter++;
     } else if (counter == 1){
         parameter = Serial.read();
-//        Serial.print("parameter = ");
-//        Serial.println((char)parameter);
+        /*Serial.print(", parameter = ");
+        Serial.println(parameter);*/
         counter = 0; 
     } 
-    Serial.println(Serial.available());
   }
 
-  Serial.print("cmd byte = ");
-  Serial.println(cmd);
   // check if cmd/parameter is initialized
   if (cmd != 0xFF && parameter != 0xFF) {
-      
+      //Serial.println("Begin interpreting command");
       interpretCommand(cmd, parameter);
+      cmd = 0xFF; // TODO: can change to a state machine
+      parameter = 0xFF;
   }
-  
-  
-  
-
-    // waste newline char 
-    //while(Serial.available() > 0) Serial.read();
-
-    //interpretCommand(commandByte, parameter);
-    
-    //unsigned long startTime = millis();
-    ///bool timedOut = true;
-    // Serial.write((char)commandByte);
-    /*while (millis() - startTime < COMMAND_WAIT_TIME) {
-      if(Serial.available() > 0) {
-        byte parameter = Serial.read();
-        Serial.print("parameter = ");
-        Serial.println((char)parameter);
-        interpretCommand(commandByte, parameter);
-        //interpretCommand(commandByte, 0x01);
-        Serial.println("haha");
-        timedOut = false;
-        break;
-      }
-    }
-    if(timedOut) {
-      currentCommandByte = commandByte;
-      currentParameter2  = Serial.read();
-      sendExternalError(INCOMPLETE_COMMAND);
-    }*/
 }

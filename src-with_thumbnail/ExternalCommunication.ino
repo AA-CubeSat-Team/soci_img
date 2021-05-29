@@ -32,6 +32,10 @@ void sendExternalError(byte errorByte) {
  * <ACK> <currentCommandByte> <currentParameter2>
  */
 void sendExternalACK() {
+  /*Serial.print("CurrentCommandByte = ");
+  Serial.println(currentCommandByte);
+  Serial.print("CurrentParameter2 = ");
+  Serial.println(currentParameter2);*/
   sendExternalResponse(ACK, currentCommandByte, currentParameter2,
                        PADDING_BYTE, PADDING_BYTE);
 }

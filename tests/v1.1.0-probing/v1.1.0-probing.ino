@@ -50,15 +50,6 @@ static byte responseBytes[MAX_RESPONSE_BYTES];
 
 String readString;
 
-uint8_t command[5];
-void print_command() {
-  Serial.print("command = ");
-  for (int i = 0; i < 5; i++) {
-     Serial.print((char)command[i]); 
-  }
-  Serial.println("\n");  
-}
-
 void setup() {
   mySerial.begin(57600);
   Serial.begin(57600);
@@ -79,11 +70,11 @@ void loop() {
     // 'c' + command(2 char) + parameter(2 char)
     // [c] + [_] + [command] + [_] +[parameter]
     if(readString.charAt(0) == 'c' && 
-        readString.length() == 6) { //unsure why this needs to be 6, should be 5. Perhaps due to null character "\0"
+        readString.length() == 5) { //make sure no newline is sent
       Serial.print(F("\nReceived from user: "));
-      Serial.print(readString);
+      Serial.println(readString);
       char commandChar = readString.charAt(2);
-      char parameterChar = readString.charAt(4);
+      char parameterChar = readString.charAt(4); // seems like just for pretty formating, must have a 0 before command and parameter
       interpretCommand(commandChar, parameterChar);
       delay(1000);
       Serial.println(F("**Completed Command**"));
@@ -91,13 +82,13 @@ void loop() {
       Serial.println(F("c0000 or c0001 or c0200 for example"));
       readString = "";
       clearSerialBuffer();
-    } else if(readString.length() >= 6){
+    } else if(readString.length() >= 5){
       Serial.println(F("Not able to recognize command. Try again"));
       clearSerialBuffer();
       readString = "";
     }
 
-  // read five bytes at a time
+  /*// read five bytes at a time
   // Serial.print(Serial.available());
   if (Serial.available() > 5) {
       for (int i = 0; i < 5; i++) command[i] = Serial.read();
@@ -105,7 +96,7 @@ void loop() {
       while (Serial.available()) Serial.read();
       print_command();
       mySerial.write(command, 5);
-  }
+  }*/
   //Serial.println(test,BIN);
   // mySerial.write(test);
   // Serial.println(test);

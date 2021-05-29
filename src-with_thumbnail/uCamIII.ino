@@ -22,7 +22,7 @@ bool sendSyncCommand() {
   sendCommand(uCamIII_CMD_SYNC,
               uCamIII_CMD_NA, uCamIII_CMD_NA,
               uCamIII_CMD_NA, uCamIII_CMD_NA);
-  return receiveAckCommand(uCamIII_CMD_SYNC);
+  return receiveAckCommand(uCamIII_CMD_SYNC);// TODO: change this to a while loop
 }
 
 /*
