@@ -26,8 +26,11 @@ void testGetPicture() {
       while(true) {}
     }
     unsigned int pictureSize = responseBytes[3] << 8 | responseBytes[4];
-    unsigned int fullPackages   = pictureSize / EXTERNAL_PACKAGE_SIZE;
-    unsigned int remainingBytes = pictureSize % EXTERNAL_PACKAGE_SIZE;
+    unsigned int fullPackages   = pictureSize / (EXTERNAL_PACKAGE_SIZE - 1); // last byte is verification byte
+    unsigned int remainingBytes = pictureSize - fullPackages * (EXTERNAL_PACKAGE_SIZE - 1);
+    Serial.print("PictureSize = ");Serial.println(pictureSize);
+    Serial.print("fullPackages = ");Serial.println(fullPackages);
+    Serial.print("remainingBytes = ");Serial.println(remainingBytes);
     /* Checking reponse of valid command */
     sendCommand(GET_PICTURE, i);
     while(mySerial.available() == 0); // wait for response
@@ -40,14 +43,35 @@ void testGetPicture() {
         Serial.print(responseBytes[j]); Serial.print(" ");
       }
       while(true) {}
+    } else {
+      Serial.println("ExternalACK received, ready to receive data");
     }
     /* Begin reading data */
+    byte rx_buf[EXTERNAL_PACKAGE_SIZE];
     for(int i = 0; i < fullPackages; i++) {
-      mySerial.write(ACK);
-      for(int j = 0; j < EXTERNAL_PACKAGE_SIZE; j++) {
-        mySerial.read();
-      }
+        memset(rx_buf, 0, sizeof(rx_buf)); // clear buffer before receiving package
+        mySerial.write(ACK); // ACK, ready for new package
+        while(1) {// retry until package received is correct
+            while(mySerial.available() == 0); // wait for incoming package
+            mySerial.readBytes(rx_buf, EXTERNAL_PACKAGE_SIZE);
+            // check if last byte(verification byte) is 0xFF, verification byte is subject to change
+            if (rx_buf[EXTERNAL_PACKAGE_SIZE - 1] != 0xFF) {
+                Serial.println("verification byte is not 0xFF, need to resend package.");
+                mySerial.write(NAK); // NAK, request resend package
+            } else { 
+                // print out rx_buf, excluding verification byte
+                char tmp[3] = {0};
+                for (int i = 0; i < EXTERNAL_PACKAGE_SIZE - 1; i++) {
+                    sprintf(tmp, "%02X", (int)rx_buf[i]);
+                    Serial.print(tmp);  
+                    //Serial.print(rx_buf[i], HEX);
+                }  
+                Serial.println();
+                break; 
+            }
+        }
     }
+    
     mySerial.write(ACK);
     byte lastByte;
     for(int i = 0; i < remainingBytes; i++) {

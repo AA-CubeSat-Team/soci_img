@@ -11,32 +11,34 @@
  * Note that the last package might not be full
  */
 void sdReadAndTransmit(File file) {
-  byte toSend[EXTERNAL_PACKAGE_SIZE];
+  byte toSend[EXTERNAL_PACKAGE_SIZE]; // byte array for each fullPackage
   unsigned int fileSize = file.size();
-  unsigned int packages = ceil(fileSize * 1.0 / (EXTERNAL_PACKAGE_SIZE - 1));
+  unsigned int fullPackages = fileSize  / (EXTERNAL_PACKAGE_SIZE - 1);
+  unsigned int remainingBytes = fileSize - fullPackages * (EXTERNAL_PACKAGE_SIZE - 1); // number of bytes in the last package + 1(verification byte)
+//  Serial.print("fileSize = ");Serial.println(fileSize);
+//  Serial.print("packages = ");Serial.println(fullPackages);
+//  Serial.print("remainingBytes = ");Serial.println(remainingBytes);
+
+  /* Wait for first ACK to start sending packages */
+  while(Serial.available() == 0 || Serial.read() != ACK) {}
+
   /* Sending all full packages - Resend if necessary */
-  for(int package = 0; package < packages; package++) {
-    for(int i = 0; i < EXTERNAL_PACKAGE_SIZE - 1; i++) {
-      toSend[i] = (byte)file.read();
-    }
-    toSend[EXTERNAL_PACKAGE_SIZE - 1] = generateVerifyByte(toSend);
-    /* Wait for ACK to send package */
-    while(Serial.available() == 0 || Serial.read() != ACK) {}
-    for(int i = 0; i < EXTERNAL_PACKAGE_SIZE; i++) {
-      Serial.write(toSend[i]);
-    }
+  for(int package = 0; package < fullPackages; package++) {
+//    for(int i = 0; i < EXTERNAL_PACKAGE_SIZE - 1; i++) {
+//      toSend[i] = (byte)file.read();
+//    }
+    memset(toSend, 0, sizeof(toSend)); // clear tx buffer 
+    file.read(toSend, EXTERNAL_PACKAGE_SIZE - 1);
+    toSend[EXTERNAL_PACKAGE_SIZE - 1] = generateVerifyByte(toSend); // populate tx buffer
+    Serial.write(toSend, sizeof(toSend)); // send data
     /* Check if the client wants a resend the package or to move on to the next one */
-    while(true) {
-      if(Serial.available() > 0) {
-        if(Serial.peek() == NAK) {
-          Serial.read();
-          for(int i = 0; i < EXTERNAL_PACKAGE_SIZE; i++) {
-            Serial.write(toSend[i]);
-          }
-        }
-        else if(Serial.peek() == ACK) break;
-        else                          Serial.read();
-      }
+    while(1) {
+      while(Serial.available() == 0); // wait for response
+      if (Serial.read()) { // ACK received, break loop, update package content
+         break;
+      } else { // NAK
+         Serial.write(toSend, sizeof(toSend)); // resend data
+      }   
     }
   }
 }
