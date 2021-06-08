@@ -138,6 +138,11 @@ void clearSerialBuffer(){
     delay(1);
   }
 }
+
+// clear software serial
+void clearSoftwareSerial() {
+  while(mySerial.available()){mySerial.read();}; // clear buffer  
+}
 /**
  * Checks whether the IMG system throws an error when
  * given an invalid slot

@@ -47,7 +47,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case TAKE_PICTURE:
-      Serial.println("Taking picture");
+      //Serial.println("Taking picture");
       if(ensureSlotValid(parameter2)) {
         if(runTakePictureProcess()) sendExternalACK();
         else {
@@ -58,7 +58,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_THUMBNAIL_SIZE:
-      Serial.println("Getting thumbnail size");
+      //Serial.println("Getting thumbnail size");
       if(ensureSlotValid(parameter2)) {
         String thumbnailName = getThumbnailNameAt(parameter2);
         if(ensureFileExists(thumbnailName)) {
@@ -70,7 +70,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_PICTURE_SIZE:
-      Serial.println("Getting picture size");
+      //Serial.println("Getting picture size");
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
         if(ensureFileExists(pictureName)) {
@@ -81,8 +81,8 @@ void interpretCommand(byte commandByte, byte parameter2) {
         }
       }
       break;
-    case GET_THUMBNAIL:
-      Serial.println("Getting thumbnial");
+    case GET_THUMBNAIL: // TODO: delete this section
+      //Serial.println("Getting thumbnial");
       if(ensureSlotValid(parameter2)) {
         String thumbnailName = getThumbnailNameAt(parameter2);
         if(ensureFileExists(thumbnailName)) {
@@ -93,7 +93,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case GET_PICTURE:
-      Serial.println("Getting picture");
+      //Serial.println("Getting picture");
       if(ensureSlotValid(parameter2)) {
         String pictureName = getPictureNameAt(parameter2);
         if(ensureFileExists(pictureName)) {

@@ -9,11 +9,10 @@ void testTakePicture() {
   //checkInvalidSlot(TAKE_PICTURE);
   /* Checking reponse of valid command */
   for(byte i = 0x00; i < IMAGES_COUNT; i++) {
+    memset(responseBytes, 0, MAX_RESPONSE_BYTES);
     sendCommand(TAKE_PICTURE, i);
-    for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
-      while(mySerial.available() == 0) {}
-      responseBytes[j] = mySerial.read();
-    }
+    while(mySerial.available() == 0); // wait for response
+    mySerial.readBytes(responseBytes, MAX_RESPONSE_BYTES);
     if(responseBytes[0] != ACK ||
        responseBytes[1] != TAKE_PICTURE || 
        responseBytes[2] != i) {
