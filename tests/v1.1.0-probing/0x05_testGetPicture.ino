@@ -64,23 +64,39 @@ void testGetPicture() {
                 for (int i = 0; i < EXTERNAL_PACKAGE_SIZE - 1; i++) {
                     sprintf(tmp, "%02X", (int)rx_buf[i]);
                     Serial.print(tmp);  
-                    //Serial.print(rx_buf[i], HEX);
                 }  
                 Serial.println();
+                if (i == fullPackages - 1) mySerial.write(ACK); // ACK for last full package
                 break; 
             }
         }
     }
-    
-    mySerial.write(ACK);
-    byte lastByte;
-    for(int i = 0; i < remainingBytes; i++) {
-      lastByte = mySerial.read();
+
+//    Serial.println("im here");
+    // receive last(incomplete package)
+    memset(rx_buf, 0, sizeof(rx_buf)); // clear buffer before receiving package
+    while(1) {// retry until package received is correct
+        while(mySerial.available() == 0); // wait for incoming package
+        mySerial.readBytes(rx_buf, remainingBytes + 1);
+//         Serial.println("remaining bytes received");
+        // check if last byte(verification byte) is 0xFF, verification byte is subject to change
+        if (rx_buf[remainingBytes] != 0xFF) {
+            Serial.println("verification byte is not 0xFF, need to resend package.");
+            mySerial.write(NAK); // NAK, request resend package
+        } else { 
+            mySerial.write(ACK);
+            // print out rx_buf, excluding verification byte
+            char tmp[3] = {0};
+            for (int i = 0; i < remainingBytes; i++) {
+                sprintf(tmp, "%02X", (int)rx_buf[i]);
+                Serial.print(tmp);  
+            }  
+            Serial.println();
+            break; 
+        }
     }
-    if(lastByte != 0xD9) {
-      Serial.print("\nFAIL: Last byte not 0xD9, received = "); Serial.println(lastByte, HEX);
-      while(true) {}  
-    }
+    Serial.println();
+    Serial.println();
   }
   /* Success */
   Serial.println("\nSUCCESS: Passed all tests for GET_PICTURE!");

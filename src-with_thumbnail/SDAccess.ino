@@ -24,9 +24,6 @@ void sdReadAndTransmit(File file) {
 
   /* Sending all full packages - Resend if necessary */
   for(int package = 0; package < fullPackages; package++) {
-//    for(int i = 0; i < EXTERNAL_PACKAGE_SIZE - 1; i++) {
-//      toSend[i] = (byte)file.read();
-//    }
     memset(toSend, 0, sizeof(toSend)); // clear tx buffer 
     file.read(toSend, EXTERNAL_PACKAGE_SIZE - 1);
     toSend[EXTERNAL_PACKAGE_SIZE - 1] = generateVerifyByte(toSend); // populate tx buffer
@@ -41,6 +38,20 @@ void sdReadAndTransmit(File file) {
       }   
     }
   }
+
+  // send the last(incomplete package)
+  memset(toSend, 0, sizeof(toSend)); // clear tx buffer 
+  file.read(toSend, remainingBytes);
+  toSend[remainingBytes] = generateVerifyByte(toSend);
+  Serial.write(toSend, remainingBytes + 1);
+  while(1) {
+      while(Serial.available() == 0); // wait for response
+      if (Serial.read()) { // ACK received, break loop, update package content
+         break;
+      } else { // NAK
+         Serial.write(toSend, remainingBytes); // resend data
+      }   
+ }
 }
 
 /**
