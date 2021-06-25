@@ -104,7 +104,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_CONTRAST:
-      Serial.println("Setting contrast");
+      //Serial.println("Setting contrast");
       if(ensureIntegerValid(parameter2)) {
         if(setCBE(parameter2, prevBrightness, prevExposure)) {
           prevContrast = parameter2;

@@ -5,6 +5,7 @@
  * (Systems need to be reset since test debug with serial)
  */
 void testGetThumbnailSize() {
+  Serial.println(F("--beginning testGetThumbnailSize--"));
   /* Checking error detection of INVALID_SLOT */
   //checkInvalidSlot(GET_THUMBNAIL_SIZE);
   /* Checking reponse of valid command */

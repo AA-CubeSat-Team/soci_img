@@ -6,6 +6,7 @@
  * (Systems need to be reset since test debug with serial)
  */
 void testGetPictureSize() {
+  Serial.println(F("--beginning testGetPictureSize--"));
   /* Checking error detection of INVALID_SLOT */
   // checkInvalidSlot(GET_PICTURE_SIZE);
   /* Checking reponse of valid command */

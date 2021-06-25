@@ -7,6 +7,7 @@
  * (Systems need to be reset since test debug with serial)
  */
 void testGetPicture() {
+  Serial.println(F("--beginning testGetPicture--"));
   /* Checking error detection of INVALID_SLOT */
   // checkInvalidSlot(GET_PICTURE);
   /* Checking reponse of valid command */
