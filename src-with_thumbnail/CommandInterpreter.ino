@@ -114,7 +114,6 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_BRIGTHNESS:
-      Serial.println("Setting brightness");
       if(ensureIntegerValid(parameter2)) {
         if(setCBE(prevContrast, parameter2, prevExposure)) {
           prevBrightness = parameter2;
@@ -124,7 +123,6 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_EXPOSURE:
-      Serial.println("Setting exposure");
       if(ensureIntegerValid(parameter2)) {
         if(setCBE(prevContrast, prevBrightness, parameter2)) {
           prevExposure = parameter2;

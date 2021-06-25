@@ -28,7 +28,7 @@ static const byte GET_PICTURE_SIZE   = 0x03;
 static const byte GET_THUMBNAIL      = 0x04;
 static const byte GET_PICTURE        = 0x05;
 static const byte SET_CONTRAST       = 0x06;
-static const byte SET_BRIGTHNESS     = 0x07;
+static const byte SET_BRIGHTNESS     = 0x07;
 static const byte SET_EXPOSURE       = 0x08;
 static const byte SET_SLEEP_TIME     = 0x09;
 
