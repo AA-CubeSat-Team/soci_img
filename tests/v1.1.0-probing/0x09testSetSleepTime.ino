@@ -4,14 +4,13 @@
  * (Systems need to be reset since test debug with serial)
  */
 void testSetSleepTime() {
+  Serial.println("--beginning testSetSleepTime--");
   /* Trying every possible sleep time */
-  for(int i = 0x00; i <= 0xFF; i++) {
-    i = (byte)i;
+  for(byte i = 0x00; i <= 0xFF; i++) {
+    memset(responseBytes, 0, MAX_RESPONSE_BYTES);
     sendCommand(SET_SLEEP_TIME, i);
-    for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
-      while(Serial.available() == 0) {}
-      responseBytes[j] = Serial.read();
-    }
+    while(mySerial.available() == 0); // wait for response
+    mySerial.readBytes(responseBytes, MAX_RESPONSE_BYTES);
     if(responseBytes[0] != ACK || responseBytes[1] != SET_SLEEP_TIME || responseBytes[2] != i) {
       Serial.print("\nFAIL: Did not give proper response when seconds = "); Serial.println(i);
       Serial.print("Received: "); 

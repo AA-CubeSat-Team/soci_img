@@ -132,7 +132,6 @@ void interpretCommand(byte commandByte, byte parameter2) {
       }
       break;
     case SET_SLEEP_TIME:
-      Serial.println("Setting sleep time");
       if(setSleepTime(parameter2)) sendExternalACK();
       else                         sendExternalError(uCamIII_CONNECTION);
       break;
