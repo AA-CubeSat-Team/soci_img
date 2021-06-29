@@ -69,7 +69,7 @@ void setup() {
   SoftSer.begin(SW_FINAL_BAUD_RATE);
   
   uCamIII_InitSuccessful &= syncCamera();
-   Serial.println("Checking camera");
+  Serial.println("Checking camera");
 
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
@@ -80,10 +80,6 @@ void setup() {
 
 /*** DEBUG CODE ***/
   Serial.println(F("SD card init successful"));
-
-// testTakePicture(2);
-//  testReadPicture(2);
-  
 }
 
 void testTakePicture(int numOfPics) {
