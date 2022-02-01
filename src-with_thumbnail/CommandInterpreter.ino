@@ -136,7 +136,7 @@ void interpretCommand(byte commandByte, byte parameter2) {
       else                         sendExternalError(uCamIII_CONNECTION);
       break;
     default:
-      Serial.println("invalid command");
+      //Serial.println("invalid command");
       sendExternalError(INVALID_COMMAND);
       break;
   }

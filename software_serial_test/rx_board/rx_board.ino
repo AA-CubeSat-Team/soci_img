@@ -11,7 +11,8 @@ byte command;
 void loop() {
   if (Serial.available() > 0) {
     command = Serial.read();  
+    Serial.println(command);
   }
   delay(1000);
-  Serial.println(command);
+  
 }

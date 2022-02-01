@@ -41,7 +41,6 @@ void print_rx_buffer() {
 SoftwareSerial SoftSer(uCamIII_RxPin, uCamIII_TxPin);
 
 void setup() {
-  Serial.begin(57600);
   /* System Setup */
   Serial.begin(HW_BAUD_RATE);
   SoftSer.begin(SW_INIT_BAUD_RATE);
@@ -82,15 +81,6 @@ void setup() {
   Serial.println(F("SD card init successful"));
 }
 
-void testTakePicture(int numOfPics) {
-  for(int i = 0; i < numOfPics; i++) {
-    currentParameter2 = (byte)i;
-    if(runTakePictureProcess()) Serial.println(F("OK"));
-    else                        Serial.println(F("FAIL"));
-  }
-}
-
-
 // some defined functions
 void clearSDCard() {
    // clear the files inside the SD card
@@ -110,26 +100,6 @@ void clearSDCard() {
       Serial.println("picture doesn't exist.");
     }
   }
-}
-
-void testReadPicture(int numOfPics) {
-  // read SD card data and print bytes to serial monitor
-  for(int i = 0; i < numOfPics; i++) {
-    String fileName = getPictureNameAt(i);
-    if(SD.exists(fileName)) {
-      File pictureFile = SD.open(fileName, FILE_READ);
-      Serial.print(fileName); Serial.print(" ");
-          unsigned int pictureSize = pictureFile.size();
-          // read from the file until there's nothing else in it:
-          while (pictureFile.available()) {
-            Serial.write(pictureFile.read());
-          }
-          pictureFile.close();
-          Serial.println(pictureSize);
-    }
-    else Serial.println(0);
-  }
-  Serial.println("Done reading data, this is some bs");
 }
 
 // convert ascii number to actual value 

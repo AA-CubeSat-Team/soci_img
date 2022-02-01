@@ -1,4 +1,4 @@
-/*
+  /*
  *  This testing function receives a command and parameter, and performs the 
  *  IMG functions associated with this [command] [parameter]
  * 

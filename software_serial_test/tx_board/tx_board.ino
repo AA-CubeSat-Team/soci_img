@@ -16,10 +16,11 @@ void setup() {
   mySerial.begin(BAUDRATE);
 }
 
+char buf[5];
 void loop() {
-  byte command = 5;
-  mySerial.write(command);
-  Serial.print("command = ");
-  Serial.println(command);
-  delay(1000);
+  if (Serial.available() > 0) {
+     Serial.readBytes(buf, 5);
+     mySerial.write(buf, 5);
+     memset(buf, 0, 5);
+  }
 }
