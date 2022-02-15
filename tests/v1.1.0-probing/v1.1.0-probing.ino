@@ -57,6 +57,7 @@ void setup() {
   Serial.println(F("\n**Setup complete. Waiting for a command**"));
   Serial.println(F("Send a command of the format: c + [command] + [parameter]"));
   Serial.println(F("c0000 or c0001 or c0200 for example"));
+  pinMode(7, OUTPUT);
   clearSerialBuffer();
 }
 
@@ -75,6 +76,11 @@ void loop() {
       Serial.println(readString);
       char commandChar = readString.charAt(2);
       char parameterChar = readString.charAt(4); // seems like just for pretty formating, must have a 0 before command and parameter
+      // reset CIA board
+//      digitalWrite(7, HIGH);
+//      delay(1000);
+//      digitalWrite(7, LOW);
+//      delay(1000);
       interpretCommand(commandChar, parameterChar);
       delay(1000);
       Serial.println(F("**Completed Command**"));

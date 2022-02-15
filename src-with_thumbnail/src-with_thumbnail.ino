@@ -50,7 +50,7 @@ void setup() {
   /* Initialize the uCamIII */
   bool  uCamIII_InitSuccessful = false;
   short uCamIII_InitAttempts   = 0;
-   Serial.println("Checking if Camera and SD are initialized");
+  //Serial.println("Checking if Camera and SD are initialized");
 
   hardwareReset(uCamIII_ResetPin, HARDWARE_RESET_TIME);
   while (!uCamIII_InitSuccessful && uCamIII_InitAttempts++ < uCamIII_MAX_INIT) {
@@ -68,17 +68,17 @@ void setup() {
   SoftSer.begin(SW_FINAL_BAUD_RATE);
   
   uCamIII_InitSuccessful &= syncCamera();
-  Serial.println("Checking camera");
+  //Serial.println("Checking camera");
 
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
   /* Check whether the SD shield is functional */
-  Serial.println("Camera init successful");
-  Serial.println("Checking SD card");
+  //Serial.println("Camera init successful");
+  //Serial.println("Checking SD card");
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/
-  Serial.println(F("SD card init successful"));
+  //Serial.println(F("SD card init successful"));
 }
 
 // some defined functions
