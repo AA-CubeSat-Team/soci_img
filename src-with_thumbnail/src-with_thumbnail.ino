@@ -42,7 +42,7 @@ SoftwareSerial SoftSer(uCamIII_RxPin, uCamIII_TxPin);
 
 void setup() {
   /* System Setup */
-  Serial.begin(HW_BAUD_RATE);
+  Serial.begin(57600);
   SoftSer.begin(SW_INIT_BAUD_RATE);
   SD.begin(SD_SlaveSelectPin);
   pinMode(uCamIII_ResetPin, OUTPUT);
@@ -73,12 +73,12 @@ void setup() {
   if(!uCamIII_InitSuccessful) haltThread(uCamIII_CONNECTION);
 
   /* Check whether the SD shield is functional */
-  //Serial.println("Camera init successful");
-  //Serial.println("Checking SD card");
+  Serial.println("Camera init successful");
+  Serial.println("Checking SD card");
   if(!SD_IsFunctional()) haltThread(SD_CONNECTION);
 
 /*** DEBUG CODE ***/
-  //Serial.println(F("SD card init successful"));
+  Serial.println(F("SD card init successful"));
 }
 
 // some defined functions

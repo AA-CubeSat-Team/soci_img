@@ -53,7 +53,8 @@ static const byte MAX_PICTURES = 5;
 static const byte PADDING_BYTE = 0xAA;
 
 /* Baud Rates */
-static const unsigned int HW_BAUD_RATE = 57600;
+//static const unsigned int HW_BAUD_RATE = 57600;
+static const unsigned int HW_BAUD_RATE = 115200;
 static const unsigned int SW_INIT_BAUD_RATE  = 57600;
 static const unsigned int SW_FINAL_BAUD_RATE = 19200;
 

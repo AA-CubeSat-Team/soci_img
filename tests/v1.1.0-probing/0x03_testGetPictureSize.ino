@@ -23,9 +23,13 @@ void testGetPictureSize() {
       for(int j = 0; j < MAX_RESPONSE_BYTES; j++) {
         Serial.print(responseBytes[j]); Serial.print(" ");
       }
-      while(true) {}
     }
     returnedSizes[i] = responseBytes[3] << 8 | responseBytes[4];
+    Serial.println(responseBytes[0]);
+    Serial.println(responseBytes[1]);
+    Serial.println(responseBytes[2]);
+    Serial.println(responseBytes[3]);
+    Serial.println(responseBytes[4]);
   }
   /* Success */
   Serial.println("\nSUCCESS: Passed all tests for GET_PICTURE_SIZE!");
